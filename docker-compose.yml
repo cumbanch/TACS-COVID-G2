@@ -3,7 +3,7 @@ services:
   covid-19-app:
     build: .
     depends_on:
-      - covide-19-db
+      - covid-19-db
     environment:
       PORT: 8080
       DB_USERNAME: admin
@@ -11,6 +11,8 @@ services:
       DB_NAME: covid19
     ports:
       - "8080:8080"
+    links:
+      - covid-19-db
   covid-19-db:
     image: postgres:10.4
     ports:
