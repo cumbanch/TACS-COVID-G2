@@ -1,5 +1,10 @@
-version: "3"
+version: '3.4'
+
+networks:
+  covid-19:
+
 services:
+
   covid-19-app:
     build: .
     depends_on:
@@ -11,13 +16,16 @@ services:
       DB_NAME: covid19
     ports:
       - "8080:8080"
-    links:
-      - covid-19-db
+    networks:
+      - covid-19
+
   covid-19-db:
     image: postgres:10.4
-    ports:
-      - "35432:5432"
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: covid19
+    ports:
+      - "35432:5432"
+    networks:
+      - covid-19
