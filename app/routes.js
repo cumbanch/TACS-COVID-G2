@@ -1,4 +1,5 @@
 // const controller = require('./controllers/controller');
+
 const { healthCheck } = require('./controllers/health_check');
 
 exports.init = app => {
