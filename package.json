@@ -1,0 +1,53 @@
+{
+  "name": "covid-19",
+  "version": "0.1.0",
+  "description": "covid-19",
+  "engines": {
+    "node": "10.14.1",
+    "npm": "6.4.1"
+  },
+  "scripts": {
+    "eslint-check": "eslint --print-config .eslintrc.js --ignore-pattern ./.eslintrc.js | eslint-config-prettier-check",
+    "lint": "eslint \"**/*.js\" --ignore-pattern ./.eslintrc.js",
+    "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
+    "lint-fix": "npm run lint -- --fix",
+    "start-dev": "nodemon --inspect server.js",
+    "prestart-dev": "npm run lint",
+    "start": "node server.js"
+  },
+  "cacheDirectories": [
+    "node_modules"
+  ],
+  "main": "app.js",
+  "homepage": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ".git"
+  },
+  "bugs": {
+    "url": "/issues"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-wolox": "^4.0.0",
+    "eslint-config-wolox-node": "^3.0.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-prettier": "^3.0.1",
+    "husky": "^4.2.3",
+    "nodemon": "^2.0.2",
+    "prettier": "^1.15.3",
+    "prettier-eslint": "^9.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-diff",
+      "pre-push": "npm test"
+    }
+  }
+}
