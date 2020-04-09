@@ -13,7 +13,8 @@
     "lint-fix": "npm run lint -- --fix",
     "start-dev": "nodemon --inspect server.js",
     "prestart-dev": "npm run lint",
-    "start": "node server.js"
+    "start": "node server.js",
+    "docker-start": "docker-compose up -d"
   },
   "cacheDirectories": [
     "node_modules"
