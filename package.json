@@ -13,14 +13,15 @@
     "lint-fix": "npm run lint -- --fix",
     "prestart": "cp -n .env.example .env.development; npm run lint;",
     "start": "docker-compose up -d",
-    "migrations": "sequelize db:migrate",
-    "create-migration": "./node_modules/.bin/sequelize migration:create --config ./migrations/config.js --migrations-path ./migrations/migrations --name",
-    "migrations-undo": "./node_modules/.bin/sequelize db:migrate:undo"
+    "migrations": "npx sequelize db:migrate",
+    "create-migration": "npx sequelize migration:create --config ./migrations/config.js --migrations-path ./migrations/migrations --name",
+    "migrations-undo": "npx sequelize db:migrate:undo",
+    "migrations-undo-all": "npx sequelize db:migrate:undo:all"
   },
   "cacheDirectories": [
     "node_modules"
   ],
-  "main": "app.js",
+  "main": "server.js",
   "homepage": "",
   "license": "MIT",
   "repository": {
@@ -39,6 +40,7 @@
     "pino": "^6.1.1",
     "pino-pretty": "^4.0.0",
     "sequelize": "^5.21.6",
+    "sequelize-cli": "^5.5.1",
     "umzug": "^2.3.0"
   },
   "devDependencies": {
