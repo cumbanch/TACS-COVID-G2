@@ -10,7 +10,8 @@ services:
     depends_on:
       - covid-19-db
     environment:
-      PORT: 8080
+      DB_HOST: covid-19-db
+      DB_PORT: 5432
       DB_USERNAME: admin
       DB_PASSWORD: admin
       DB_NAME: covid19
