@@ -13,4 +13,4 @@ You need to have installed:
 
 ## Start dockerized app and db
 
-`npm run docker-start`
+`npm start`
