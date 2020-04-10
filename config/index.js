@@ -12,6 +12,9 @@ const config = {
   },
   migrations: {
     automaticallyUp: process.env.AUTOMATICALLY_UP
+  },
+  server: {
+    port: process.env.PORT || 8080
   }
 };
 

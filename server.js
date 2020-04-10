@@ -1,8 +1,7 @@
 const app = require('./app');
 const logger = require('./app/logger');
 const migrationsManager = require('./migrations');
-
-const port = 8081;
+const { port } = require('./config').server;
 
 Promise.resolve()
   .then(() => migrationsManager.check())

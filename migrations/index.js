@@ -1,7 +1,7 @@
 const Umzug = require('umzug');
 
 const { automaticallyUp = false } = require('./../config').migrations;
-const { sequelize } = require('../app/models');
+const { sequelizeInstance: sequelize } = require('../app/models');
 const logger = require('../app/logger');
 
 const getError = () =>
