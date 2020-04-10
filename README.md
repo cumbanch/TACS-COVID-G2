@@ -11,6 +11,10 @@ You need to have installed:
 
 * [docker](https://www.docker.com/products/docker-desktop)
 
+## Install node dependencies (in the same folder of the project)
+
+`npm install`
+
 ## Start dockerized app and db
 
 `npm start`
