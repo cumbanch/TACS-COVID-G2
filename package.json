@@ -12,7 +12,10 @@
     "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
     "lint-fix": "npm run lint -- --fix",
     "prestart": "cp -n .env.example .env.development; npm run lint;",
-    "start": "docker-compose up -d"
+    "start": "docker-compose up -d",
+    "migrations": "sequelize db:migrate",
+    "create-migration": "./node_modules/.bin/sequelize migration:create --config ./migrations/config.js --migrations-path ./migrations/migrations --name",
+    "migrations-undo": "./node_modules/.bin/sequelize db:migrate:undo"
   },
   "cacheDirectories": [
     "node_modules"
