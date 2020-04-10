@@ -12,7 +12,8 @@
     "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
     "lint-fix": "npm run lint -- --fix",
     "prestart": "cp -n .env.example .env.development; npm run lint;",
-    "start": "docker-compose up -d"
+    "start": "docker-compose up -d",
+    "migrations": "sequelize db:migrate"
   },
   "cacheDirectories": [
     "node_modules"
