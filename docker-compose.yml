@@ -3,6 +3,7 @@ version: '3.4'
 services:
   covid-19-dev:
     build: .
+    command: nodemon server.js
     env_file:
       - .env.example
     depends_on:
@@ -12,7 +13,7 @@ services:
     networks:
       - covid-19
     volumes:
-      - .:/home/node/app
+      - .:/usr/src/
 
     # Example for production environment
     # covid-19-app:
