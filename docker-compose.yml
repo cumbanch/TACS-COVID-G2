@@ -5,8 +5,9 @@ networks:
 
 services:
 
-  covid-19-app:
+  covid-19-dev:
     build: .
+    command: nodemon server.js
     depends_on:
       - covid-19-db
     environment:
@@ -19,6 +20,24 @@ services:
       - "8080:8080"
     networks:
       - covid-19
+    volumes:
+      - .:/home/node/app
+
+    # Example for production environment
+    # covid-19-app:
+    #   build: .
+    #   depends_on:
+    #     - covid-19-db
+    #   environment:
+    #     DB_HOST: covid-19-db
+    #     DB_PORT: 5432
+    #     DB_USERNAME: admin
+    #     DB_PASSWORD: admin
+    #     DB_NAME: covid19
+    #   ports:
+    #     - "80:8080"
+    #   networks:
+    #     - covid-19
 
   covid-19-db:
     image: postgres:10.4

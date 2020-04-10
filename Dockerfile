@@ -7,6 +7,7 @@ COPY package-lock.json .
 COPY .nvmrc .
 
 RUN npm install
+RUN npm install -g nodemon
 
 COPY . .
 
