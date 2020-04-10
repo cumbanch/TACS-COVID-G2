@@ -3,7 +3,7 @@ version: "3.4"
 services:
   covid-19-dev:
     build: .
-    command: nodemon server.js
+    command: npm run migrate-and-start
     container_name: covid-19-dev
     env_file:
       - .env.development

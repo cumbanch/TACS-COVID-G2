@@ -12,12 +12,17 @@
     "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
     "lint-fix": "npm run lint -- --fix",
     "prestart": "cp -n .env.example .env.development; npm run lint;",
-    "start": "docker-compose up -d"
+    "start": "docker-compose up -d",
+    "migrate-and-start": "npm run migrations; nodemon server.js;",
+    "migrations": "npx sequelize db:migrate",
+    "create-migration": "npx sequelize migration:create --config ./migrations/config.js --migrations-path ./migrations/migrations --name",
+    "migrations-undo": "npx sequelize db:migrate:undo",
+    "migrations-undo-all": "npx sequelize db:migrate:undo:all"
   },
   "cacheDirectories": [
     "node_modules"
   ],
-  "main": "app.js",
+  "main": "server.js",
   "homepage": "",
   "license": "MIT",
   "repository": {
@@ -30,9 +35,14 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
+    "dotenv": "^8.2.0",
     "express": "^4.16.2",
+    "pg": "^8.0.2",
     "pino": "^6.1.1",
-    "pino-pretty": "^4.0.0"
+    "pino-pretty": "^4.0.0",
+    "sequelize": "^5.21.6",
+    "sequelize-cli": "^5.5.1",
+    "umzug": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
