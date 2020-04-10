@@ -4,8 +4,8 @@ const Sequelize = require('sequelize');
 
 const config = require('../../config');
 
-const { dialect, username, password, port, name, host } = config.database;
-const connectionString = `${dialect}://${username}:${password}@${host}:${port}/${name}`;
+const { dialect, username, password, port, database, host } = config.database;
+const connectionString = `${dialect}://${username}:${password}@${host}:${port}/${database}`;
 const basename = path.basename(__filename);
 const db = {};
 const sequelize = new Sequelize(connectionString);
