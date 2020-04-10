@@ -1,16 +1,18 @@
 FROM node:10.14.1
 
-WORKDIR /home/node/app
+RUN mkdir -p /usr/src
 
-COPY package.json .
-COPY package-lock.json .
-COPY .nvmrc .
+COPY package.json package-lock.json .nvmrc /usr/src/
+
+WORKDIR /usr/src
 
 RUN npm install
 RUN npm install -g nodemon
 
-COPY . .
+COPY server.js app.js /usr/src/
+COPY app /usr/src/app
 
 EXPOSE 8080
 ENV NODE_ENV production
+
 CMD ["npm", "start"]
