@@ -5,4 +5,4 @@ const logger = require('pino')({
   }
 });
 
-module.exports = { info: logger.info, error: logger.error };
+module.exports = logger;

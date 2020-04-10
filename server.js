@@ -1,11 +1,11 @@
 const app = require('./app');
-const { info, error } = require('./app/logger');
+const logger = require('./app/logger');
 
 const port = 8080;
 
 Promise.resolve()
   .then(() => {
     app.listen(port);
-    info(`Listening on port: ${port}`);
+    logger.info(`Listening on port: ${port}`);
   })
-  .catch(error);
+  .catch(logger.error);
