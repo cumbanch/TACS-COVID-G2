@@ -1,0 +1,54 @@
+version: '3.4'
+
+services:
+  covid-19-dev:
+    build: .
+    command: nodemon server.js
+    container_name: covid-19-dev
+    env_file:
+      - .env.development
+    depends_on:
+      - covid-19-db-dev
+    ports:
+      - "8080:8080"
+    networks:
+      - covid-19
+    volumes:
+      - .:/usr/src/
+
+    # Example for production environment
+    # covid-19-app:
+    #   build: .
+    #   container_name: covid-19-app
+    #   env_file:
+    #     - .env
+    #   depends_on:
+    #     - covid-19-db
+    #   ports:
+    #     - "80:8080"
+    #   networks:
+    #     - covid-19
+
+  covid-19-db-dev:
+    image: postgres:12
+    container_name: covid-19-db-dev
+    env_file:
+      - .env.development
+    ports:
+      - "35432:5432"
+    networks:
+      - covid-19
+
+    # Example for production environment
+    # covid-19-db:
+    #   image: postgres:12
+    #   container_name: covid-19-db
+    #   env_file:
+    #     - .env
+    #   ports:
+    #     - "35432:5432"
+    #   networks:
+    #     - covid-19
+
+networks:
+  covid-19:

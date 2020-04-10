@@ -11,9 +11,8 @@
     "lint": "eslint \"**/*.js\" --ignore-pattern ./.eslintrc.js",
     "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
     "lint-fix": "npm run lint -- --fix",
-    "start-dev": "nodemon --inspect server.js",
-    "prestart-dev": "npm run lint",
-    "start": "node server.js"
+    "prestart": "cp -n .env.example .env.development; npm run lint;",
+    "start": "docker-compose up -d"
   },
   "cacheDirectories": [
     "node_modules"

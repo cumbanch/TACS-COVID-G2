@@ -41,6 +41,7 @@ node_modules
 
 # dotenv
 .env
+.env.development
 
 # VS Code
 .vscode/
