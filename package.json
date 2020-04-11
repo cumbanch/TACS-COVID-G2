@@ -19,6 +19,7 @@
     "migrations-undo": "npx sequelize db:migrate:undo",
     "migrations-undo-all": "npx sequelize db:migrate:undo:all"
     "tests": "jest",
+    "test": "jest",
   },
   "cacheDirectories": [
     "node_modules"
