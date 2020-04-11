@@ -9,7 +9,7 @@ services:
     depends_on:
       - covid-19-db
     ports:
-      - "80:80"
+      - "443:443"
     networks:
       - covid-19
 
