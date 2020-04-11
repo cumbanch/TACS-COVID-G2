@@ -54,7 +54,6 @@ module.exports = {
               allowNull: false
             },
             password: {
-              // can be null for the Google/FB/Google integration
               type: Sequelize.STRING
             },
             last_access: {

@@ -1,0 +1,341 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "TACS COVID G2",
+    "description": "The application allows following the progression of the COVID-19 pandemic using different tools. You can find out more about in the [GitHub's repository](https://github.com/loopmeagain/TACS-COVID-G2)."
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "host": "localhost:8080",
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Check API status",
+        "description": "If the API is active, it returns the seconds that it has been in that state.",
+        "responses": {
+          "200": {
+            "description": "The API is up.",
+            "schema": {
+              "properties": {
+                "uptime": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Standard200Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Standard200Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Creates a user",
+        "description": "Adds a new user to the users list.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Standard200Response"
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Modifies a user",
+        "description": "Updates data of an existent user.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Standard200Response"
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Gets a user",
+        "description": "Returns a single user for its id",
+        "parameters": [
+          {
+            "$ref": "#/parameters/numericId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A User",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/countries": {
+      "get": {
+        "tags": [
+          "countries"
+        ],
+        "summary": "Gets some countries",
+        "description": "Returns a list containing all countries",
+        "parameters": [
+          {
+            "$ref": "#/parameters/pageSize"
+          },
+          {
+            "$ref": "#/parameters/pageLimit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of Country",
+            "schema": {
+              "type": "object",
+              "allOf": [
+                {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/Countries"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/definitions/Pagination"
+                }
+              ]
+            }
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/countries/{id}": {
+      "get": {
+        "tags": [
+          "countries"
+        ],
+        "summary": "Gets a country",
+        "description": "Returns a single country for its id",
+        "parameters": [
+          {
+            "$ref": "#/parameters/numericId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A Country",
+            "schema": {
+              "$ref": "#/definitions/Country"
+            }
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Country": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "iso2": {
+          "type": "string"
+        },
+        "iso3": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "string"
+        },
+        "longitude": {
+          "type": "string"
+        }
+      }
+    },
+    "Countries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Country"
+      }
+    },
+    "User": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "country_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "Users": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/User"
+      }
+    },
+    "Pagination": {
+      "properties": {
+        "total_pages": {
+          "type": "integer"
+        },
+        "total_count": {
+          "type": "integer"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      }
+    },
+    "Error": {
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "responses": {
+    "Standard200Response": {
+      "description": "Operation executed successfully."
+    },
+    "Standard400Response": {
+      "description": "Bad request.",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
+    "Standard404Response": {
+      "description": "Resource not found.",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
+    "Standard500Response": {
+      "description": "An unexpected error occured.",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    }
+  },
+  "parameters": {
+    "pageSize": {
+      "name": "page",
+      "in": "query",
+      "description": "Page number",
+      "type": "integer"
+    },
+    "pageLimit": {
+      "name": "limit",
+      "in": "query",
+      "description": "Number of items returned by page",
+      "type": "integer"
+    },
+    "user": {
+      "name": "user",
+      "in": "body",
+      "description": "User object.",
+      "schema": {
+        "$ref": "#/definitions/User"
+      }
+    },
+    "numericId": {
+      "name": "id",
+      "in": "path",
+      "required": true,
+      "description": "The identifier of the resourse to found",
+      "type": "integer"
+    }
+  }
+}
