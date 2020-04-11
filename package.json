@@ -70,5 +70,11 @@
       "pre-commit": "npm run lint-diff",
       "pre-push": "npm test"
     }
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }
