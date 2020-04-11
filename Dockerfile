@@ -1,18 +1,14 @@
-FROM node:10.14.1
+FROM node:10.14.1-alpine
 
-RUN mkdir -p /usr/src
+WORKDIR /usr/src/
 
-COPY package.json package-lock.json .nvmrc /usr/src/
+COPY package*.json /usr/src/
 
-WORKDIR /usr/src
+RUN npm install --production
 
-RUN npm install
-RUN npm install -g nodemon
+COPY src /usr/
 
-COPY server.js app.js /usr/src/
-COPY app /usr/src/app
-
-EXPOSE 8080
+EXPOSE 80
 ENV NODE_ENV production
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:prod"]

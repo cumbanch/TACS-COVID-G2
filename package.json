@@ -7,22 +7,23 @@
     "npm": "6.4.1"
   },
   "scripts": {
-    "eslint-check": "eslint --print-config .eslintrc.js --ignore-pattern ./.eslintrc.js | eslint-config-prettier-check",
-    "lint": "eslint \"**/*.js\" --ignore-pattern ./.eslintrc.js",
+    "eslint-check": "eslint --print-config ./src/.eslintrc.js --ignore-pattern ./src/.eslintrc.js | eslint-config-prettier-check",
+    "lint": "eslint \"**/*.js\" --ignore-pattern ./src/.eslintrc.js",
     "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
     "lint-fix": "npm run lint -- --fix",
-    "prestart": "npm run lint",
-    "start": "docker-compose up -d",
-    "migrate-and-start": "npm run migrations; nodemon server.js;",
-    "migrations": "npx sequelize db:migrate",
-    "create-migration": "npx sequelize migration:create --config ./migrations/config.js --migrations-path ./migrations/migrations --name",
-    "migrations-undo": "npx sequelize db:migrate:undo",
-    "migrations-undo-all": "npx sequelize db:migrate:undo:all"
+    "create-xmigration": "npx sequelize migration:create --options-path=src/.sequelizerc --name",
+    "migrations": "npx sequelize --options-path=src/.sequelizerc db:migrate",
+    "migrations-undo": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo",
+    "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
+    "test": "jest",
+    "start:dev": " npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
+    "start:prod": " npm run migrations; node src/server.js",
+    "docker-stop-dev": "docker stop covid-19-dev covid-19-db-dev; docker rm covid-19-dev covid-19-db-dev;",
+    "start": "docker-compose -f docker-compose.development.yml up -d"
   },
   "cacheDirectories": [
     "node_modules"
   ],
-  "main": "server.js",
   "homepage": "",
   "license": "MIT",
   "repository": {
@@ -42,6 +43,7 @@
     "pino-pretty": "^4.0.0",
     "sequelize": "^5.21.6",
     "sequelize-cli": "^5.5.1",
+    "swagger-ui-express": "^4.1.4",
     "umzug": "^2.3.0"
   },
   "devDependencies": {
@@ -51,6 +53,7 @@
     "eslint-plugin-import": "^2.17.3",
     "eslint-plugin-prettier": "^3.0.1",
     "husky": "^4.2.3",
+    "jest": "^25.3.0",
     "nodemon": "^2.0.2",
     "prettier": "^1.15.3",
     "prettier-eslint": "^9.0.1"

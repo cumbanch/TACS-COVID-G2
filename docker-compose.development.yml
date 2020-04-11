@@ -1,0 +1,32 @@
+version: "3.4"
+
+services:
+  covid-19-dev:
+    build:
+      context: ./
+      dockerfile: Dockerfile.development
+    container_name: covid-19-dev
+    env_file:
+      - .env.development
+    depends_on:
+      - covid-19-db-dev
+    ports:
+      - "8080:8080"
+      - "9229:9229"
+    networks:
+      - covid-19
+    volumes:
+      - .:/usr/src/
+
+  covid-19-db-dev:
+    image: postgres:12
+    container_name: covid-19-db-dev
+    env_file:
+      - .env.development
+    ports:
+      - "35432:5432"
+    networks:
+      - covid-19
+
+networks:
+  covid-19:

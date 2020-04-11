@@ -1,54 +1,27 @@
 version: "3.4"
 
 services:
-  covid-19-dev:
+  covid-19-app:
     build: .
-    command: npm run migrate-and-start
-    container_name: covid-19-dev
+    container_name: covid-19-app
     env_file:
-      - .env.development
+      - .env
     depends_on:
-      - covid-19-db-dev
+      - covid-19-db
     ports:
-      - "8080:8080"
+      - "80:80"
     networks:
       - covid-19
-    volumes:
-      - .:/usr/src/
 
-    # Example for production environment
-    # covid-19-app:
-    #   build: .
-    #   container_name: covid-19-app
-    #   env_file:
-    #     - .env
-    #   depends_on:
-    #     - covid-19-db
-    #   ports:
-    #     - "80:8080"
-    #   networks:
-    #     - covid-19
-
-  covid-19-db-dev:
-    image: postgres:12
-    container_name: covid-19-db-dev
+  covid-19-db:
+    image: postgres:12-alpine
+    container_name: covid-19-db
     env_file:
-      - .env.development
+      - .env
     ports:
-      - "35432:5432"
+      - "5432:5432"
     networks:
       - covid-19
-
-    # Example for production environment
-    # covid-19-db:
-    #   image: postgres:12
-    #   container_name: covid-19-db
-    #   env_file:
-    #     - .env
-    #   ports:
-    #     - "35432:5432"
-    #   networks:
-    #     - covid-19
 
 networks:
   covid-19:
