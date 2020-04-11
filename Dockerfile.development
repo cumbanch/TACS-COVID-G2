@@ -1,13 +1,12 @@
 FROM node:10.14.1-alpine
 
-WORKDIR /usr/src/
+WORKDIR /usr/local/
 
-COPY package*.json /usr/src/
+COPY package*.json /usr/local/
 
 RUN npm install
-RUN npm install -g nodemon
 
-COPY src /usr/src/
+COPY src /usr/local/src
 
 EXPOSE 8080
 EXPOSE 9229
