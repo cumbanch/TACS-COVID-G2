@@ -11,7 +11,7 @@
     "lint": "eslint \"**/*.js\" --ignore-pattern ./.eslintrc.js",
     "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
     "lint-fix": "npm run lint -- --fix",
-    "prestart": "cp -n .env.example .env.development; npm run lint;",
+    "prestart": "npm run lint",
     "start": "docker-compose up -d",
     "migrate-and-start": "npm run migrations; nodemon server.js;",
     "migrations": "npx sequelize db:migrate",
