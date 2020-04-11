@@ -1,12 +1,12 @@
 FROM node:10.14.1-alpine
 
-WORKDIR /usr/src
+WORKDIR /usr/src/
 
-COPY package*.json .
+COPY package*.json /usr/src/
 
 RUN npm install --production
 
-COPY . .
+COPY src /usr/
 
 EXPOSE 80
 ENV NODE_ENV production
