@@ -18,7 +18,6 @@
     "create-migration": "npx sequelize migration:create --config ./migrations/config.js --migrations-path ./migrations/migrations --name",
     "migrations-undo": "npx sequelize db:migrate:undo",
     "migrations-undo-all": "npx sequelize db:migrate:undo:all"
-    "tests": "jest",
     "test": "jest",
   },
   "cacheDirectories": [
