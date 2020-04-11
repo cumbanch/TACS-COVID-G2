@@ -16,9 +16,9 @@
     "migrations-undo": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo",
     "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
     "test": "jest",
-    "start:dev": "npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
-    "start:prod": "npm run migrations; node src/server.js",
-    "docker-stop-rm": "docker stop covid-19-dev covid-19-db-dev; docker rm covid-19-dev covid-19-db-dev;",
+    "start:dev": " npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
+    "start:prod": " npm run migrations; node src/server.js",
+    "docker-stop-dev": "docker stop covid-19-dev covid-19-db-dev; docker rm covid-19-dev covid-19-db-dev;",
     "start": "docker-compose -f docker-compose.development.yml up -d"
   },
   "cacheDirectories": [
