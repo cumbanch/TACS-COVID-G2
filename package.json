@@ -19,7 +19,8 @@
     "start:dev": " npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
     "start:prod": " npm run migrations; node src/server.js",
     "docker-stop-dev": "docker stop covid-19-dev covid-19-db-dev; docker rm covid-19-dev covid-19-db-dev;",
-    "start": "docker-compose -f docker-compose.development.yml up -d"
+    "start": "docker-compose -f docker-compose.development.yml up -d",
+    "build": "docker-compose -f docker-compose.development.yml build"
   },
   "cacheDirectories": [
     "node_modules"
