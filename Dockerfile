@@ -1,8 +1,8 @@
-FROM node:10.14.1
 
 RUN mkdir -p /usr/src
 
 COPY package.json package-lock.json .nvmrc /usr/src/
+FROM node:10.14.1-alpine
 
 WORKDIR /usr/src
 
