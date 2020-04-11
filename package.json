@@ -15,6 +15,7 @@
     "migrations": "npx sequelize --options-path=src/.sequelizerc db:migrate",
     "migrations-undo": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo",
     "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
+    "migrations-reset": "npm run migrations-undo-all && npm run migrations",
     "test": "jest",
     "start:dev": " npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
     "start:prod": " npm run migrations; node src/server.js",
