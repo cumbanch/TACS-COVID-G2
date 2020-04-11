@@ -4,7 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 
 const routes = require('./app/routes');
 const errors = require('./app/middlewares/errors');
-const swaggerDocument = require('./swagger.json');
+const swaggerDocument = require('./documentation/swagger.json');
 
 const app = express();
 

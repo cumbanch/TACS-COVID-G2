@@ -6,7 +6,8 @@
     "description": "The application allows following the progression of the COVID-19 pandemic using different tools. You can find out more about in the [GitHub's repository](https://github.com/loopmeagain/TACS-COVID-G2)."
   },
   "schemes": [
-    "http"
+    "http",
+    "https"
   ],
   "host": "localhost:8080",
   "paths": {
