@@ -482,8 +482,17 @@
         "name": {
           "type": "string"
         },
-        "createAt": {
+        "registerAt": {
           "type": "datetime"
+        },
+        "iso3": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "string"
+        },
+        "longitude": {
+          "type": "string"
         },
         "countries": {
           "type": "array",
