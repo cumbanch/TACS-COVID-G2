@@ -25,7 +25,7 @@ After cloning de project you need to go to the `backend` directory and execute `
 
 ### Starting the application
 
-The backend consists in two containers, one for the application and the other for de database. You can start the application in three differents modes:
+The backend consists in two containers, one for the application and the other for the database. You can start the application in three differents modes:
 
  #### Development
  
