@@ -1,0 +1,13 @@
+FROM node:10.14.1-alpine
+
+WORKDIR /usr/local/
+
+COPY package*.json /usr/local/
+
+RUN npm install
+
+COPY src /usr/local/src
+
+ENV NODE_ENV testing
+
+CMD ["npm", "run", "start:test"]
