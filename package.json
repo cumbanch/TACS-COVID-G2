@@ -11,7 +11,7 @@
     "lint": "eslint \"**/*.js\" --ignore-pattern ./src/.eslintrc.js",
     "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
     "lint-fix": "npm run lint -- --fix",
-    "create-xmigration": "npx sequelize migration:create --options-path=src/.sequelizerc --name",
+    "create-migration": "npx sequelize migration:create --options-path=src/.sequelizerc --name",
     "migrations": "npx sequelize --options-path=src/.sequelizerc db:migrate",
     "migrations-undo": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo",
     "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
