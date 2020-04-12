@@ -1,4 +1,5 @@
 const logger = require('./../logger');
+const service = require('./../services');
 
 exports.getAll = async (req, res) => {
     let ret = {
@@ -101,50 +102,8 @@ exports.get = async (req, res) => {
 };
 
 exports.getLastest = async (req, res) => {
-    logger.debug("CONTROLLER-LISTS: GET Lastest list_id=" + req.param.id);
-
-    res.status(200).send({
-        id: req.param.id,
-        name: "Prueba",
-        registerAt: "2020-01-01",
-        countries: [
-            {
-                id: 1,
-                name: "Argentina",
-                iso2: "AR",
-                iso3: "ARG",
-                latitude: -34,
-                longitude: -64,
-                results: [
-                    {
-                        day: 1,
-                        timestamp: "2020-04-11T20:42:00.009Z",
-                        confirmed: 1975,
-                        deaths: 82,
-                        recovered: 375
-                    }
-                ]
-            },
-            {
-                id: 2,
-                name: "Brazil",
-                iso2: "BR",
-                iso3: "BRA",
-                latitude: -10,
-                longitude: -55,
-                results: [
-                    {
-                        day: 1,
-                        timestamp: "2020-04-11T20:42:00.009Z",
-                        confirmed: 19638,
-                        deaths: 1057,
-                        recovered: 173
-                    }
-                ]
-            }
-        ]
-    });
-
+    logger.debug(`CONTROLLER-LISTS: GET Lastest list_id=${req.params.id}`);
+    service.getLastest(req.params.id, (list) => res.status(200).send(list));
     //res.status(404).send();
 };
 
