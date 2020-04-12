@@ -11,15 +11,9 @@ The application allows following the progression of the COVID-19 pandemic using 
 
 ## Prerequisites
 
-  
-
 You need to have installed:
 
-  
-
 * [npm](https://www.npmjs.com/get-npm)
-
-  
 
 * [docker](https://www.docker.com/products/docker-desktop)
 
@@ -42,7 +36,7 @@ The containers will be run in background with the following names:
  - **Database**: covid-19-db-dev
 
 The application will be accesible from [http://localhost:8080/](http://localhost:8080/) and the port **9229** will be available to link a debugger.
-In this mode the data of the database is:
+In this mode the data connection of the database is:
 
  - **Host**: covid-19-db-dev
  - **Port**: 35432
@@ -64,7 +58,7 @@ The containers will be run in background with the following names:
  - **Database**: covid-19-db
 
 The application will be accesible from [http://localhost:443/](http://localhost:443/).
-In this mode the data of the database is:
+In this mode the data connection of the database is:
 
  - **Host**: covid-19-db
  - **Port**: 5432
