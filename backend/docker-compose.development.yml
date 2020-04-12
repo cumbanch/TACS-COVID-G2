@@ -16,10 +16,10 @@ services:
     networks:
       - covid-19
     volumes:
-      - .:/usr/src/
+      - ./src:/usr/local/src
 
   covid-19-db-dev:
-    image: postgres:12
+    image: postgres:12-alpine
     container_name: covid-19-db-dev
     env_file:
       - .env.development

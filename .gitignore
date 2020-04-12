@@ -42,6 +42,7 @@ node_modules
 # dotenv
 .env
 .env.development
+.env.testing
 
 # VS Code
 .vscode/
