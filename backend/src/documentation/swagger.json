@@ -205,9 +205,241 @@
           }
         }
       }
+    },
+    "/lists": {
+      "get": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Gets some lists",
+        "description": "Returns a list containing all lists",
+        "parameters": [
+          {
+            "$ref": "#/parameters/from"
+          },
+          {
+            "$ref": "#/parameters/pageSize"
+          },
+          {
+            "$ref": "#/parameters/pageLimit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of Lists",
+            "schema": {
+              "type": "object",
+              "allOf": [
+                {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/Lists"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/definitions/Pagination"
+                }
+              ]
+            }
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Creates a list",
+        "description": "Adds a new list to the lists list.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/list"
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/Standard201Response"
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Modifies a list",
+        "description": "Updates data of an existent list.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/list"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Standard200Response"
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/lists/{id}": {
+      "get": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Gets a list",
+        "description": "Returns a single list for its id",
+        "parameters": [
+          {
+            "$ref": "#/parameters/numericId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A List",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Delete a list",
+        "description": "Delete a single list for its id",
+        "parameters": [
+          {
+            "$ref": "#/parameters/numericId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Standard200Response"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/lists/{id}/lastest": {
+      "get": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Gets a list with the lastest result for each Country",
+        "description": "Returns a single list for its id",
+        "parameters": [
+          {
+            "$ref": "#/parameters/numericId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A List",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+  
+    },
+    "/lists/{id}/compare/{offset}?from": {
+      "get": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Gets a list with the comparition of the results for each Country",
+        "description": "Returns a single list for its id",
+        "parameters": [
+          {
+            "$ref": "#/parameters/numericId"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/from"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A List",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+  
     }
   },
   "definitions": {
+    "Result":{
+      "properties": {
+        "day": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "datetime"
+        },
+        "confirmed": {
+          "type": "integer"
+        },
+        "deaths": {
+          "type": "integer"
+        },
+        "recovered": {
+          "type": "integer"
+        }
+      }
+    },
+    "Results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Result"
+      }
+    },
     "Country": {
       "properties": {
         "id": {
@@ -227,6 +459,12 @@
         },
         "longitude": {
           "type": "string"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Result"
+          }
         }
       }
     },
@@ -234,6 +472,40 @@
       "type": "array",
       "items": {
         "$ref": "#/definitions/Country"
+      }
+    },
+    "List": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "registerAt": {
+          "type": "datetime"
+        },
+        "iso3": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "string"
+        },
+        "longitude": {
+          "type": "string"
+        },
+        "countries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Country"
+          }
+        }
+      }
+    },
+    "Lists": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/List"
       }
     },
     "User": {
@@ -290,6 +562,9 @@
     "Standard200Response": {
       "description": "Operation executed successfully."
     },
+    "Standard201Response": {
+      "description": "The request has been fulfilled and has resulted in one or more new resources being created."
+    },
     "Standard400Response": {
       "description": "Bad request.",
       "schema": {
@@ -330,12 +605,33 @@
         "$ref": "#/definitions/User"
       }
     },
+    "list": {
+      "name": "list",
+      "in": "body",
+      "description": "List object.",
+      "schema": {
+        "$ref": "#/definitions/List"
+      }
+    },
     "numericId": {
       "name": "id",
       "in": "path",
       "required": true,
       "description": "The identifier of the resourse to found",
       "type": "integer"
+    },
+    "offset": {
+      "name": "offset",
+      "in": "path",
+      "required": true,
+      "description": "The offset to compare the countries results",
+      "type": "integer"
+    },
+    "from": {
+      "name": "from",
+      "in": "query",
+      "description": "Format: yyyy-MM-dd",
+      "type": "datetime"
     }
   }
 }
