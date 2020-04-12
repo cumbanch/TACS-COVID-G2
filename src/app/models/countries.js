@@ -6,10 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       iso2: { type: DataTypes.STRING, allowNull: false },
       iso3: { type: DataTypes.STRING, allowNull: false },
       latitude: { type: DataTypes.STRING, allowNull: false },
-      longitude: { type: DataTypes.STRING, allowNull: false },
-      createdAt: { type: DataTypes.DATE, allowNull: false },
-      updatedAt: { type: DataTypes.DATE, allowNull: false },
-      deletedAt: DataTypes.DATE
+      longitude: { type: DataTypes.STRING, allowNull: false }
     },
     { timestamps: true, underscored: true, paranoid: true, tableName: 'countries' }
   );
