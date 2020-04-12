@@ -14,7 +14,12 @@ const config = {
     automaticallyUp: process.env.AUTOMATICALLY_UP
   },
   server: {
-    port: process.env.PORT || 8080
+    port: process.env.PORT || 8080,
+    defaultPagination: process.env.DEFAULT_PAGINATION || 20,
+    momentTimezone: process.env.MOMENT_TIMEZONE || 'America/Buenos_Aires'
+  },
+  logger: {
+    minLevel: process.env.LOGGER_MIN_LEVEL || 'debug'
   }
 };
 
