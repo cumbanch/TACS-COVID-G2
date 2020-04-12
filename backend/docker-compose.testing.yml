@@ -1,25 +1,8 @@
 version: "3.4"
 
 services:
-  covid-19-test:
-    build:
-      context: ./
-      dockerfile: Dockerfile.testing
-    container_name: covid-19-test
-    env_file:
-      - .env.testing
-    depends_on:
-      - covid-19-db-test
-    networks:
-      - covid-19
-
-  covid-19-db-test:
-    image: postgres:12-alpine
-    container_name: covid-19-db-test
-    env_file:
-      - .env.testing
-    networks:
-      - covid-19
-
-networks:
   covid-19:
+      args:
+        - NODE_ENV="testing"
+    container_name: covid-19-test
+    command: ["npm", "run", "start:test"]
