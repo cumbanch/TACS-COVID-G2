@@ -99,10 +99,15 @@ module.exports = {
                   },
                   allowNull: false
                 },
-                registred_at: {
+                created_at: {
                   type: Sequelize.DATE,
                   allowNull: false
-                }
+                },
+                updated_at: {
+                  type: Sequelize.DATE,
+                  allowNull: false
+                },
+                deleted_at: Sequelize.DATE
               })
               .then(() => {
                 queryInterface.createTable('country_by_list', {

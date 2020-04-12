@@ -3,7 +3,9 @@ module.exports = (sequelize, DataTypes) => {
     'List',
     {
       name: { type: DataTypes.STRING, allowNull: false },
-      registerAt: { type: DataTypes.DATE, allowNull: false }
+      createdAt: { type: DataTypes.DATE, allowNull: false },
+      updatedAt: { type: DataTypes.DATE, allowNull: false },
+      deletedAt: DataTypes.DATE
     },
     { timestamps: true, underscored: true, paranoid: true, tableName: 'lists' }
   );
