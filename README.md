@@ -21,7 +21,7 @@ You need to have installed:
 
 ### Getting started
 
-After cloning de project you need a to go to the `backend` directory and execute `npm install` for installing dependencies.
+After cloning de project you need to go to the `backend` directory and execute `npm install` for installing dependencies.
 
 ### Starting the application
 
