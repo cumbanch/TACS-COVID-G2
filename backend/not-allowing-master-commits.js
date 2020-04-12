@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 const childProcessExec = require('child_process').exec;
 const util = require('util');
 
