@@ -19,7 +19,7 @@ export default class App extends Component {
       },
       body: JSON.stringify({
         firstParam: 'yourValue',
-        secondParam: 'yourOtherValue',
+        secondParam: 'yourOtherValue'
       })
     })
       .then(response => response.json())
