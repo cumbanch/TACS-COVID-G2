@@ -3,28 +3,28 @@ version: "3.4"
 services:
   covid-19-dev:
     build:
-      context: ./
-      dockerfile: Dockerfile.development
+      context: .
+      args:
+        - NODE_ENV="development"
     container_name: covid-19-dev
-    env_file:
-      - .env.development
-    depends_on:
-      - covid-19-db-dev
     ports:
-      - "8080:8080"
       - "9229:9229"
-    networks:
-      - covid-19
+      - "8080:8080"
     volumes:
       - ./src:/usr/local/src
-
-  covid-19-db-dev:
-    image: postgres:12-alpine
-    container_name: covid-19-db-dev
     env_file:
-      - .env.development
+      - .env
+    command: ["npm", "run", "start:dev"]
+    networks:
+      - covid-19
+  
+  covid-19-db:
+    image: postgres:12-alpine
+    container_name: covid-19-db
+    env_file:
+      - .env
     ports:
-      - "35432:5432"
+      - "5432:5432"
     networks:
       - covid-19
 
