@@ -9,7 +9,7 @@
   "scripts": {
     "eslint-check": "eslint --print-config ./src/.eslintrc.js --ignore-pattern ./src/.eslintrc.js | eslint-config-prettier-check",
     "lint": "eslint \"**/*.js\" --ignore-pattern ./src/.eslintrc.js",
-    "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
+    "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint --ignore-pattern ./src/.eslintrc.js",
     "lint-fix": "npm run lint -- --fix",
     "create-migration": "npx sequelize migration:create --options-path=src/.sequelizerc --name",
     "migrations": "npx sequelize --options-path=src/.sequelizerc db:migrate",
@@ -69,8 +69,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint-diff",
-      "pre-push": "npm test"
+      "pre-commit": "npm run lint-diff;",
+      "pre-push": " node not-allowing-master-commits.js;"
     }
   },
   "jest": {
