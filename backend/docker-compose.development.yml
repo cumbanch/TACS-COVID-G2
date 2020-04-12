@@ -16,7 +16,7 @@ services:
     networks:
       - covid-19
     volumes:
-      - .:/usr/src/
+      - ./src:/usr/local/src
 
   covid-19-db-dev:
     image: postgres:12
