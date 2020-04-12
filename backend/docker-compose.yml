@@ -1,15 +1,15 @@
 version: "3.4"
 
 services:
-  covid-19-app:
+  covid-19:
     build: .
-    container_name: covid-19-app
+    container_name: covid-19
     env_file:
       - .env
     depends_on:
       - covid-19-db
     ports:
-      - "80:80"
+      - "443:443"
     networks:
       - covid-19
 
