@@ -1,5 +1,5 @@
-const serviceCovid = require('./covid_api_services');
-const db = require('./lists_services');
+const serviceCovid = require('./covid_api');
+const db = require('./lists');
 const logger = require('../logger');
 
 function getLastestOfCountry(country, callback) {
