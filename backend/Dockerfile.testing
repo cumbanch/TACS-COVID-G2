@@ -4,11 +4,10 @@ WORKDIR /usr/local/
 
 COPY package*.json /usr/local/
 
-RUN npm install --production
+RUN npm install
 
 COPY src /usr/local/src
 
-EXPOSE 80
-ENV NODE_ENV production
+ENV NODE_ENV testing
 
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:test"]

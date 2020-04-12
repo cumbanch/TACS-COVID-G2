@@ -15,11 +15,17 @@
     "migrations": "npx sequelize --options-path=src/.sequelizerc db:migrate",
     "migrations-undo": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo",
     "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
+    "migrations-reset": "npm run migrations-undo-all && npm run migrations",
     "test": "jest",
-    "start:dev": " npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
-    "start:prod": " npm run migrations; node src/server.js",
+    "start:dev": "npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
+    "start:prod": "npm run migrations; node src/server.js",
+    "start:test": "npm run migrations-reset; npm test",
+    "development": "npm start",
+    "production": "docker-compose up -d",
+    "testing": "docker-compose -f docker-compose.testing.yml up --abort-on-container-exit",
     "docker-stop-dev": "docker stop covid-19-dev covid-19-db-dev; docker rm covid-19-dev covid-19-db-dev;",
-    "start": "docker-compose -f docker-compose.development.yml up -d"
+    "start": "docker-compose -f docker-compose.development.yml up -d",
+    "build": "docker-compose -f docker-compose.development.yml build"
   },
   "cacheDirectories": [
     "node_modules"
@@ -56,12 +62,19 @@
     "jest": "^25.3.0",
     "nodemon": "^2.0.2",
     "prettier": "^1.15.3",
-    "prettier-eslint": "^9.0.1"
+    "prettier-eslint": "^9.0.1",
+    "supertest": "^4.0.2"
   },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint-diff",
       "pre-push": "npm test"
     }
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }
