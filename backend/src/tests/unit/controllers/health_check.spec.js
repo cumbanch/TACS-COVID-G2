@@ -1,9 +1,5 @@
-const { healthCheck } = require('../../../app/controllers/health_check');
-
-describe('healthCheck()', () => {
-  it('asd asd', () => {
-    // eslint-disable-next-line no-console
-    console.log(healthCheck);
+describe('trueEqualsTrue', () => {
+  it('True always should be Truthy', () => {
     expect(true).toBeTruthy();
   });
 });
