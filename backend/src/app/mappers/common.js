@@ -8,13 +8,3 @@ exports.pagination = req => ({
 });
 
 exports.idParam = req => ({ id: req.params.id });
-
-exports.listAttributes = req => ({
-  name: req.body.name,
-  countriesIds: req.body.countries_id
-});
-
-exports.countryByListAttributes = req => ({
-  ...exports.listAttributes(req),
-  ...exports.idParam(req)
-});
