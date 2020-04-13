@@ -2,7 +2,10 @@ version: "3.4"
 
 services:
   covid-19:
-    build: .
+    build: 
+      context: .
+      args:
+        - NODE_ENV=production
     container_name: covid-19
     env_file:
       - .env

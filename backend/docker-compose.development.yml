@@ -5,7 +5,7 @@ services:
     build:
       context: .
       args:
-        - NODE_ENV="development"
+        - NODE_ENV=development
     container_name: covid-19-dev
     ports:
       - "9229:9229"

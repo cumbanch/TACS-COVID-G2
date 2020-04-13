@@ -2,6 +2,8 @@ version: "3.4"
 
 services:
   covid-19:
+    build:
+      context: .
       args:
         - NODE_ENV="testing"
     container_name: covid-19-test
