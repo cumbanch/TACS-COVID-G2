@@ -18,7 +18,7 @@ services:
     networks:
       - covid-19
   
-  covid-19-db:
+  covid-19-db-dev:
     image: postgres:12-alpine
     container_name: covid-19-db
     env_file:

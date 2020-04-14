@@ -22,10 +22,9 @@
     "start:test": "npm run migrations-reset; npm test",
     "development": "npm start",
     "production": "docker-compose up -d",
-    "testing": "docker-compose -f docker-compose.testing.yml up --abort-on-container-exit",
+    "testing": "docker-compose -f docker-compose.development.yml -f docker-compose.testing.yml up --abort-on-container-exit",
     "docker-stop-dev": "docker stop covid-19-dev covid-19-db-dev; docker rm covid-19-dev covid-19-db-dev;",
-    "start": "docker-compose -f docker-compose.development.yml up -d",
-    "build": "docker-compose -f docker-compose.development.yml build"
+    "start": "docker-compose -f docker-compose.development.yml up -d"
   },
   "cacheDirectories": [
     "node_modules"
