@@ -1,7 +1,7 @@
 const app = require('./app');
+const { port } = require('./config').server;
 const logger = require('./app/logger');
 const migrationsManager = require('./migrations');
-const { port } = require('./config').server;
 
 Promise.resolve()
   .then(() => migrationsManager.check())

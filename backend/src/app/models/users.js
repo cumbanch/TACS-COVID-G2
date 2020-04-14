@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     { timestamps: true, underscored: true, paranoid: true, tableName: 'users' }
   );
   User.associate = models => {
-    User.belongsTo(models.Country, { as: 'userCountry', foreignKey: 'countryId' });
     User.hasMany(models.List, { as: 'userList', foreignKey: 'userId' });
   };
   return User;
