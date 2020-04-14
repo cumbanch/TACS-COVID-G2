@@ -1,5 +1,6 @@
 const logger = require('./../logger');
-const service = require('./../services');
+const serviceCovid = require('./../services/covid_api');
+const db = require('./../services/lists');
 
 exports.getAll = async (req, res) => {
     let ret = {
@@ -102,9 +103,24 @@ exports.get = async (req, res) => {
 };
 
 exports.getLastest = async (req, res) => {
-    logger.debug(`CONTROLLER-LISTS: GET Lastest list_id=${req.params.id}`);
-    service.getLastest(req.params.id, (list) => res.status(200).send(list));
-    //res.status(404).send();
+    var list = db.getList(req.param.id);
+    serviceCovid.getLastestForAll(list.countries, function (data, header) {
+        var json = JSON.parse(data);
+        console.log("COVID API: " + json);
+        var lastest = {
+            timestamp: json[0].lastupdate,
+            confirmed: json[0].confirmed,
+            deaths: json[0].deaths,
+            recovered: json[0].recovered
+        };
+        var country = list.countries.find(c => c.iso2 == json[0].countrycode.iso2);
+        country.results.push(lastest);
+        console.log("COVID API: " + JSON.stringify(country));
+        return country;
+    })
+    .then(responses => {
+        res.status(200).send(list);
+    });
 };
 
 exports.getCompare = async (req, res) => {

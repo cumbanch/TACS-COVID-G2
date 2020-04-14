@@ -1,30 +1,26 @@
 const logger = require('../logger');
-var request = require('request');
+const axios = require('axios');
 
-exports.getLastest = (countryIso2, callback) => {
-    var options = {
-        'method': 'GET',
-        'url': 'https://wuhan-coronavirus-api.laeyoung.endpoint.ainize.ai/jhu-edu/latest?onlyCountries=true&iso2=' + countryIso2,
-        'headers': {
-        }
+function getLastestIso2 (iso2, transfromResponse) {    
+    const options = {
+        transformResponse : [
+            transfromResponse
+        ]
     };
-
-    request(options, function (error, response, body) {
-        if (error)
-        { 
-            logger.error(error);
-            throw new Error(error);
-        }
-
-        if (response.statusCode == 200)
-        {
-            logger.debug("COVID API: " + options.url);
-            logger.debug("COVID API: " + body);
-            callback(body);
-        }
-    });
+    const url = 'https://wuhan-coronavirus-api.laeyoung.endpoint.ainize.ai/jhu-edu/latest?onlyCountries=true&iso2=' + iso2;
+    return axios.get(url, options);
 };
 
+exports.getLastest = (country, transfromResponse) => {
+    return getLastestIso2(country.iso2, transfromResponse);
+};
+
+exports.getLastestForAll = (countries, transfromResponse) => {
+    var promises = countries.map(c => this.getLastest(c, transfromResponse));
+    return axios.all(promises);
+};
+
+/*
 exports.getTimeseries = async (countryIso2) => {
     var options = {
         'method': 'GET',
@@ -35,7 +31,7 @@ exports.getTimeseries = async (countryIso2) => {
 
     request(options, function (error, response) {
         if (error)
-        { 
+        {
             logger.error(error);
             throw new Error(error);
         }
@@ -59,7 +55,7 @@ exports.getBrief = async () => {
 
     request(options, function (error, response) {
         if (error)
-        { 
+        {
             logger.error(error);
             throw new Error(error);
         }
@@ -72,3 +68,4 @@ exports.getBrief = async () => {
         }
     });
 };
+*/
