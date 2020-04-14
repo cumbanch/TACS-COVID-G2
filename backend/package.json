@@ -69,8 +69,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint-diff;",
-      "pre-push": " node not-allowing-master-commits.js;"
+      "pre-commit": "npm run lint-diff;"
     }
   },
   "jest": {
