@@ -16,8 +16,8 @@ exports.init = app => {
 
   listRouter.get('/', getAllLists);
   listRouter.post('/', createList);
-  listRouter.put('/:id', updateList);
 
+  listRouter.put('/:id', updateList);
   listRouter.get('/:id', getList);
   listRouter.delete('/:id', deleteList);
 

@@ -13,7 +13,7 @@ exports.deleteListMapper = idParam;
 
 exports.createListMapper = listAttributesMapper;
 
-exports.updateListMapper = listAttributesMapper;
+exports.updateListMapper = { ...idParam, ...listAttributesMapper };
 
 exports.getCountriesListMapper = {
   ...idParam,
