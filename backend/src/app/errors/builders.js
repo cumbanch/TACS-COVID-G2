@@ -7,4 +7,4 @@ const buildError = (message, internalCode) => ({
 
 exports.notFound = message => buildError(message, NOT_FOUND);
 exports.invalidParams = arrayErrors => buildError(arrayErrors, INVALID_PARAMS);
-exports.nonEmptyBody = buildError("The body mustn't be empty", NON_EMPTY_BODY);
+exports.nonEmptyBody = buildError("The body musn't be empty", NON_EMPTY_BODY);
