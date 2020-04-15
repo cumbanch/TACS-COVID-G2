@@ -9,8 +9,9 @@ exports.getCountriesSchema = {
     in: ['query'],
     isString: true,
     trim: true,
-    errorMessage: countryName
+    errorMessage: countryName,
+    optional: true
   },
-  isocode2: { in: ['query'], isString: true, trim: true, errorMessage: isocode2 },
-  isocode3: { in: ['query'], isString: true, trim: true, errorMessage: isocode3 }
+  isocode2: { in: ['query'], isString: true, trim: true, errorMessage: isocode2, optional: true },
+  isocode3: { in: ['query'], isString: true, trim: true, errorMessage: isocode3, optional: true }
 };
