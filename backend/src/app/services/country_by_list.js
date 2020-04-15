@@ -2,6 +2,7 @@ const { inspect } = require('util');
 
 const logger = require('../logger');
 const { moment } = require('../utils/moment');
+const { CountryByList } = require('../models');
 
 const countriesMock = [
   {
@@ -45,7 +46,15 @@ const countriesByListMock = listId => [
 
 exports.getCountriesByList = filters => {
   logger.info(`Attempting to get countries by list with filters: ${inspect(filters)}`);
-  return Promise.resolve({ rows: countriesMock, count: countriesMock.length });
+  return CountryByList.findAndCountAll({
+    where: { listId: filters.listId },
+    offset: (filters.page - 1) * filters.limit,
+    limit: filters.limit,
+    order: filters.orderColumn ? [filters.orderColumn, filters.orderType || 'ASC'] : undefined
+  }).then(countriesByList => ({
+    rows: countriesByList.rows.map(countryByList => countryByList.country),
+    count: countriesByList.count
+  }));
 };
 
 exports.createCountriesByList = attributes => {
