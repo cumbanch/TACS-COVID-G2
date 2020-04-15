@@ -1,7 +1,7 @@
 const { getModelKeys } = require('../utils/models');
 const { limit, orderColumn, orderType, page } = require('../errors/schema_messages');
 
-module.exports = {
+module.exports = model => ({
   limit: {
     in: ['query'],
     isInt: {
@@ -40,4 +40,4 @@ module.exports = {
     custom: { options: value => ['ASC', 'DESC'].includes(value && value.toUpperCase()) },
     errorMessage: orderType
   }
-};
+});

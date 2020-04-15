@@ -1,14 +1,16 @@
 const pagination = require('./pagination');
 const authorization = require('./authorizations');
 const { userId, userName, password, email, lastAccess } = require('../errors/schema_messages');
+const { User } = require('../models');
 
 exports.getUsersSchema = {
   ...authorization,
-  ...pagination,
+  ...pagination(User),
   last_access: {
     in: ['query'],
     isISO8601: true,
     trim: true,
+    optional: true,
     errorMessage: lastAccess
   }
 };

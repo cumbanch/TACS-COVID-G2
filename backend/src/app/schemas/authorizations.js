@@ -1,6 +1,6 @@
 const { authorization } = require('../errors/schema_messages');
 
-module.exports = authorizationHeader = {
+module.exports = {
   Authorization: {
     in: ['headers'],
     isJWT: true,

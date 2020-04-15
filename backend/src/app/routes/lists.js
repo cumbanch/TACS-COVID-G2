@@ -1,13 +1,17 @@
 const { Router: createRouter } = require('express');
 
-const { getAllLists, createList, updateList, getList, deleteList } = require('../controllers/lists');
 const {
+  getAllLists,
+  createList,
+  updateList,
+  getList,
+  deleteList,
   getCountriesByList,
   createCountriesByList,
   deleteCountriesByList,
   getLatest,
   getHistory
-} = require('../controllers/countries_by_list');
+} = require('../controllers/lists');
 const {
   getListsSchema,
   createListSchema,

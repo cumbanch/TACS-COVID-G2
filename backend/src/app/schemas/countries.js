@@ -1,10 +1,11 @@
 const pagination = require('./pagination');
 const authorization = require('./authorizations');
 const { isocode2, isocode3, countryName } = require('../errors/schema_messages');
+const { Country } = require('../models');
 
 exports.getCountriesSchema = {
   ...authorization,
-  ...pagination,
+  ...pagination(Country),
   name: {
     in: ['query'],
     isString: true,

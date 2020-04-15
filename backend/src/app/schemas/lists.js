@@ -2,6 +2,7 @@ const pagination = require('./pagination');
 const authorization = require('./authorizations');
 const { ListName, countries, listId, offset, countryName, countryId } = require('../errors/schema_messages');
 const { isArray, isInteger } = require('../utils/lodash');
+const { Country, List } = require('../models');
 
 const commonAttributes = {
   name: {
@@ -35,7 +36,7 @@ const commonAttributes = {
 
 exports.getListsSchema = {
   ...authorization,
-  ...pagination,
+  ...pagination(List),
   name: {
     ...commonAttributes.name,
     optional: true
@@ -87,7 +88,7 @@ exports.getHistoryResultListSchema = {
 };
 
 exports.getCountriesByListSchema = {
-  ...pagination,
+  ...pagination(Country),
   id: commonAttributes.id,
   country_name: {
     in: ['query'],
