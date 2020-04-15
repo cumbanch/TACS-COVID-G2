@@ -2,7 +2,7 @@ const { Router: createRouter } = require('express');
 
 const usersController = require('../controllers/users');
 const { getUsersSchema, createUserSchema, getUserSchema } = require('../schemas/users');
-const { validateSchemaAndFail } = require('../middlewares/schema_validator');
+const { validateSchemaAndFail } = require('../middlewares/params_validator');
 
 const userRouter = createRouter();
 

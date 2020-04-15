@@ -2,7 +2,7 @@ const { Router: createRouter } = require('express');
 
 const { login, logout } = require('../controllers/sessions');
 const { loginSchema, logoutSchema } = require('../schemas/sessions');
-const { validateSchemaAndFail } = require('../middlewares/schema_validator');
+const { validateSchemaAndFail } = require('../middlewares/params_validator');
 
 const sessionRouter = createRouter();
 
