@@ -1,8 +1,8 @@
 const { defaultPagination } = require('../../config').server;
 
 exports.pagination = req => ({
-  orderColumn: req.query.order_column,
-  orderType: req.query.order_type,
+  orderColumn: req.query.orderColumn,
+  orderType: req.query.orderType,
   limit: req.query.limit ? parseInt(req.query.limit) : defaultPagination,
   page: req.query.page ? parseInt(req.query.page) : 1
 });

@@ -8,7 +8,7 @@ exports.getAllCountries = filters => {
   return Country.findAndCountAll({
     offset: (filters.page - 1) * filters.limit,
     limit: filters.limit,
-    order: filters.orderColumn ? [filters.orderColumn, filters.orderType || 'ASC'] : undefined
+    order: filters.orderColumn ? [[filters.orderColumn, filters.orderType || 'ASC']] : undefined
   }).then(countries => ({
     rows: countries.rows,
     count: countries.count
