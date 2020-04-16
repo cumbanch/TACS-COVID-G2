@@ -5,26 +5,30 @@ const { moment } = require('../utils/moment');
 
 const usersMock = [
   {
-    id: 1,
-    name: 'fake',
-    email: 'fake@gmail.com',
-    password: '$2y$12$sAVFwBobLXpdPOYVc0lvA.InAzmeogdURVxz34C6rJl7WNcJmMFUS',
-    lastAccess: moment().format(),
-    admin: false,
-    createdAt: moment().format(),
-    updatedAt: moment().format(),
-    deletedAt: null
+    dataValues: {
+      id: 1,
+      name: 'fake',
+      email: 'fake@gmail.com',
+      password: '$2y$12$sAVFwBobLXpdPOYVc0lvA.InAzmeogdURVxz34C6rJl7WNcJmMFUS',
+      lastAccess: moment().format(),
+      admin: false,
+      createdAt: moment().format(),
+      updatedAt: moment().format(),
+      deletedAt: null
+    }
   },
   {
-    id: 2,
-    name: 'falsy',
-    email: 'falsy@gmail.com',
-    password: '$2y$12$sAVFwBobLXpdPOYVc0lvA.InAzmeogdURVxz34C6rJl7WNcJmMFUS',
-    lastAccess: moment().format(),
-    admin: false,
-    createdAt: moment().format(),
-    updatedAt: moment().format(),
-    deletedAt: null
+    dataValues: {
+      id: 2,
+      name: 'falsy',
+      email: 'falsy@gmail.com',
+      password: '$2y$12$sAVFwBobLXpdPOYVc0lvA.InAzmeogdURVxz34C6rJl7WNcJmMFUS',
+      lastAccess: moment().format(),
+      admin: false,
+      createdAt: moment().format(),
+      updatedAt: moment().format(),
+      deletedAt: null
+    }
   }
 ];
 

@@ -5,49 +5,57 @@ const { moment } = require('../utils/moment');
 
 const countriesMock = [
   {
-    id: 1,
-    name: 'Argentina',
-    iso2: 'AR',
-    iso3: 'ARG',
-    latitude: -34,
-    longitude: -64,
-    createdAt: moment().format(),
-    updatedAt: moment().format(),
-    deletedAt: null
+    dataValues: {
+      id: 1,
+      name: 'Argentina',
+      iso2: 'AR',
+      iso3: 'ARG',
+      latitude: -34,
+      longitude: -64,
+      createdAt: moment().format(),
+      updatedAt: moment().format(),
+      deletedAt: null
+    }
   },
   {
-    id: 2,
-    name: 'Brazil',
-    iso2: 'BR',
-    iso3: 'BRA',
-    latitude: -10,
-    longitude: -55,
-    createdAt: moment().format(),
-    updatedAt: moment().format(),
-    deletedAt: null
+    dataValues: {
+      id: 2,
+      name: 'Brazil',
+      iso2: 'BR',
+      iso3: 'BRA',
+      latitude: -10,
+      longitude: -55,
+      createdAt: moment().format(),
+      updatedAt: moment().format(),
+      deletedAt: null
+    }
   }
 ];
 
 const listsMock = [
   {
-    id: 1,
-    name: 'Lista 1',
-    createdAt: moment().format(),
-    updatedAt: moment().format(),
-    deletedAt: null,
+    dataValues: {
+      id: 1,
+      name: 'Lista 1',
+      createdAt: moment().format(),
+      updatedAt: moment().format(),
+      deletedAt: null
+    },
     countries: countriesMock
   },
   {
-    id: 2,
-    name: 'Lista 2',
-    createdAt: moment().format(),
-    updatedAt: moment().format(),
-    deletedAt: null,
+    dataValues: {
+      id: 2,
+      name: 'Lista 2',
+      createdAt: moment().format(),
+      updatedAt: moment().format(),
+      deletedAt: null
+    },
     countries: countriesMock
   }
 ];
 
-exports.getAllList = async filters => {
+exports.getAllList = filters => {
   logger.info(`Attempting to get lists with filters: ${inspect(filters)}`);
   return Promise.resolve({ rows: listsMock, count: listsMock.length });
 };
@@ -70,4 +78,24 @@ exports.createList = attributes => {
 exports.updateList = attributes => {
   logger.info(`Attempting to update list with attributes: ${inspect(attributes)}`);
   return Promise.resolve();
+};
+
+exports.getCountriesByList = filters => {
+  logger.info(`Attempting to get countries with filters: ${inspect(filters)}`);
+  return Promise.resolve({ rows: listsMock[0], count: listsMock[0].countries.length });
+};
+
+exports.createCountriesByList = attributes => {
+  logger.info(`Attempting to create countries by list with attributes: ${inspect(attributes)}`);
+  return Promise.resolve();
+};
+
+exports.deleteCountriesByList = attributes => {
+  logger.info(`Attempting to delete countries by list with attributes: ${inspect(attributes)}`);
+  return Promise.resolve();
+};
+
+exports.getCountriesByListBy = filters => {
+  logger.info(`Attempting to get countries by list with filters: ${inspect(filters)}`);
+  return Promise.resolve({ rows: listsMock[0], count: listsMock[0].countries.length });
 };

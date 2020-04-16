@@ -1,4 +1,4 @@
-const { isObject, snakeCase, camelCase, isArray } = require('./lodash');
+const { isObject, snakeCase, camelCase } = require('./lodash');
 
 const changeCaseObject = ({ originalObject, caseFunction, nestedCaseFunction }) => {
   const newObject = {};

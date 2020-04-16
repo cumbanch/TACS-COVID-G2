@@ -1,6 +1,6 @@
 const { pagination } = require('./common');
 
-exports.getUsersMapper = req => ({ ...pagination(req) });
+exports.getUsersMapper = req => ({ ...pagination(req), lastAccess: req.query.last_access });
 
 exports.getUserMapper = req => ({ id: req.params.id });
 
