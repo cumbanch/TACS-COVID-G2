@@ -1,6 +1,6 @@
 const request = require('supertest');
 
-const app = require('../app');
+const app = require('../../app');
 
 describe('Health check endpoint', () => {
   let res = {};
