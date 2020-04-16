@@ -1,3 +1,3 @@
 const { objectToSnakeCase } = require('../utils/objects');
 
-exports.getListSerializer = list => objectToSnakeCase(list.dataValues);
+exports.getListSerializer = list => objectToSnakeCase(list);
