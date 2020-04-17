@@ -1,3 +1,3 @@
 const { objectToSnakeCase } = require('../utils/objects');
 
-exports.getUserSerializer = user => objectToSnakeCase(user);
+exports.getUserSerializer = user => objectToSnakeCase(user.dataValues);
