@@ -9,7 +9,7 @@ const {
   getCountriesByList,
   createCountriesByList,
   deleteCountriesByList,
-  getLatest,
+  getLastest,
   getHistory
 } = require('../controllers/lists');
 const {
@@ -38,7 +38,7 @@ exports.init = app => {
   listRouter.get('/:id', validateSchemaAndFail(getListSchema), getList);
   listRouter.delete('/:id', validateSchemaAndFail(deleteListSchema), deleteList);
 
-  listRouter.get('/:id/latest', validateSchemaAndFail(getLatestResultListSchema), getLatest);
+  listRouter.get('/:id/lastest', validateSchemaAndFail(getLatestResultListSchema), getLastest);
   listRouter.get('/:id/history', validateSchemaAndFail(getHistoryResultListSchema), getHistory);
 
   listRouter.get('/:id/countries', validateSchemaAndFail(getCountriesByListSchema), getCountriesByList);

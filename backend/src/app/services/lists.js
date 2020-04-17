@@ -15,7 +15,8 @@ const countriesMock = [
       createdAt: moment().format(),
       updatedAt: moment().format(),
       deletedAt: null
-    }
+    },
+    results: []
   },
   {
     dataValues: {
@@ -28,7 +29,8 @@ const countriesMock = [
       createdAt: moment().format(),
       updatedAt: moment().format(),
       deletedAt: null
-    }
+    },
+    results: []
   }
 ];
 
@@ -93,9 +95,4 @@ exports.createCountriesByList = attributes => {
 exports.deleteCountriesByList = attributes => {
   logger.info(`Attempting to delete countries by list with attributes: ${inspect(attributes)}`);
   return Promise.resolve();
-};
-
-exports.getCountriesByListBy = filters => {
-  logger.info(`Attempting to get countries by list with filters: ${inspect(filters)}`);
-  return Promise.resolve({ rows: listsMock[0], count: listsMock[0].countries.length });
 };

@@ -24,6 +24,7 @@ const {
 } = require('../mappers/lists');
 const { notFound } = require('../errors/builders');
 const { getListSerializer } = require('../serializers/lists');
+const covid_api = require('../services/covid_api')
 
 exports.getAllLists = (req, res, next) => {
   const filters = getListsMapper(req);
@@ -82,16 +83,28 @@ exports.deleteCountriesByList = (req, res, next) => {
     .catch(next);
 };
 
-exports.getLatest = (req, res, next) => {
+exports.getLastest = (req, res, next) => {
   const params = getLatestMapper(req);
-  return getCountriesByListBy(params)
-    .then(() =>
-      res.status(200).send({
-        confirmed: 1975,
-        deaths: 82,
-        recovered: 375
+  getList(params.id)
+    .then((list) => {
+      covid_api.getLastestForAll(
+      list.countries.map(x => x.dataValues), function (data, header) {
+        var json = JSON.parse(data);
+        var lastest = {
+          timestamp: json[0].lastupdate,
+          confirmed: json[0].confirmed,
+          deaths: json[0].deaths,
+          recovered: json[0].recovered
+        };
+        var country = list.countries.find(c => c.dataValues.iso2 == json[0].countrycode.iso2);
+        country.results.push(lastest);
+        return country;
       })
-    )
+      .then(responses => {
+        res.status(200).send(list);
+      })
+      .catch(next);
+    })
     .catch(next);
 };
 
