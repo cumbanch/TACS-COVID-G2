@@ -378,7 +378,7 @@
       }
   
     },
-    "/lists/{id}/compare/{offset}?from": {
+    "/lists/{id}/history": {
       "get": {
         "tags": [
           "lists"
@@ -388,12 +388,6 @@
         "parameters": [
           {
             "$ref": "#/parameters/numericId"
-          },
-          {
-            "$ref": "#/parameters/offset"
-          },
-          {
-            "$ref": "#/parameters/from"
           }
         ],
         "responses": {
@@ -619,19 +613,6 @@
       "required": true,
       "description": "The identifier of the resourse to found",
       "type": "integer"
-    },
-    "offset": {
-      "name": "offset",
-      "in": "path",
-      "required": true,
-      "description": "The offset to compare the countries results",
-      "type": "integer"
-    },
-    "from": {
-      "name": "from",
-      "in": "query",
-      "description": "Format: yyyy-MM-dd",
-      "type": "datetime"
     }
   }
 }

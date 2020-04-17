@@ -6,8 +6,7 @@ const {
   updateList,
   getCountriesByList,
   createCountriesByList,
-  deleteCountriesByList,
-  getCountriesByListBy
+  deleteCountriesByList
 } = require('../services/lists');
 const { paginateResponse } = require('../serializers/paginations');
 const {
@@ -88,48 +87,50 @@ exports.getLastest = (req, res, next) => {
   getList(params.id)
     .then((list) => {
       covid_api.getLastestForAll(
-      list.countries.map(x => x.dataValues), function (data, header) {
-        var json = JSON.parse(data);
-        var lastest = {
-          timestamp: json[0].lastupdate,
-          confirmed: json[0].confirmed,
-          deaths: json[0].deaths,
-          recovered: json[0].recovered
-        };
-        var country = list.countries.find(c => c.dataValues.iso2 == json[0].countrycode.iso2);
-        country.results.push(lastest);
-        return country;
-      })
-      .then(responses => {
-        res.status(200).send(list);
-      })
-      .catch(next);
+        list.countries.map(x => x.dataValues), function (data, header) {
+          var json = JSON.parse(data);
+          var lastest = {
+            timestamp: json[0].lastupdate,
+            confirmed: json[0].confirmed,
+            deaths: json[0].deaths,
+            recovered: json[0].recovered
+          };
+          var country = list.countries.find(c => c.dataValues.iso2 == json[0].countrycode.iso2);
+          country.results.push(lastest);
+          return country;
+        })
+        .then(responses => {
+          res.status(200).send(list);
+        })
+        .catch(next);
     })
     .catch(next);
 };
 
 exports.getHistory = (req, res, next) => {
   const params = getHistoryMapper(req);
-  return getCountriesByListBy(params)
-    .then(() =>
-      res.status(200).send([
-        {
-          name: 'Argentina',
-          iso2: 'AR',
-          iso3: 'ARG',
-          latitude: '78.46668',
-          longitude: '-33.44844',
-          history: [{ '22-01-2020': { confirmed: 14, deaths: 0, recovered: 0 } }]
-        },
-        {
-          name: 'Brasil',
-          iso2: 'BR',
-          iso3: 'BRA',
-          latitude: '71.46668',
-          longitude: '-28.44844',
-          history: [{ '22-01-2020': { confirmed: 79, deaths: 0, recovered: 0 } }]
-        }
-      ])
-    )
+  getList(params.id)
+    .then((list) => {
+      covid_api.getTimeseriesForAll(
+        list.countries.map(x => x.dataValues), function (data, header) {
+          var json = JSON.parse(data);
+          var history = [];
+          for (var date_serie in json[0].timeseries) {
+            history.push({
+              timestamp: date_serie,
+              confirmed: json[0].timeseries[date_serie].confirmed,
+              deaths: json[0].timeseries[date_serie].deaths,
+              recovered: json[0].timeseries[date_serie].recovered
+            });
+          }
+          var country = list.countries.find(c => c.dataValues.iso2 == json[0].countrycode.iso2);
+          country.results.push(history);
+          return country;
+        })
+        .then(responses => {
+          res.status(200).send(list);
+        })
+        .catch(next);
+    })
     .catch(next);
 };
