@@ -10,10 +10,9 @@ exports.getAllCountries = filters => {
     offset: (filters.page - 1) * filters.limit,
     limit: filters.limit,
     order: filters.orderColumn ? [[filters.orderColumn, filters.orderType || 'ASC']] : undefined
-  })
-    .catch(error => {
-      throw databaseError(`There was an error getting countries: ${error.message}`);
-    });
+  }).catch(error => {
+    throw databaseError(`There was an error getting countries: ${error.message}`);
+  });
 };
 
 exports.getCountry = filters => {
