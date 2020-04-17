@@ -85,8 +85,9 @@ exports.getAllList = filters => {
     offset: (filters.page - 1) * filters.limit,
     limit: filters.limit,
     order: filters.orderColumn ? [[filters.orderColumn, filters.orderType || 'ASC']] : undefined
-  }).catch(error => {
-    throw databaseError(`There was an error getting the lists: ${error.message}`);
+  }).catch(err => {
+    logger.error(inspect(err));
+    throw databaseError(`There was an error getting the lists: ${err.message}`);
   });
 };
 
@@ -98,8 +99,9 @@ exports.getList = (filters, options = {}) => {
       userId: filters.userId
     },
     ...options
-  }).catch(error => {
-    throw databaseError(`There was an error getting the list: ${error.message}`);
+  }).catch(err => {
+    logger.error(inspect(err));
+    throw databaseError(`There was an error getting the list: ${err.message}`);
   });
 };
 
@@ -116,16 +118,18 @@ exports.deleteList = filters => {
           list.countryByList.map(countryByList => countryByList.destroy({ transaction }))
         ).then(() => list.destroy({ transaction }))
       )
-      .catch(error => {
-        throw databaseError(`There was an error deleting the list: ${error.message}`);
+      .catch(err => {
+        logger.error(inspect(err));
+        throw databaseError(`There was an error deleting the list: ${err.message}`);
       });
   });
 };
 
 exports.createList = attributes => {
   logger.info(`Attempting to create list with attributes: ${inspect(attributes)}`);
-  return List.create(attributes).catch(error => {
-    throw databaseError(`There was an error creating the list: ${error.message}`);
+  return List.create(attributes).catch(err => {
+    logger.error(inspect(err));
+    throw databaseError(`There was an error creating the list: ${err.message}`);
   });
 };
 
@@ -147,8 +151,9 @@ exports.updateList = attributes => {
           CountryByList.bulkCreate(countriesByListToCreate, { transaction })
         ]);
       })
-      .catch(error => {
-        throw databaseError(`There was an error updating the list: ${error.message}`);
+      .catch(err => {
+        logger.error(inspect(err));
+        throw databaseError(`There was an error updating the list: ${err.message}`);
       });
   });
 };
@@ -172,8 +177,9 @@ exports.getCountriesByList = filters => {
         rows: countriesByList.rows.map(countryByList => countryByList.country).filter(country => country),
         count: countriesByList.count
       }))
-      .catch(error => {
-        throw databaseError(`There was an error getting countries of the list: ${error.message}`);
+      .catch(err => {
+        logger.error(inspect(err));
+        throw databaseError(`There was an error getting countries of the list: ${err.message}`);
       });
   });
 };
@@ -191,8 +197,9 @@ exports.createCountriesByList = attributes => {
       return CountryByList.create({
         countryId: attributes.countryId,
         listId: attributes.id
-      }).catch(error => {
-        throw databaseError(`There was an error creating country of the list: ${error.message}`);
+      }).catch(err => {
+        logger.error(inspect(err));
+        throw databaseError(`There was an error creating country of the list: ${err.message}`);
       });
     });
   });
@@ -212,8 +219,9 @@ exports.deleteCountriesByList = attributes => {
         }
       });
     })
-    .catch(error => {
-      throw databaseError(`There was an error deleting country of the list: ${error.message}`);
+    .catch(err => {
+      logger.error(inspect(err));
+      throw databaseError(`There was an error deleting country of the list: ${err.message}`);
     });
 };
 
