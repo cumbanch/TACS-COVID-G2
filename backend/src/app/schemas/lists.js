@@ -1,6 +1,6 @@
 const pagination = require('./pagination');
 const authorization = require('./authorizations');
-const { ListName, countries, listId, offset, countryName, countryId } = require('../errors/schema_messages');
+const { listName, countries, listId, offset, countryName, countryId } = require('../errors/schema_messages');
 const { isArray, isInteger } = require('../utils/lodash');
 const { Country, List } = require('../models');
 
@@ -9,7 +9,7 @@ const commonAttributes = {
     in: ['body'],
     isString: true,
     trim: true,
-    errorMessage: ListName
+    errorMessage: listName
   },
   countries: {
     in: ['body'],
