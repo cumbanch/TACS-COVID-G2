@@ -25,3 +25,4 @@ exports.listId = `${integerMessage('list id')} ${containedMessage('path')}`;
 exports.offset = `${integerMessage('offset')} ${containedMessage('query')}`;
 exports.countryName = `${stringMessage('country_name')} ${containedMessage('query')}`;
 exports.countryId = `${integerMessage('country_id')} ${containedMessage('body')}`;
+exports.lastName = `${stringMessage('last_name')} ${containedMessage('body')}`;
