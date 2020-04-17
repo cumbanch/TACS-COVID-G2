@@ -39,12 +39,7 @@ exports.getTimeseriesForAll = (countries, transfromResponse) => {
     return axios.all(promises);
 };
 
-exports.getBrief = (transfromResponse) => {
-    const options = {
-        transformResponse : [
-            transfromResponse
-        ]
-    };
+exports.getBrief = () => {
     const url = 'https://wuhan-coronavirus-api.laeyoung.endpoint.ainize.ai/jhu-edu/brief';
-    return axios.get(url, options);
+    return axios.get(url);
 };
