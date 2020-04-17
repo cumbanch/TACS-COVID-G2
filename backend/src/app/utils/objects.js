@@ -27,3 +27,9 @@ exports.objectToSnakeCase = camelCaseObject =>
     caseFunction: snakeCase,
     nestedCaseFunction: exports.objectToSnakeCase
   });
+
+exports.deleteUndefined = attrs => {
+  const newAttrs = { ...attrs };
+  Object.keys(newAttrs).forEach(key => newAttrs[key] === undefined && delete newAttrs[key]);
+  return newAttrs;
+};
