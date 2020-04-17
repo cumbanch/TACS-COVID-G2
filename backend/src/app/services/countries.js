@@ -25,6 +25,7 @@ exports.getAllCountries = params => {
     logger.error(inspect(err));
     throw databaseError(`Error getting countries, reason: ${err.message}`);
   });
+};
 
 exports.getCountry = filters => {
   logger.info(`Attempting to get country with filters: ${inspect(filters)}`);
