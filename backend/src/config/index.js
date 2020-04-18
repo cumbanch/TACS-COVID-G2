@@ -16,7 +16,8 @@ const config = {
   server: {
     port: process.env.PORT || 8080,
     defaultPagination: process.env.DEFAULT_PAGINATION || 20,
-    momentTimezone: process.env.MOMENT_TIMEZONE || 'America/Buenos_Aires'
+    momentTimezone: process.env.MOMENT_TIMEZONE || 'America/Buenos_Aires',
+    corsWhitelist: process.env.CORS_WHITELIST ? process.env.CORS_WHITELIST.split(',') : []
   },
   logger: {
     minLevel: process.env.LOGGER_MIN_LEVEL || 'debug'

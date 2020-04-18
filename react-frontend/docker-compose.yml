@@ -1,0 +1,12 @@
+version: "3.4"
+
+services:
+  frontend:
+    build: .
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    volumes:
+      - ./src:/usr/local/src
+      - ./public:/usr/local/public
