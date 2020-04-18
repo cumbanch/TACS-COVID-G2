@@ -3,18 +3,18 @@ const { pagination, idParam } = require('./common');
 const listAttributesMapper = req => ({
   name: req.body.name,
   countriesIds: req.body.countries,
-  userId: req.headers.user_id
+  userId: req.userId
 });
 
 const countryByListAttributes = req => ({
   countryId: req.body.country_id,
   ...idParam(req),
-  userId: req.headers.user_id
+  userId: req.userId
 });
 
-exports.getListsMapper = req => ({ ...pagination(req), name: req.query.name, userId: req.headers.user_id });
+exports.getListsMapper = req => ({ ...pagination(req), name: req.query.name, userId: req.userId });
 
-exports.getListMapper = req => ({ userId: req.headers.user_id, ...idParam(req) });
+exports.getListMapper = req => ({ userId: req.userId, ...idParam(req) });
 
 exports.deleteListMapper = idParam;
 
@@ -26,7 +26,7 @@ exports.getCountriesByListMapper = req => ({
   ...pagination(req),
   ...idParam(req),
   countryName: req.query.country_name,
-  userId: req.headers.user_id
+  userId: req.userId
 });
 
 exports.createCountriesByListMapper = countryByListAttributes;
