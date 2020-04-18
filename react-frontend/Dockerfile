@@ -9,7 +9,7 @@ RUN npm install
 COPY src /usr/local/src
 COPY public /usr/local/public
 
-EXPOSE 3030
+EXPOSE 3000
 ENV NODE_ENV development
 
 CMD ["npm", "run", "start:dev"]
