@@ -5,7 +5,7 @@ const changeCaseObject = ({ originalObject, caseFunction, nestedCaseFunction }) 
   Object.entries(originalObject).forEach(([key, value]) => {
     if (isObject(value) && Object.keys(value).length) {
       newObject[caseFunction(key)] = value.length
-        ? value.map(exports.objectToSnakeCase)
+        ? value.map(nestedCaseFunction)
         : nestedCaseFunction(value.dataValues);
     } else {
       newObject[caseFunction(key)] = value;

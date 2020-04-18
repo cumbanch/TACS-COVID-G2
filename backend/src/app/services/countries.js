@@ -26,3 +26,10 @@ exports.getAllCountries = params => {
     throw databaseError(`Error getting countries, reason: ${err.message}`);
   });
 };
+
+exports.getCountry = filters => {
+  logger.info(`Attempting to get country with filters: ${inspect(filters)}`);
+  return Country.findByPk(filters.id).catch(error => {
+    throw databaseError(`There was an error getting country: ${error.message}`);
+  });
+};
