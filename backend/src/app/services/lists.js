@@ -16,7 +16,8 @@ const countriesMock = [
       updatedAt: moment().format(),
       deletedAt: null
     },
-    results: []
+    latest: {},
+    timeseries: {}
   },
   {
     dataValues: {
@@ -30,7 +31,8 @@ const countriesMock = [
       updatedAt: moment().format(),
       deletedAt: null
     },
-    results: []
+    latest: {},
+    timeseries: {}
   }
 ];
 

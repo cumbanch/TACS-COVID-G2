@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       updatedAt: { type: DataTypes.DATE, allowNull: false },
       deletedAt: DataTypes.DATE
     },
-    { timestamps: true, underscored: true, paranoid: true }
+    { timeseries: true, underscored: true, paranoid: true }
   );
   Country.associate = models => {
     Country.belongsToMany(models.List, {

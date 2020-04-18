@@ -1,45 +1,53 @@
-const logger = require('../logger');
 const axios = require('axios');
 
-function getLastestIso2 (iso2, transfromResponse) {    
+const logger = require('../logger');
+const { 
+    baseUrl, 
+    timeserieEndpoint,
+    latestEndpoint, 
+    briefEndpoint 
+} = require('../../config').covidApi;
+
+function getCovidServiceLatestIso2 (iso2, transfromResponse) {    
     const options = {
         transformResponse : [
             transfromResponse
         ]
     };
-    const url = 'https://wuhan-coronavirus-api.laeyoung.endpoint.ainize.ai/jhu-edu/latest?onlyCountries=true&iso2=' + iso2;
+    const url = `${baseUrl}${latestEndpoint}${iso2}`;
+    console.log(url);
     return axios.get(url, options);
 };
 
-exports.getLastest = (country, transfromResponse) => {
-    return getLastestIso2(country.iso2, transfromResponse);
+exports.getCovidServiceLatest = (country, transfromResponse) => {
+    return getCovidServiceLatestIso2(country.iso2, transfromResponse);
 };
 
-exports.getLastestForAll = (countries, transfromResponse) => {
-    var promises = countries.map(c => this.getLastest(c, transfromResponse));
+exports.getCovidServiceLatestForAll = (countries, transfromResponse) => {
+    const promises = countries.map(country => this.getCovidServiceLatest(country, transfromResponse));
     return axios.all(promises);
 };
 
-exports.getTimeseriesIso2 = (iso2, transfromResponse) => {
+function getCovidServiceTimeseriesIso2(iso2, transfromResponse) {
     const options = {
         transformResponse : [
             transfromResponse
         ]
     };
-    const url = 'https://wuhan-coronavirus-api.laeyoung.endpoint.ainize.ai/jhu-edu/timeseries?onlyCountries=true&iso2=' + iso2;
+    const url = baseUrl + timeserieEndpoint + `${iso2}`;
     return axios.get(url, options);
 };
 
-exports.getTimeseries = (country, transfromResponse) => {
-    return this.getTimeseriesIso2(country.iso2, transfromResponse);
+exports.getCovidServiceTimeseries = (country, transfromResponse) => {
+    return getCovidServiceTimeseriesIso2(country.iso2, transfromResponse);
 };
 
-exports.getTimeseriesForAll = (countries, transfromResponse) => {
-    var promises = countries.map(c => this.getTimeseries(c, transfromResponse));
+exports.getCovidServiceTimeseriesForAll = (countries, transfromResponse) => {
+    const promises = countries.map(country => this.getCovidServiceTimeseries(country, transfromResponse));
     return axios.all(promises);
 };
 
-exports.getBrief = () => {
-    const url = 'https://wuhan-coronavirus-api.laeyoung.endpoint.ainize.ai/jhu-edu/brief';
+exports.getCovidServiceBrief = () => {
+    const url = baseUrl + briefEndpoint;
     return axios.get(url);
 };

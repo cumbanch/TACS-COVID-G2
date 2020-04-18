@@ -1,4 +1,8 @@
 const {
+  getCovidServiceLatestForAll,
+  getCovidServiceTimeseriesForAll
+} = require('../services/covid_api');
+const {
   getAllList,
   getList,
   deleteList,
@@ -82,55 +86,47 @@ exports.deleteCountriesByList = (req, res, next) => {
     .catch(next);
 };
 
-exports.getLastest = (req, res, next) => {
+exports.getLatest = (req, res, next) => {
   const params = getLatestMapper(req);
-  getList(params.id)
-    .then((list) => {
-      covid_api.getLastestForAll(
-        list.countries.map(x => x.dataValues), function (data, header) {
-          var json = JSON.parse(data);
-          var lastest = {
-            timestamp: json[0].lastupdate,
-            confirmed: json[0].confirmed,
-            deaths: json[0].deaths,
-            recovered: json[0].recovered
-          };
-          var country = list.countries.find(c => c.dataValues.iso2 == json[0].countrycode.iso2);
-          country.results.push(lastest);
-          return country;
-        })
-        .then(responses => {
+  return getList(params.id)
+    .then((list) =>
+      getCovidServiceLatestForAll(list.countries.map(x => x.dataValues), (data) => {
+        const json = JSON.parse(data);
+        const country = list.countries.find(x => x.dataValues.iso2 == json[0].countrycode.iso2);
+        country.latest = json[0];
+      })
+        .then(() => {
           res.status(200).send(list);
         })
-        .catch(next);
-    })
+    )
     .catch(next);
 };
 
 exports.getHistory = (req, res, next) => {
   const params = getHistoryMapper(req);
-  getList(params.id)
-    .then((list) => {
-      covid_api.getTimeseriesForAll(
-        list.countries.map(x => x.dataValues), function (data, header) {
-          var json = JSON.parse(data);
-          var history = [];
-          for (var date_serie in json[0].timeseries) {
-            history.push({
-              timestamp: date_serie,
-              confirmed: json[0].timeseries[date_serie].confirmed,
-              deaths: json[0].timeseries[date_serie].deaths,
-              recovered: json[0].timeseries[date_serie].recovered
-            });
-          }
-          var country = list.countries.find(c => c.dataValues.iso2 == json[0].countrycode.iso2);
-          country.results.push(history);
-          return country;
-        })
-        .then(responses => {
+  return getList(params.id)
+    .then((list) =>
+      getCovidServiceTimeseriesForAll(list.countries.map(x => x.dataValues), (data) => {
+        const json = JSON.parse(data);
+        /*
+        Esto queda comentado hasta que definamos que control usar para graficar en el frontend
+
+        var history = [];
+        json[0].timeseries.forEach(date_serie => {
+          history.push({
+            timestamp: date_serie,
+            confirmed: json[0].timeseries[date_serie].confirmed,
+            deaths: json[0].timeseries[date_serie].deaths,
+            recovered: json[0].timeseries[date_serie].recovered
+          });
+        }
+        */
+        const country = list.countries.find(x => x.dataValues.iso2 == json[0].countrycode.iso2);
+        country.timeseries = json[0].timeseries;
+      })
+        .then(() => {
           res.status(200).send(list);
         })
-        .catch(next);
-    })
+    )
     .catch(next);
 };
