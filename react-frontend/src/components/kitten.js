@@ -1,6 +1,6 @@
 import React, { Component, useState } from "react";
 
-const Gatito = (props) => {
+const Kitten = (props) => {
     const [estado, cambiarEstado] = useState({ img: props.img, nombre: props.nombre });
 
     const getGatito = () => {
@@ -32,7 +32,7 @@ const Gatito = (props) => {
 }
 
 
-export default Gatito;
+export default Kitten;
 
 
 
