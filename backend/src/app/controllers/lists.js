@@ -93,7 +93,12 @@ exports.getLatest = (req, res, next) => {
       getCovidServiceLatestForAll(list.countries.map(x => x.dataValues), (data) => {
         const json = JSON.parse(data);
         const country = list.countries.find(x => x.dataValues.iso2 == json[0].countrycode.iso2);
-        country.latest = json[0];
+        country.latest = {
+          lastUpdate: json[0].lastupdate,
+          confirmed:json[0].confirmed,
+          deaths:json[0].deaths,
+          recovered:json[0].recovered
+        };
       })
         .then(() => {
           res.status(200).send(list);
