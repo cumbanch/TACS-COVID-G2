@@ -10,24 +10,14 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:8080/login", {
-      method: 'POST',
-      mode: "no-cors",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        firstParam: 'yourValue',
-        secondParam: 'yourOtherValue'
-      })
+    fetch('http://localhost:8080/health', {
+      method: 'GET',
     })
-      .then(response => response.json())
-      .then(responseJson => {
-        this.setState({ players: responseJson.result });
-      },
-      )
+        .then(response => response.json())
+        .then(console.log)
+        .catch(console.log);
   }
+
   render() {
     return (
       <div className="container">
