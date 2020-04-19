@@ -80,7 +80,7 @@ exports.getAllList = filters => {
   logger.info(`Attempting to get lists with filters: ${inspect(filters)}`);
   return List.findAndCountAll({
     where: {
-      userId: filters.userId
+      userId: filters.user.id
     },
     offset: (filters.page - 1) * filters.limit,
     limit: filters.limit,
@@ -96,7 +96,7 @@ exports.getList = (filters, options = {}) => {
   return List.findOne({
     where: {
       id: filters.id,
-      userId: filters.userId
+      userId: filters.user.id
     },
     ...options
   }).catch(err => {
