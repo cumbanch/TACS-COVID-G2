@@ -1,17 +1,41 @@
-import React, { Component, useState } from "react";
-import Kitten from '../kitten'
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './app.css';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
-const App = (props) => {
+import Login from '../login/login';
+import SignUp from '../sign-up/sign-up';
 
-  // const [todos, setTodos] = useState({ img: props.img, name: props.name });
+function App() {
+    return (<Router>
+            <div className="App">
+                <nav className="navbar navbar-expand-lg navbar-light fixed-top">
+                    <div className="container">
+                        <Link className="navbar-brand" to={"/sign-in"}>Covid 19 - TACS - G2</Link>
+                        <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
+                            <ul className="navbar-nav ml-auto">
+                                <li className="nav-item">
+                                    <Link className="nav-link" to={"/sign-in"}>Login</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
 
-  return (
-    <Kitten img="https://image.shutterstock.com/image-photo/cut-kitten-cup-home-cat-260nw-1494647540.jpg" nombre="Michino" />
-  );
+                <div className="auth-wrapper">
+                    <div className="auth-inner">
+                        <Switch>
+                            <Route exact path='/' component={Login} />
+                            <Route path="/sign-in" component={Login} />
+                            <Route path="/sign-up" component={SignUp} />
+                        </Switch>
+                    </div>
+                </div>
+            </div></Router>
+    );
 }
+
 export default App;
-
-
-
-
-
