@@ -187,7 +187,7 @@ const countries = [{ name: 'Afghanistan', iso2: ' AF', iso3: ' AFG', latitude: '
 { name: 'Portugal', iso2: ' PT', iso3: ' PRT', latitude: ' 39.5', longitude: '-8', created_at: moment().format(), updated_at: moment().format() },
 { name: 'Puerto Rico', iso2: ' PR', iso3: ' PRI', latitude: ' 18.25', longitude: ' -66.5', created_at: moment().format(), updated_at: moment().format() },
 { name: 'Qatar', iso2: ' QA', iso3: ' QAT', latitude: ' 25.5', longitude: ' 51.25', created_at: moment().format(), updated_at: moment().format() },
-{ name: 'RÃ©union', iso2: ' RE', iso3: ' REU', latitude: ' -21.1', longitude: ' 55.6', created_at: moment().format(), updated_at: moment().format() },
+{ name: 'Reunion', iso2: ' RE', iso3: ' REU', latitude: ' -21.1', longitude: ' 55.6', created_at: moment().format(), updated_at: moment().format() },
 { name: 'Romania', iso2: ' RO', iso3: ' ROU', latitude: '46', longitude: '25', created_at: moment().format(), updated_at: moment().format() },
 { name: 'Russian Federation', iso2: ' RU', iso3: ' RUS', latitude: '60', longitude: '100', created_at: moment().format(), updated_at: moment().format() },
 { name: 'Russia', iso2: ' RU', iso3: ' RUS', latitude: '60', longitude: '100', created_at: moment().format(), updated_at: moment().format() },
