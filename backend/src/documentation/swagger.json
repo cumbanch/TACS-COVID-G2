@@ -349,12 +349,12 @@
         }
       }
     },
-    "/lists/{id}/lastest": {
+    "/lists/{id}/latest": {
       "get": {
         "tags": [
           "lists"
         ],
-        "summary": "Gets a list with the lastest result for each Country",
+        "summary": "Gets a list with the latest result for each Country",
         "description": "Returns a single list for its id",
         "parameters": [
           {

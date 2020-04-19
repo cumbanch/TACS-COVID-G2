@@ -45,6 +45,7 @@ const listsMock = [
       updatedAt: moment().format(),
       deletedAt: null
     },
+    latest: {},
     countries: countriesMock
   },
   {
@@ -55,6 +56,7 @@ const listsMock = [
       updatedAt: moment().format(),
       deletedAt: null
     },
+    latest: {},
     countries: countriesMock
   }
 ];

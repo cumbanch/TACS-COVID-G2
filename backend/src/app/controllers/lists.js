@@ -90,16 +90,7 @@ exports.getLatest = (req, res, next) => {
   const params = getLatestMapper(req);
   return getList(params.id)
     .then((list) =>
-      getCovidServiceLatestForAll(list.countries.map(x => x.dataValues), (data) => {
-        const json = JSON.parse(data);
-        const country = list.countries.find(x => x.dataValues.iso2 == json[0].countrycode.iso2);
-        country.latest = {
-          lastUpdate: json[0].lastupdate,
-          confirmed:json[0].confirmed,
-          deaths:json[0].deaths,
-          recovered:json[0].recovered
-        };
-      })
+      getCovidServiceLatestForAll(list)
         .then(() => {
           res.status(200).send(list);
         })
@@ -111,24 +102,7 @@ exports.getHistory = (req, res, next) => {
   const params = getHistoryMapper(req);
   return getList(params.id)
     .then((list) =>
-      getCovidServiceTimeseriesForAll(list.countries.map(x => x.dataValues), (data) => {
-        const json = JSON.parse(data);
-        /*
-        Esto queda comentado hasta que definamos que control usar para graficar en el frontend
-
-        var history = [];
-        json[0].timeseries.forEach(date_serie => {
-          history.push({
-            timestamp: date_serie,
-            confirmed: json[0].timeseries[date_serie].confirmed,
-            deaths: json[0].timeseries[date_serie].deaths,
-            recovered: json[0].timeseries[date_serie].recovered
-          });
-        }
-        */
-        const country = list.countries.find(x => x.dataValues.iso2 == json[0].countrycode.iso2);
-        country.timeseries = json[0].timeseries;
-      })
+      getCovidServiceTimeseriesForAll(list)
         .then(() => {
           res.status(200).send(list);
         })
