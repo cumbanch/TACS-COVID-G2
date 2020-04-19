@@ -7,7 +7,7 @@ const {
   sequelizePackage: { Op }
 } = require('../models');
 const { deleteUndefined } = require('../utils/objects');
-const { databaseError } = require('../errors/builders');
+const { databaseError, alreadyExist } = require('../errors/builders');
 
 exports.getUsers = params => {
   logger.info(`Attempting to get users with params: ${inspect(params)}`);
@@ -39,10 +39,15 @@ exports.getUserByPk = ({ id }) => {
 
 exports.createUser = attrs => {
   logger.info(`Attempting to create user with attributes: ${inspect(attrs)}`);
-  return User.create(attrs).catch(err => {
-    logger.error(inspect(err));
-    throw databaseError(`Error creating a user, reason: ${err.message}`);
-  });
+  return User.findCreateFind({ where: { email: attrs.email }, defaults: attrs })
+    .catch(err => {
+      logger.error(inspect(err));
+      throw databaseError(`Error creating a user, reason: ${err.message}`);
+    })
+    .then(([instance, created]) => {
+      if (!created) throw alreadyExist('User already exist');
+      return instance;
+    });
 };
 
 exports.getUserBy = filters => {

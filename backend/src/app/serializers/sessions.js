@@ -1,3 +1,7 @@
 const { objectToSnakeCase } = require('../utils/objects');
 
-exports.login = tokens => objectToSnakeCase(tokens);
+const commonSerializer = tokens => objectToSnakeCase(tokens);
+
+exports.login = commonSerializer;
+
+exports.refresh = commonSerializer;
