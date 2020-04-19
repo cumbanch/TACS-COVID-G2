@@ -376,7 +376,6 @@
           }
         }
       }
-  
     },
     "/lists/{id}/history": {
       "get": {
@@ -405,16 +404,25 @@
           }
         }
       }
-  
     }
   },
   "definitions": {
-    "Result":{
+    "Covid": {
       "properties": {
-        "day": {
+        "confirmed": {
           "type": "integer"
         },
-        "timestamp": {
+        "deaths": {
+          "type": "integer"
+        },
+        "recovered": {
+          "type": "integer"
+        }
+      }
+    },
+    "Latest": {
+      "properties": {
+        "lastUpdate": {
           "type": "datetime"
         },
         "confirmed": {
@@ -428,13 +436,14 @@
         }
       }
     },
-    "Results": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Result"
+    "TimeSeries": {
+      "properties": {
+        "M/d/yyyy": {
+          "$ref": "#/definitions/Result"
+        }
       }
     },
-    "Country": {
+    "CountryDataValue": {
       "properties": {
         "id": {
           "type": "integer"
@@ -462,13 +471,26 @@
         }
       }
     },
+    "Country": {
+      "properties": {
+        "dataValues": {
+          "$ref": "#/definitions/CountryDataValue"
+        },
+        "latest": {
+          "$ref": "#/definitions/Latest"
+        },
+        "timeseries": {
+          "$ref": "#/definitions/Latest"
+        }
+      }
+    },
     "Countries": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/Country"
       }
     },
-    "List": {
+    "ListDataValue": {
       "properties": {
         "id": {
           "type": "integer"
@@ -493,6 +515,16 @@
           "items": {
             "$ref": "#/definitions/Country"
           }
+        }
+      }
+    },
+    "List": {
+      "properties": {
+        "dataValues": {
+          "$ref": "#/definitions/ListDataValue"
+        },
+        "latest": {
+          "$ref": "#/definitions/Latest"
         }
       }
     },
