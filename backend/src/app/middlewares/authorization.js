@@ -3,18 +3,18 @@ const { promisify } = require('util');
 
 const { secret } = require('../../config').session;
 const { invalidToken, notFound } = require('../errors/builders');
-const { getTokenBlackListBy } = require('../services/tokens_black_list');
+const { getTokenBlacklistBy } = require('../services/tokens_black_list');
 const { getUserByPk } = require('../services/users');
 
-const verifyPromise = promisify(verify);
+const verifyJwtPromise = promisify(verify);
 
-exports.checkToken = (req, _, next) =>
-  getTokenBlackListBy({ accessToken: req.headers.authorization }).then(tokenInvalidated => {
-    if (tokenInvalidated) return next(invalidToken('The provider token was invalidated'));
-    return verifyPromise(req.headers.authorization, secret)
+exports.checkTokenAndSetUser = (req, _, next) =>
+  getTokenBlacklistBy({ accessToken: req.headers.authorization }).then(tokenInvalidated => {
+    if (tokenInvalidated) return next(invalidToken('The provided token was invalidated'));
+    return verifyJwtPromise(req.headers.authorization, secret)
       .then(decodedToken => {
         if (decodedToken.token_use !== 'access') {
-          return next(invalidToken('The provider token is not access token'));
+          return next(invalidToken('The provided token is not an access token'));
         }
         return getUserByPk({ id: decodedToken.sub }).then(user => {
           if (!user) return next(notFound('User not found'));
