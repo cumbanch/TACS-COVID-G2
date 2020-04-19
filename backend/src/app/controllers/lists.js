@@ -27,7 +27,6 @@ const {
 } = require('../mappers/lists');
 const { notFound } = require('../errors/builders');
 const { getListSerializer } = require('../serializers/lists');
-const covid_api = require('../services/covid_api')
 
 exports.getAllLists = (req, res, next) => {
   const filters = getListsMapper(req);
