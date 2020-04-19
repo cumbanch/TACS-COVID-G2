@@ -2,7 +2,6 @@ const authorization = require('./authorizations');
 const { password, email, refreshToken } = require('../errors/schema_messages');
 
 exports.loginSchema = {
-  ...authorization,
   email: { in: ['body'], isString: true, trim: true, isEmail: true, errorMessage: email },
   password: { in: ['body'], isString: true, trim: true, errorMessage: password }
 };

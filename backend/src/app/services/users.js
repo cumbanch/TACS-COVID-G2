@@ -29,9 +29,9 @@ exports.getUsers = params => {
   });
 };
 
-exports.getUser = filters => {
-  logger.info(`Attempting to get user with filters: ${inspect(filters)}`);
-  return User.findByPk(filters.id).catch(err => {
+exports.getUserByPk = ({ id }) => {
+  logger.info(`Attempting to get user with pk: ${inspect(id)}`);
+  return User.findByPk(id).catch(err => {
     logger.error(inspect(err));
     throw databaseError(`Error getting a user, reason: ${err.message}`);
   });
@@ -42,5 +42,13 @@ exports.createUser = attrs => {
   return User.create(attrs).catch(err => {
     logger.error(inspect(err));
     throw databaseError(`Error creating a user, reason: ${err.message}`);
+  });
+};
+
+exports.getUserBy = filters => {
+  logger.info(`Attempting to get user with filters: ${inspect(filters)}`);
+  return User.findOne({ where: filters }).catch(err => {
+    logger.error(inspect(err));
+    throw databaseError(`Error getting a user, reason: ${err.message}`);
   });
 };

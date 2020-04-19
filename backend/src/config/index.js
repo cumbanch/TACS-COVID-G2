@@ -21,6 +21,15 @@ const config = {
   },
   logger: {
     minLevel: process.env.LOGGER_MIN_LEVEL || 'debug'
+  },
+  session: {
+    secret: process.env.SECRET || 'top-secret',
+    expirationUnitAccessToken: process.env.EXPIRATION_UNIT_ACCESS_TOKEN || 'minutes',
+    expirationUnitRefreshToken: process.env.EXPIRATION_UNIT_REFRESH_TOKEN || 'hours',
+    expirationUnitIdToken: process.env.EXPIRATION_UNIT_ID_TOKEN || 'minutes',
+    expirationValueAccessToken: process.env.EXPIRATION_VALUE_ACCESS_TOKEN || 15,
+    expirationValueRefreshToken: process.env.EXPIRATION_VALUE_REFRESH_TOKEN || 24,
+    expirationValueIdToken: process.env.EXPIRATION_VALUE_ID_TOKEN || 10
   }
 };
 
