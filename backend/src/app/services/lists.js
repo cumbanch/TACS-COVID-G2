@@ -15,7 +15,9 @@ const countriesMock = [
       createdAt: moment().format(),
       updatedAt: moment().format(),
       deletedAt: null
-    }
+    },
+    latest: {},
+    timeseries: {}
   },
   {
     dataValues: {
@@ -28,7 +30,9 @@ const countriesMock = [
       createdAt: moment().format(),
       updatedAt: moment().format(),
       deletedAt: null
-    }
+    },
+    latest: {},
+    timeseries: {}
   }
 ];
 
@@ -41,6 +45,7 @@ const listsMock = [
       updatedAt: moment().format(),
       deletedAt: null
     },
+    latest: {},
     countries: countriesMock
   },
   {
@@ -51,6 +56,7 @@ const listsMock = [
       updatedAt: moment().format(),
       deletedAt: null
     },
+    latest: {},
     countries: countriesMock
   }
 ];
@@ -93,9 +99,4 @@ exports.createCountriesByList = attributes => {
 exports.deleteCountriesByList = attributes => {
   logger.info(`Attempting to delete countries by list with attributes: ${inspect(attributes)}`);
   return Promise.resolve();
-};
-
-exports.getCountriesByListBy = filters => {
-  logger.info(`Attempting to get countries by list with filters: ${inspect(filters)}`);
-  return Promise.resolve({ rows: listsMock[0], count: listsMock[0].countries.length });
 };
