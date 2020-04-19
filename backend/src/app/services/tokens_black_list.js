@@ -4,7 +4,7 @@ const logger = require('../logger');
 const { TokenBlackList } = require('../models');
 const { databaseError } = require('../errors/builders');
 
-exports.getBy = filters => {
+exports.getTokenBlackListBy = filters => {
   logger.info(`Attempting to get token in the black list with filters: ${inspect(filters)}`);
   return TokenBlackList.findOne({ where: filters }).catch(err => {
     logger.error(inspect(err));
@@ -12,7 +12,7 @@ exports.getBy = filters => {
   });
 };
 
-exports.create = attrs => {
+exports.createTokenBlackList = attrs => {
   logger.info(`Attempting to create token in the black list with attributes: ${inspect(attrs)}`);
   return TokenBlackList.upsert(attrs).catch(err => {
     logger.error(inspect(err));

@@ -85,9 +85,11 @@ exports.generateTokens = ({ req, user }) => {
   });
 };
 
-exports.verifyToken = ({ token, type, req }) => {
-  logger.info(`Attempting to verify token ${token} generated for the user with id :${req.user.id}`);
-  return verifyPromise(token, secret).then(decodedToken => {
+exports.verifyToken = ({ type, req }) => {
+  logger.info(
+    `Attempting to verify token ${req.body.refresh_token} generated for the user with id :${req.user.id}`
+  );
+  return verifyPromise(req.body.refresh_token, secret).then(decodedToken => {
     logger.info('Token verified successful');
     if (decodedToken.token_use !== type) throw invalidToken('The provider token is invalid');
     logger.info('Attempting to generate new access token');
@@ -108,13 +110,5 @@ exports.verifyToken = ({ token, type, req }) => {
         subject: `${req.user.id}`
       }
     );
-  });
-};
-
-exports.invalidateToken = ({ token }) => {
-  logger.info(`Attempting to invalidate token ${token}`);
-  return TokenBlackList.create({ accessToken: token }).catch(err => {
-    logger.error(inspect(err));
-    throw databaseError(`There was an error invalidating the token: ${err.message}`);
   });
 };

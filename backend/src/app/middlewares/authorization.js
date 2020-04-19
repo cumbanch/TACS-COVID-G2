@@ -3,13 +3,13 @@ const { promisify } = require('util');
 
 const { secret } = require('../../config').session;
 const { invalidToken, notFound } = require('../errors/builders');
-const { getBy } = require('../services/tokens_black_list');
+const { getTokenBlackListBy } = require('../services/tokens_black_list');
 const { getUserByPk } = require('../services/users');
 
 const verifyPromise = promisify(verify);
 
 exports.checkToken = (req, _, next) =>
-  getBy({ accessToken: req.headers.authorization }).then(tokenInvalidated => {
+  getTokenBlackListBy({ accessToken: req.headers.authorization }).then(tokenInvalidated => {
     if (tokenInvalidated) return next(invalidToken('The provider token was invalidated'));
     return verifyPromise(req.headers.authorization, secret)
       .then(decodedToken => {
