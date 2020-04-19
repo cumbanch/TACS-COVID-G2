@@ -25,39 +25,55 @@ const {
   deleteCountryInListSchema
 } = require('../schemas/lists');
 const { validateSchemaAndFail, bodyNotEmpty } = require('../middlewares/params_validator');
-const { setUserId } = require('../middlewares/authorization');
+const { checkTokenAndSetUser } = require('../middlewares/authorization');
 
 const listRouter = createRouter();
 
 exports.init = app => {
   app.use('/lists', listRouter);
 
-  listRouter.get('/', validateSchemaAndFail(getListsSchema), setUserId, getAllLists);
-  listRouter.post('/', validateSchemaAndFail(createListSchema), setUserId, createList);
+  listRouter.get('/', validateSchemaAndFail(getListsSchema), checkTokenAndSetUser, getAllLists);
+  listRouter.post('/', validateSchemaAndFail(createListSchema), checkTokenAndSetUser, createList);
 
-  listRouter.put('/:id', validateSchemaAndFail(updateListSchema), bodyNotEmpty, setUserId, updateList);
-  listRouter.get('/:id', validateSchemaAndFail(getListSchema), setUserId, getList);
-  listRouter.delete('/:id', validateSchemaAndFail(deleteListSchema), deleteList);
+  listRouter.put(
+    '/:id',
+    validateSchemaAndFail(updateListSchema),
+    bodyNotEmpty,
+    checkTokenAndSetUser,
+    updateList
+  );
+  listRouter.get('/:id', validateSchemaAndFail(getListSchema), checkTokenAndSetUser, getList);
+  listRouter.delete('/:id', validateSchemaAndFail(deleteListSchema), checkTokenAndSetUser, deleteList);
 
-  listRouter.get('/:id/latest', validateSchemaAndFail(getLatestResultListSchema), setUserId, getLatest);
-  listRouter.get('/:id/history', validateSchemaAndFail(getHistoryResultListSchema), setUserId, getHistory);
+  listRouter.get(
+    '/:id/latest',
+    validateSchemaAndFail(getLatestResultListSchema),
+    checkTokenAndSetUser,
+    getLatest
+  );
+  listRouter.get(
+    '/:id/history',
+    validateSchemaAndFail(getHistoryResultListSchema),
+    checkTokenAndSetUser,
+    getHistory
+  );
 
   listRouter.get(
     '/:id/countries',
     validateSchemaAndFail(getCountriesByListSchema),
-    setUserId,
+    checkTokenAndSetUser,
     getCountriesByList
   );
   listRouter.post(
     '/:id/countries',
     validateSchemaAndFail(addCountryInListSchema),
-    setUserId,
+    checkTokenAndSetUser,
     createCountriesByList
   );
   listRouter.delete(
     '/:id/countries',
     validateSchemaAndFail(deleteCountryInListSchema),
-    setUserId,
+    checkTokenAndSetUser,
     deleteCountriesByList
   );
 };
