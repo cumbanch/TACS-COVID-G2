@@ -3,10 +3,9 @@ const { createManyUsers, createUser } = require('../../factories/users');
 const { token } = require('../../factories/tokens');
 const { orderBy, omit } = require('../../../app/utils/lodash');
 const { objectToSnakeCase } = require('../../../app/utils/objects');
-const { getPaginationData } = require('../../utils/paginations');
+const { getPaginationData, expectedPaginationKeys } = require('../../utils/paginations');
 
-const expected_pagination_keys = ['data', 'limit', 'page', 'total_count', 'total_pages'];
-const expected_users_keys = [
+const expectedUserKeys = [
   'id',
   'created_at',
   'updated_at',
@@ -23,8 +22,8 @@ const limit = 4;
 const page = 3;
 const orderColumn = 'name';
 const orderType = 'asc';
-const expectedPaginationWithoutParams = getPaginationData({ totalUsers });
-const expectedPaginationWithParams = getPaginationData({ totalUsers, limit, page });
+const expectedPaginationWithoutParams = getPaginationData({ total: totalUsers });
+const expectedPaginationWithParams = getPaginationData({ total: totalUsers, limit, page });
 
 describe('GET /users', () => {
   let successfulResponse = {};
@@ -55,7 +54,7 @@ describe('GET /users', () => {
       expect(successfulResponse.statusCode).toEqual(200);
     });
     it('Should return the correct keys in body', () => {
-      expect(Object.keys(successfulResponse.body).every(key => expected_pagination_keys.includes(key))).toBe(
+      expect(Object.keys(successfulResponse.body).every(key => expectedPaginationKeys.includes(key))).toBe(
         true
       );
     });
@@ -76,7 +75,7 @@ describe('GET /users', () => {
     });
     it('Should return the correct keys in each user', () => {
       successfulResponse.body.data.forEach(user => {
-        expect(Object.keys(user).every(key => expected_users_keys.includes(key))).toBe(true);
+        expect(Object.keys(user).every(key => expectedUserKeys.includes(key))).toBe(true);
       });
     });
   });
@@ -86,7 +85,7 @@ describe('GET /users', () => {
     });
     it('Should return the correct keys in body', () => {
       expect(
-        Object.keys(successWithPaginationResponse.body).every(key => expected_pagination_keys.includes(key))
+        Object.keys(successWithPaginationResponse.body).every(key => expectedPaginationKeys.includes(key))
       ).toBe(true);
     });
     it(`Should return total count ${expectedPaginationWithParams.totalCount}`, () => {
@@ -110,7 +109,7 @@ describe('GET /users', () => {
     });
     it('Should return the correct keys in each user', () => {
       successWithPaginationResponse.body.data.forEach(user => {
-        expect(Object.keys(user).every(key => expected_users_keys.includes(key))).toBe(true);
+        expect(Object.keys(user).every(key => expectedUserKeys.includes(key))).toBe(true);
       });
     });
   });
@@ -185,7 +184,7 @@ describe('GET /users/:id', () => {
       expect(successfulResponse.statusCode).toEqual(200);
     });
     it('Should return the correct keys in body', () => {
-      expect(Object.keys(successfulResponse.body).every(key => expected_users_keys.includes(key))).toBe(true);
+      expect(Object.keys(successfulResponse.body).every(key => expectedUserKeys.includes(key))).toBe(true);
     });
     it('Should return the user created', () => {
       expect(

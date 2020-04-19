@@ -16,8 +16,7 @@
     "migrations-undo": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo",
     "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
     "migrations-reset": "npm run migrations-undo-all && npm run migrations",
-    "test": "jest --runInBand --detectOpenHandles",
-    "cover": "npm run test -- --cover",
+    "test": "jest --runInBand --detectOpenHandles --coverage",
     "start:dev": "npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
     "start:prod": "npm run migrations; node src/server.js",
     "start:test": "npm run migrations-reset; npm test",
@@ -95,7 +94,7 @@
       "!**/migrations/**",
       "!**/config/**",
       "!**/app/models/**",
-      "!**/test/factory/**",
+      "!**/tests/factories/**",
       "!**/coverage/**",
       "!**/server.js"
     ],
