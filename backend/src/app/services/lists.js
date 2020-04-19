@@ -18,7 +18,9 @@ const countriesMock = [
       createdAt: moment().format(),
       updatedAt: moment().format(),
       deletedAt: null
-    }
+    },
+    latest: {},
+    timeseries: {}
   },
   {
     dataValues: {
@@ -31,7 +33,9 @@ const countriesMock = [
       createdAt: moment().format(),
       updatedAt: moment().format(),
       deletedAt: null
-    }
+    },
+    latest: {},
+    timeseries: {}
   }
 ];
 
@@ -44,6 +48,7 @@ const listsMock = [
       updatedAt: moment().format(),
       deletedAt: null
     },
+    latest: {},
     countries: countriesMock
   },
   {
@@ -54,6 +59,7 @@ const listsMock = [
       updatedAt: moment().format(),
       deletedAt: null
     },
+    latest: {},
     countries: countriesMock
   }
 ];
@@ -223,9 +229,4 @@ exports.deleteCountriesByList = attributes => {
       logger.error(inspect(err));
       throw databaseError(`There was an error deleting country of the list: ${err.message}`);
     });
-};
-
-exports.getCountriesByListBy = filters => {
-  logger.info(`Attempting to get countries by list with filters: ${inspect(filters)}`);
-  return Promise.resolve({ rows: listsMock[0], count: listsMock[0].countries.length });
 };
