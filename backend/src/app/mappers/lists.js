@@ -35,4 +35,4 @@ exports.deleteCountriesByListMapper = countryByListAttributes;
 
 exports.getLatestMapper = idParam;
 
-exports.getHistoryMapper = req => ({ ...idParam(req), offset: req.query.offset });
+exports.getHistoryMapper = req => ({ ...idParam(req) });

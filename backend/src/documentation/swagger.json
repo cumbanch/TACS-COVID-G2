@@ -349,12 +349,12 @@
         }
       }
     },
-    "/lists/{id}/lastest": {
+    "/lists/{id}/latest": {
       "get": {
         "tags": [
           "lists"
         ],
-        "summary": "Gets a list with the lastest result for each Country",
+        "summary": "Gets a list with the latest result for each Country",
         "description": "Returns a single list for its id",
         "parameters": [
           {
@@ -376,9 +376,8 @@
           }
         }
       }
-  
     },
-    "/lists/{id}/compare/{offset}?from": {
+    "/lists/{id}/history": {
       "get": {
         "tags": [
           "lists"
@@ -388,12 +387,6 @@
         "parameters": [
           {
             "$ref": "#/parameters/numericId"
-          },
-          {
-            "$ref": "#/parameters/offset"
-          },
-          {
-            "$ref": "#/parameters/from"
           }
         ],
         "responses": {
@@ -411,16 +404,25 @@
           }
         }
       }
-  
     }
   },
   "definitions": {
-    "Result":{
+    "Covid": {
       "properties": {
-        "day": {
+        "confirmed": {
           "type": "integer"
         },
-        "timestamp": {
+        "deaths": {
+          "type": "integer"
+        },
+        "recovered": {
+          "type": "integer"
+        }
+      }
+    },
+    "Latest": {
+      "properties": {
+        "lastUpdate": {
           "type": "datetime"
         },
         "confirmed": {
@@ -434,13 +436,14 @@
         }
       }
     },
-    "Results": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Result"
+    "TimeSeries": {
+      "properties": {
+        "M/d/yyyy": {
+          "$ref": "#/definitions/Result"
+        }
       }
     },
-    "Country": {
+    "CountryDataValue": {
       "properties": {
         "id": {
           "type": "integer"
@@ -468,13 +471,26 @@
         }
       }
     },
+    "Country": {
+      "properties": {
+        "dataValues": {
+          "$ref": "#/definitions/CountryDataValue"
+        },
+        "latest": {
+          "$ref": "#/definitions/Latest"
+        },
+        "timeseries": {
+          "$ref": "#/definitions/Latest"
+        }
+      }
+    },
     "Countries": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/Country"
       }
     },
-    "List": {
+    "ListDataValue": {
       "properties": {
         "id": {
           "type": "integer"
@@ -499,6 +515,16 @@
           "items": {
             "$ref": "#/definitions/Country"
           }
+        }
+      }
+    },
+    "List": {
+      "properties": {
+        "dataValues": {
+          "$ref": "#/definitions/ListDataValue"
+        },
+        "latest": {
+          "$ref": "#/definitions/Latest"
         }
       }
     },
@@ -619,19 +645,6 @@
       "required": true,
       "description": "The identifier of the resourse to found",
       "type": "integer"
-    },
-    "offset": {
-      "name": "offset",
-      "in": "path",
-      "required": true,
-      "description": "The offset to compare the countries results",
-      "type": "integer"
-    },
-    "from": {
-      "name": "from",
-      "in": "query",
-      "description": "Format: yyyy-MM-dd",
-      "type": "datetime"
     }
   }
 }

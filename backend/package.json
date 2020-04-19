@@ -40,6 +40,7 @@
     "url": "/issues"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "dotenv": "^8.2.0",

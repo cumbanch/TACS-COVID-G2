@@ -1,3 +1,4 @@
+const { getCovidServiceLatestForAll, getCovidServiceTimeseriesForAll } = require('../services/covid_api');
 const {
   getAllList,
   getList,
@@ -6,8 +7,7 @@ const {
   updateList,
   getCountriesByList,
   createCountriesByList,
-  deleteCountriesByList,
-  getCountriesByListBy
+  deleteCountriesByList
 } = require('../services/lists');
 const { paginateResponse } = require('../serializers/paginations');
 const {
@@ -84,12 +84,10 @@ exports.deleteCountriesByList = (req, res, next) => {
 
 exports.getLatest = (req, res, next) => {
   const params = getLatestMapper(req);
-  return getCountriesByListBy(params)
-    .then(() =>
-      res.status(200).send({
-        confirmed: 1975,
-        deaths: 82,
-        recovered: 375
+  return getList(params.id)
+    .then(list =>
+      getCovidServiceLatestForAll(list).then(() => {
+        res.status(200).send(list);
       })
     )
     .catch(next);
@@ -97,26 +95,11 @@ exports.getLatest = (req, res, next) => {
 
 exports.getHistory = (req, res, next) => {
   const params = getHistoryMapper(req);
-  return getCountriesByListBy(params)
-    .then(() =>
-      res.status(200).send([
-        {
-          name: 'Argentina',
-          iso2: 'AR',
-          iso3: 'ARG',
-          latitude: '78.46668',
-          longitude: '-33.44844',
-          history: [{ '22-01-2020': { confirmed: 14, deaths: 0, recovered: 0 } }]
-        },
-        {
-          name: 'Brasil',
-          iso2: 'BR',
-          iso3: 'BRA',
-          latitude: '71.46668',
-          longitude: '-28.44844',
-          history: [{ '22-01-2020': { confirmed: 79, deaths: 0, recovered: 0 } }]
-        }
-      ])
+  return getList(params.id)
+    .then(list =>
+      getCovidServiceTimeseriesForAll(list).then(() => {
+        res.status(200).send(list);
+      })
     )
     .catch(next);
 };
