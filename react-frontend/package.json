@@ -9,6 +9,7 @@
     "bootstrap": "^4.4.1",
     "dotenv": "^8.2.0",
     "eslint-plugin-react-hooks": "^3.0.0",
+    "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
