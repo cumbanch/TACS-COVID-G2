@@ -3,6 +3,7 @@ const { createManyUsers, createUser } = require('../../factories/users');
 const { token } = require('../../factories/tokens');
 const { orderBy, omit } = require('../../../app/utils/lodash');
 const { objectToSnakeCase } = require('../../../app/utils/objects');
+const { getPaginationData } = require('../../utils/paginations');
 
 const expected_pagination_keys = ['data', 'limit', 'page', 'total_count', 'total_pages'];
 const expected_users_keys = [
@@ -17,6 +18,13 @@ const expected_users_keys = [
   'email',
   'password'
 ];
+const totalUsers = 24;
+const limit = 4;
+const page = 3;
+const orderColumn = 'name';
+const orderType = 'asc';
+const expectedPaginationWithoutParams = getPaginationData({ totalUsers });
+const expectedPaginationWithParams = getPaginationData({ totalUsers, limit, page });
 
 describe('GET /users', () => {
   let successfulResponse = {};
@@ -24,7 +32,7 @@ describe('GET /users', () => {
   let invalidParamsResponse = {};
   beforeAll(async () => {
     await truncateDatabase();
-    await createManyUsers({ quantity: 24 });
+    await createManyUsers({ quantity: totalUsers });
     successfulResponse = await getResponse({
       endpoint: '/users',
       method: 'get',
@@ -34,7 +42,7 @@ describe('GET /users', () => {
       endpoint: '/users',
       method: 'get',
       headers: { Authorization: token },
-      query: { limit: 4, page: 3, order_column: 'name', order_type: 'asc' }
+      query: { limit, page, order_column: orderColumn, order_type: orderType }
     });
     invalidParamsResponse = await getResponse({
       endpoint: '/users',
@@ -51,20 +59,20 @@ describe('GET /users', () => {
         true
       );
     });
-    it('Should return total count 24', () => {
-      expect(successfulResponse.body.total_count).toBe(24);
+    it(`Should return total count ${totalUsers}`, () => {
+      expect(successfulResponse.body.total_count).toBe(totalUsers);
     });
-    it('Should return total pages 2', () => {
-      expect(successfulResponse.body.total_pages).toBe(2);
+    it(`Should return total pages ${expectedPaginationWithoutParams.totalPages}`, () => {
+      expect(successfulResponse.body.total_pages).toBe(expectedPaginationWithoutParams.totalPages);
     });
-    it('Should return page 1', () => {
-      expect(successfulResponse.body.page).toBe(1);
+    it(`Should return page ${expectedPaginationWithoutParams.page}`, () => {
+      expect(successfulResponse.body.page).toBe(expectedPaginationWithoutParams.page);
     });
-    it('Should return limit 20', () => {
-      expect(successfulResponse.body.limit).toBe(20);
+    it(`Should return limit ${expectedPaginationWithoutParams.limit}`, () => {
+      expect(successfulResponse.body.limit).toBe(expectedPaginationWithoutParams.limit);
     });
-    it('Should return 20 results', () => {
-      expect(successfulResponse.body.data.length).toBe(20);
+    it(`Should return ${expectedPaginationWithoutParams.limit} results`, () => {
+      expect(successfulResponse.body.data.length).toBe(expectedPaginationWithoutParams.limit);
     });
     it('Should return the correct keys in each user', () => {
       successfulResponse.body.data.forEach(user => {
@@ -81,23 +89,23 @@ describe('GET /users', () => {
         Object.keys(successWithPaginationResponse.body).every(key => expected_pagination_keys.includes(key))
       ).toBe(true);
     });
-    it('Should return total count 24', () => {
-      expect(successWithPaginationResponse.body.total_count).toBe(24);
+    it(`Should return total count ${expectedPaginationWithParams.totalCount}`, () => {
+      expect(successWithPaginationResponse.body.total_count).toBe(expectedPaginationWithParams.totalCount);
     });
-    it('Should return total pages 6', () => {
-      expect(successWithPaginationResponse.body.total_pages).toBe(6);
+    it(`Should return total pages ${expectedPaginationWithParams.totalPages}`, () => {
+      expect(successWithPaginationResponse.body.total_pages).toBe(expectedPaginationWithParams.totalPages);
     });
-    it('Should return page 3', () => {
-      expect(successWithPaginationResponse.body.page).toBe(3);
+    it(`Should return page ${expectedPaginationWithParams.page}`, () => {
+      expect(successWithPaginationResponse.body.page).toBe(expectedPaginationWithParams.page);
     });
-    it('Should return limit 4', () => {
-      expect(successWithPaginationResponse.body.limit).toBe(4);
+    it(`Should return limit ${expectedPaginationWithParams.limit}`, () => {
+      expect(successWithPaginationResponse.body.limit).toBe(expectedPaginationWithParams.limit);
     });
-    it('Should return 4 results', () => {
-      expect(successWithPaginationResponse.body.data.length).toBe(4);
+    it(`Should return ${expectedPaginationWithParams.limit} results`, () => {
+      expect(successWithPaginationResponse.body.data.length).toBe(expectedPaginationWithParams.limit);
     });
-    it('Should return a results ordered by name asc', () => {
-      const lodashOrder = orderBy(successWithPaginationResponse.body.data, 'name', 'asc');
+    it(`Should return a results ordered by ${orderColumn} ${orderType}`, () => {
+      const lodashOrder = orderBy(successWithPaginationResponse.body.data, orderColumn, orderType);
       expect(successWithPaginationResponse.body.data).toEqual(lodashOrder);
     });
     it('Should return the correct keys in each user', () => {
@@ -171,7 +179,6 @@ describe('GET /users/:id', () => {
       endpoint: '/users/wrongId',
       method: 'get'
     });
-    console.log(invalidParamsResponse.body.message);
   });
   describe('Successful response', () => {
     it('Should return status code 200', () => {
