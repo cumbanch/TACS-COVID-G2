@@ -1,8 +1,6 @@
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createManyCountries } = require('../../factories/countries');
 const { token } = require('../../factories/tokens');
-const { orderBy, omit } = require('../../../app/utils/lodash');
-const { objectToSnakeCase } = require('../../../app/utils/objects');
 const { getPaginationData, expectedPaginationKeys } = require('../../utils/paginations');
 
 const expectedCountriesKeys = [

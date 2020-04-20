@@ -13,8 +13,7 @@ const {
   secret
 } = require('../../config').session;
 const logger = require('../logger');
-const { invalidToken } = require('../errors/builders');
-const { TokenBlackList } = require('../models');
+const { invalidToken, databaseError } = require('../errors/builders');
 
 const signJwtPromise = promisify(jwt.sign);
 const verifyJwtPromise = promisify(jwt.verify);
@@ -88,26 +87,31 @@ exports.verifyAndCreateToken = ({ type, req }) => {
   logger.info(
     `Attempting to verify token ${req.body.refresh_token} generated for the user with id :${req.user.id}`
   );
-  return verifyJwtPromise(req.body.refresh_token, secret).then(decodedToken => {
-    logger.info('Token verified successful');
-    if (decodedToken.token_use !== type) throw invalidToken('The provider token is invalid');
-    logger.info('Attempting to generate new access token');
-    return signJwtPromise(
-      {
-        token_use: 'access',
-        admin: req.user.admin,
-        nbf: moment().unix(),
-        exp: moment()
-          .clone()
-          .add(parseInt(expirationValueAccessToken), expirationUnitAccessToken)
-          .unix()
-      },
-      secret,
-      {
-        issuer: getIss(req),
-        jwtid: uuid(),
-        subject: `${req.user.id}`
-      }
-    );
-  });
+  return verifyJwtPromise(req.body.refresh_token, secret)
+    .then(decodedToken => {
+      logger.info('Token verified successful');
+      if (decodedToken.token_use !== type) throw invalidToken('The provider token is invalid');
+      logger.info('Attempting to generate new access token');
+      return signJwtPromise(
+        {
+          token_use: 'access',
+          admin: req.user.admin,
+          nbf: moment().unix(),
+          exp: moment()
+            .clone()
+            .add(parseInt(expirationValueAccessToken), expirationUnitAccessToken)
+            .unix()
+        },
+        secret,
+        {
+          issuer: getIss(req),
+          jwtid: uuid(),
+          subject: `${req.user.id}`
+        }
+      );
+    })
+    .catch(err => {
+      logger.error(inspect(err));
+      throw databaseError(`There was an error generating the token: ${err.message}`);
+    });
 };
