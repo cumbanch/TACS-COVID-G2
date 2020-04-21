@@ -16,8 +16,7 @@
     "migrations-undo": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo",
     "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
     "migrations-reset": "npm run migrations-undo-all && npm run migrations",
-    "test": "jest --runInBand",
-    "cover": "npm run test -- --cover",
+    "test": "jest --runInBand --detectOpenHandles --coverage",
     "start:dev": "npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
     "start:prod": "npm run migrations; node src/server.js",
     "start:test": "npm run migrations-reset; npm test",
@@ -47,6 +46,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.16.2",
     "express-validator": "^6.4.0",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "moment-timezone": "^0.5.28",
     "pg": "^8.0.2",
@@ -55,7 +55,8 @@
     "sequelize": "^5.21.6",
     "sequelize-cli": "^5.5.1",
     "swagger-ui-express": "^4.1.4",
-    "umzug": "^2.3.0"
+    "umzug": "^2.3.0",
+    "uuidv4": "^6.0.7"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -94,7 +95,7 @@
       "!**/migrations/**",
       "!**/config/**",
       "!**/app/models/**",
-      "!**/test/factory/**",
+      "!**/tests/factories/**",
       "!**/coverage/**",
       "!**/server.js"
     ],

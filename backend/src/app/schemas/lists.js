@@ -1,6 +1,6 @@
 const pagination = require('./pagination');
 const authorization = require('./authorizations');
-const { ListName, countries, listId, offset, countryName, countryId } = require('../errors/schema_messages');
+const { listName, countries, listId, offset, countryName, countryId } = require('../errors/schema_messages');
 const { isArray, isInteger } = require('../utils/lodash');
 const { Country, List } = require('../models');
 
@@ -9,7 +9,7 @@ const commonAttributes = {
     in: ['body'],
     isString: true,
     trim: true,
-    errorMessage: ListName
+    errorMessage: listName
   },
   countries: {
     in: ['body'],
@@ -45,7 +45,12 @@ exports.getListsSchema = {
 
 exports.createListSchema = {
   ...authorization,
-  ...commonAttributes
+  name: {
+    ...commonAttributes.name
+  },
+  countries: {
+    ...commonAttributes.countries
+  }
 };
 
 exports.updateListSchema = {
@@ -67,13 +72,23 @@ exports.updateListSchema = {
   }
 };
 
-exports.getListSchema = { id: commonAttributes.id };
+exports.getListSchema = {
+  ...authorization,
+  id: commonAttributes.id
+};
 
-exports.deleteListSchema = { id: commonAttributes.id };
+exports.deleteListSchema = {
+  ...authorization,
+  id: commonAttributes.id
+};
 
-exports.getLatestResultListSchema = { id: commonAttributes.id };
+exports.getLatestResultListSchema = {
+  ...authorization,
+  id: commonAttributes.id
+};
 
 exports.getHistoryResultListSchema = {
+  ...authorization,
   id: commonAttributes.id,
   offset: {
     in: ['query'],
@@ -88,6 +103,7 @@ exports.getHistoryResultListSchema = {
 };
 
 exports.getCountriesByListSchema = {
+  ...authorization,
   ...pagination(Country),
   id: commonAttributes.id,
   country_name: {
@@ -100,11 +116,13 @@ exports.getCountriesByListSchema = {
 };
 
 exports.addCountryInListSchema = {
+  ...authorization,
   id: commonAttributes.id,
   country_id: commonAttributes.country_id
 };
 
 exports.deleteCountryInListSchema = {
+  ...authorization,
   id: commonAttributes.id,
   country_id: commonAttributes.country_id
 };

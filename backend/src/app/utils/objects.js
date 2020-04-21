@@ -5,8 +5,8 @@ const changeCaseObject = ({ originalObject, caseFunction, nestedCaseFunction }) 
   Object.entries(originalObject).forEach(([key, value]) => {
     if (isObject(value) && Object.keys(value).length) {
       newObject[caseFunction(key)] = value.length
-        ? value.map(exports.objectToSnakeCase)
-        : nestedCaseFunction(value.dataValues);
+        ? value.map(nestedCaseFunction)
+        : nestedCaseFunction(value.dataValues || value);
     } else {
       newObject[caseFunction(key)] = value;
     }
@@ -27,3 +27,9 @@ exports.objectToSnakeCase = camelCaseObject =>
     caseFunction: snakeCase,
     nestedCaseFunction: exports.objectToSnakeCase
   });
+
+exports.deleteUndefined = attrs => {
+  const newAttrs = { ...attrs };
+  Object.keys(newAttrs).forEach(key => newAttrs[key] === undefined && delete newAttrs[key]);
+  return newAttrs;
+};
