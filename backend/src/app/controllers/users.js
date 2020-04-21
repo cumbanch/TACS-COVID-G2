@@ -1,4 +1,4 @@
-const { getUsers, getUser, createUser } = require('../services/users');
+const { getUsers, getUserByPk, createUser } = require('../services/users');
 const { getUsersMapper, getUserMapper, createUserMapper } = require('../mappers/users');
 const { paginateResponse } = require('../serializers/paginations');
 const { getUserSerializer } = require('../serializers/users');
@@ -12,7 +12,7 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.getUser = (req, res, next) =>
-  getUser(getUserMapper(req))
+  getUserByPk(getUserMapper(req))
     .then(user => {
       if (!user) throw notFound('User not found');
       return res.status(200).send(getUserSerializer(user));

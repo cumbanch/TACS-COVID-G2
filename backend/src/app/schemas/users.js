@@ -1,6 +1,6 @@
 const pagination = require('./pagination');
 const authorization = require('./authorizations');
-const { userId, userName, password, email, lastAccess } = require('../errors/schema_messages');
+const { userId, userName, password, email, lastAccess, lastName } = require('../errors/schema_messages');
 const { User } = require('../models');
 
 exports.getUsersSchema = {
@@ -12,7 +12,10 @@ exports.getUsersSchema = {
     trim: true,
     optional: true,
     errorMessage: lastAccess
-  }
+  },
+  email: { in: ['query'], isString: true, trim: true, isEmail: true, errorMessage: email, optional: true },
+  name: { in: ['query'], isString: true, trim: true, errorMessage: userName, optional: true },
+  last_name: { in: ['query'], isString: true, trim: true, errorMessage: lastName, optional: true }
 };
 
 exports.getUserSchema = {
@@ -27,8 +30,8 @@ exports.getUserSchema = {
 };
 
 exports.createUserSchema = {
-  ...authorization,
   name: { in: ['body'], isString: true, trim: true, errorMessage: userName },
   email: { in: ['body'], isString: true, trim: true, isEmail: true, errorMessage: email },
-  password: { in: ['body'], isString: true, trim: true, errorMessage: password }
+  password: { in: ['body'], isString: true, trim: true, errorMessage: password },
+  last_name: { in: ['body'], isString: true, trim: true, errorMessage: lastName }
 };
