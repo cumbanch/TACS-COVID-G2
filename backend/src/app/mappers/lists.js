@@ -16,7 +16,7 @@ exports.getListsMapper = req => ({ ...pagination(req), name: req.query.name, use
 
 exports.getListMapper = req => ({ userId: req.user.id, ...idParam(req) });
 
-exports.deleteListMapper = idParam;
+exports.deleteListMapper = req => ({ ...idParam(req), userId: req.user.id });
 
 exports.createListMapper = listAttributesMapper;
 
