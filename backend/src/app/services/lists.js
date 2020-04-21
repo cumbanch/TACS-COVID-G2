@@ -64,15 +64,14 @@ exports.getListWithCountries = filters =>
 
 exports.deleteList = filters => {
   logger.info(`Attempting to delete list with filters: ${inspect(filters)}`);
-  const options = { include: [{ model: CountryByList, as: 'countryByList' }] };
-  return this.getList(filters, options).then(list => {
+  return this.getListWithCountries(filters).then(list => {
     if (!list) {
       throw notFound('The list was not found');
     }
     return sequelizeInstance
       .transaction(transaction =>
         Promise.all(
-          list.countryByList.map(countryByList => countryByList.destroy({ transaction }))
+          list.countries.map(({ CountryByList: countryByList }) => countryByList.destroy({ transaction }))
         ).then(() => list.destroy({ transaction }))
       )
       .catch(err => {
