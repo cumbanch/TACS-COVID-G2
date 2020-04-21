@@ -12,11 +12,6 @@ const DATEONLY = 'DATEONLY';
 const JSONTYPE = 'JSON';
 const FLOAT = 'FLOAT';
 
-const IS_NUMERIC = 'isNumeric';
-const IS_ALPHANUMERIC = 'isAlphanumeric';
-const IS_LOWERCASE = 'isLowercase';
-const IS_UPPERCASE = 'isUppercase';
-const IS_IP = 'isIP';
 const MAX = 'max';
 const MIN = 'min';
 const LEN = 'len';
@@ -38,18 +33,6 @@ const generatorIntByValidations = (key, validate) => {
   }[key];
 };
 
-const generatorStringByValidations = key =>
-  ({
-    [IS_ALPHANUMERIC]: factory.chance('string', { pool: 'abcde6546' }),
-    [IS_NUMERIC]: factory.chance('string', { pool: '123456789' }),
-    [IS_LOWERCASE]: factory.chance('string', { pool: 'abcdefghijklmnopqrstuvwxyz' }),
-    [IS_UPPERCASE]: factory.chance('string', { pool: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' }),
-    [IS_IP]: factory.chance('ip')
-  }[key]);
-
-const generateStringByValidations = validate =>
-  Object.keys(validate).map(key => generatorStringByValidations(key))[0];
-
 const generateIntByValidations = validate =>
   Object.keys(validate).map(key => generatorIntByValidations(key, validate))[0];
 
@@ -62,16 +45,6 @@ const intValidation = (model, key) => {
     return generateIntByValidations(validate) || factory.chance('integer', { min: 1, max: 1000000 });
   }
   return factory.chance('integer', { min: 1, max: 1000000 });
-};
-
-const emailFactory = (model, key) => {
-  if (model.rawAttributes[key].validate.isEmail) {
-    if (model.rawAttributes[key].unique) {
-      return factory.sequence(`${model.name}.email`, n => `dummy-user-${n}@wolox.com.ar`);
-    }
-    return factory.chance('email', { domain: 'wolox.com.ar' });
-  }
-  return false;
 };
 
 const randomJsonCreate = () => {

@@ -33,6 +33,6 @@ exports.createCountriesByListMapper = countryByListAttributes;
 
 exports.deleteCountriesByListMapper = countryByListAttributes;
 
-exports.getLatestMapper = idParam;
+exports.getLatestMapper = req => ({ ...idParam(req), userId: req.user.id });
 
-exports.getHistoryMapper = req => ({ ...idParam(req) });
+exports.getHistoryMapper = req => ({ ...idParam(req), userId: req.user.id });

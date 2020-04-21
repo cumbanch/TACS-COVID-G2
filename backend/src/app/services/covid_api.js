@@ -1,63 +1,76 @@
 const axios = require('axios');
+const { inspect } = require('util');
 
 const logger = require('../logger');
-const {
-    baseUrl,
-    timeserieEndpoint,
-    latestEndpoint,
-    briefEndpoint
-} = require('../../config').covidApi;
+const { baseUrl, timeserieEndpoint, latestEndpoint } = require('../../config').covidApi;
+const { externalService } = require('../errors/builders');
 
-getCovidServiceLatestIso2 = (iso2, transfromResponse) => {
-    const options = {
-        transformResponse: [
-            transfromResponse
-        ]
-    };
-    const url = `${baseUrl}${latestEndpoint}${iso2}`;
-    return axios.get(url, options);
+const getLatestByIso2 = (iso2, transformResponse) => {
+  const options = {
+    transformResponse: [transformResponse]
+  };
+  const url = `${baseUrl}${latestEndpoint}${iso2}`;
+  return axios.get(url, options);
 };
 
-exports.getCovidServiceLatest = (country, transfromResponse) => getCovidServiceLatestIso2(country.dataValues.iso2, transfromResponse);
-
-exports.getCovidServiceLatestForAll = (list) => {
-    const promises = list.countries.map(country => this.getCovidServiceLatest(country, (data) => {
-        const json = JSON.parse(data);
-        const country = list.countries.find(x => x.dataValues.iso2 == json[0].countrycode.iso2);
-        country.latest = {
-            lastUpdate: json[0].lastupdate,
-            confirmed: json[0].confirmed,
-            deaths: json[0].deaths,
-            recovered: json[0].recovered
-        };
-    }));
-
-    return axios.all(promises)
-    .then(() => 
-        list.latest = {
-            lastUpdate: list.countries.reduce((a, b) => a < b.latest.lastUpdate ? a : b.latest.lastUpdate),
-            confirmed: list.countries.reduce((a, b) => a + b.latest.confirmed, 0),
-            deaths: list.countries.reduce((a, b) => a + b.latest.deaths, 0),
-            recovered: list.countries.reduce((a, b) => a + b.latest.recovered, 0)
-        });
+const getTimeseriesByIso2 = (iso2, transformResponse) => {
+  const options = {
+    transformResponse: [transformResponse]
+  };
+  const url = `${baseUrl}${timeserieEndpoint}${iso2}`;
+  return axios.get(url, options);
 };
 
-getCovidServiceTimeseriesIso2 = (iso2, transfromResponse) => {
-    const options = {
-        transformResponse: [
-            transfromResponse
-        ]
-    };
-    const url = `${baseUrl}${timeserieEndpoint}${iso2}`;
-    return axios.get(url, options);
+const getLatest = (country, transformResponse) => getLatestByIso2(country.dataValues.iso2, transformResponse);
+
+const getTimeseries = (country, transformResponse) =>
+  getTimeseriesByIso2(country.dataValues.iso2, transformResponse);
+
+exports.getLatestByList = list => {
+  const promises = list.countries.map(country =>
+    getLatest(country, data => {
+      const parsedData = JSON.parse(data)[0];
+      let countryFounded = {};
+      if (parsedData) {
+        countryFounded = list.countries.find(({ iso2 }) => iso2 === parsedData.countrycode.iso2);
+        delete countryFounded.dataValues.CountryByList;
+      }
+      const latest = parsedData && {
+        confirmed: parsedData.confirmed,
+        deaths: parsedData.deaths,
+        recovered: parsedData.recovered
+      };
+      return { ...countryFounded.dataValues, latest };
+    })
+  );
+  return axios
+    .all(promises)
+    .then(responses => {
+      const latestResults = responses.map(({ data }) => data.latest);
+      const sumOfLatest = latestResults.reduce((previous, current) => ({
+        confirmed: previous.confirmed + current.confirmed,
+        deaths: previous.deaths + current.deaths,
+        recovered: previous.recovered + current.recovered
+      }));
+      return sumOfLatest;
+    })
+    .catch(err => {
+      logger.error(inspect(err));
+      throw externalService(`There was an error getting the latest results, reason: ${err.message}`);
+    });
 };
 
-exports.getCovidServiceTimeseries = (country, transfromResponse) => getCovidServiceTimeseriesIso2(country.dataValues.iso2, transfromResponse);
-
-exports.getCovidServiceTimeseriesForAll = (list) => {
-    const promises = list.countries.map(country => this.getCovidServiceTimeseries(country, (data) => {
-        const json = JSON.parse(data);
-        /*
+exports.getTimeseriesByList = list => {
+  const promises = list.countries.map(country =>
+    getTimeseries(country, data => {
+      const parsedData = JSON.parse(data)[0];
+      let countryFounded = {};
+      if (parsedData) {
+        countryFounded = list.countries.find(({ iso2 }) => iso2 === parsedData.countrycode.iso2);
+        delete countryFounded.dataValues.CountryByList;
+      }
+      return parsedData ? { ...countryFounded.dataValues, timeseries: parsedData.timeseries } : undefined;
+      /*
         Esto queda comentado hasta que definamos que control usar para graficar en el frontend
 
         var history = [];
@@ -70,13 +83,10 @@ exports.getCovidServiceTimeseriesForAll = (list) => {
           });
         }
         */
-        const country = list.countries.find(x => x.dataValues.iso2 == json[0].countrycode.iso2);
-        country.timeseries = json[0].timeseries;
-    }));
-    return axios.all(promises);
-};
-
-exports.getCovidServiceBrief = () => {
-    const url = `${baseUrl}${briedEndpoint}`;;
-    return axios.get(url);
+    })
+  );
+  return axios.all(promises).catch(err => {
+    logger.error(inspect(err));
+    throw externalService(`There was an error getting the history, reason: ${err.message}`);
+  });
 };

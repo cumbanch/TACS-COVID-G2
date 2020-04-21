@@ -1,4 +1,4 @@
-const { getCovidServiceLatestForAll, getCovidServiceTimeseriesForAll } = require('../services/covid_api');
+const { getLatestByList, getTimeseriesByList } = require('../services/covid_api');
 const {
   getAllList,
   getList,
@@ -7,7 +7,8 @@ const {
   updateList,
   getCountriesByList,
   createCountriesByList,
-  deleteCountriesByList
+  deleteCountriesByList,
+  getListWithCountries
 } = require('../services/lists');
 const { paginateResponse } = require('../serializers/paginations');
 const {
@@ -23,7 +24,7 @@ const {
   getLatestMapper
 } = require('../mappers/lists');
 const { notFound } = require('../errors/builders');
-const { getListSerializer } = require('../serializers/lists');
+const { getListSerializer, getHistorySerializer } = require('../serializers/lists');
 
 exports.getAllLists = (req, res, next) => {
   const filters = getListsMapper(req);
@@ -84,22 +85,22 @@ exports.deleteCountriesByList = (req, res, next) => {
 
 exports.getLatest = (req, res, next) => {
   const params = getLatestMapper(req);
-  return getList(params.id)
-    .then(list =>
-      getCovidServiceLatestForAll(list).then(() => {
-        res.status(200).send(list);
-      })
-    )
+  return getListWithCountries(params)
+    .then(list => {
+      if (!list) throw notFound('List not found');
+      return getLatestByList(list).then(latestResult => res.status(200).send(latestResult));
+    })
     .catch(next);
 };
 
 exports.getHistory = (req, res, next) => {
   const params = getHistoryMapper(req);
-  return getList(params.id)
-    .then(list =>
-      getCovidServiceTimeseriesForAll(list).then(() => {
-        res.status(200).send(list);
-      })
-    )
+  return getListWithCountries(params)
+    .then(list => {
+      if (!list) throw notFound('List not found');
+      return getTimeseriesByList(list).then(historyResult => {
+        res.status(200).send(getHistorySerializer(historyResult));
+      });
+    })
     .catch(next);
 };

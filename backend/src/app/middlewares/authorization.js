@@ -19,7 +19,7 @@ exports.checkTokenAndSetUser = (req, _, next) =>
         return getUserByPk({ id: decodedToken.sub }).then(user => {
           if (!user) return next(notFound('User not found'));
           req.user = user.dataValues;
-          next();
+          return next();
         });
       })
       .catch(err => next(invalidToken(err.message)));

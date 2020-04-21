@@ -6,7 +6,7 @@ const changeCaseObject = ({ originalObject, caseFunction, nestedCaseFunction }) 
     if (isObject(value) && Object.keys(value).length) {
       newObject[caseFunction(key)] = value.length
         ? value.map(nestedCaseFunction)
-        : nestedCaseFunction(value.dataValues);
+        : nestedCaseFunction(value.dataValues || value);
     } else {
       newObject[caseFunction(key)] = value;
     }
