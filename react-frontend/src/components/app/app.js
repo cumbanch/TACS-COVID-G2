@@ -3,10 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
-import Login from '../login/login';
-import SignUp from '../sign-up/sign-up';
+import SignInComponent from '../sign-in/sign-in';
+import SignUpComponent from '../sign-up/sign-up';
+import HomeComponent from "../home/home";
 
-function App() {
+function AppComponent() {
     return (<Router>
             <div className="App">
                 <nav className="navbar navbar-expand-lg navbar-light fixed-top">
@@ -15,7 +16,7 @@ function App() {
                         <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
                             <ul className="navbar-nav ml-auto">
                                 <li className="nav-item">
-                                    <Link className="nav-link" to={"/sign-in"}>Login</Link>
+                                    <Link className="nav-link" to={"/sign-in"}>Sign in</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
@@ -28,9 +29,10 @@ function App() {
                 <div className="auth-wrapper">
                     <div className="auth-inner">
                         <Switch>
-                            <Route exact path='/' component={Login} />
-                            <Route path="/sign-in" component={Login} />
-                            <Route path="/sign-up" component={SignUp} />
+                            <Route exact path='/' component={SignInComponent} />
+                            <Route path="/sign-in" component={SignInComponent} />
+                            <Route path="/sign-up" component={SignUpComponent} />
+                            <Route path="/home" component={HomeComponent} />
                         </Switch>
                     </div>
                 </div>
@@ -38,4 +40,4 @@ function App() {
     );
 }
 
-export default App;
+export default AppComponent;
