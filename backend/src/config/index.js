@@ -34,7 +34,8 @@ const config = {
   covidApi: {
     baseUrl: process.env.COVID_API_BASE || 'https://wuhan-coronavirus-api.laeyoung.endpoint.ainize.ai',
     briefEndpoint: process.env.COVID_API_BRIEF_ENDPOINT || '/jhu-edu/brief',
-    timeserieEndpoint: process.env.COVID_API_TIMESERIE_ENDPOINT || '/jhu-edu/timeseries?onlyCountries=true&iso2=',
+    timeserieEndpoint:
+      process.env.COVID_API_TIMESERIE_ENDPOINT || '/jhu-edu/timeseries?onlyCountries=true&iso2=',
     latestEndpoint: process.env.COVID_API_LATEST_ENDPOINT || '/jhu-edu/latest?onlyCountries=true&iso2='
   }
 };

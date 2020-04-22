@@ -30,7 +30,6 @@ exports.getUserSchema = {
 };
 
 exports.createUserSchema = {
-  ...authorization,
   name: { in: ['body'], isString: true, trim: true, errorMessage: userName },
   email: { in: ['body'], isString: true, trim: true, isEmail: true, errorMessage: email },
   password: { in: ['body'], isString: true, trim: true, errorMessage: password },

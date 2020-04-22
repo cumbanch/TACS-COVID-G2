@@ -1,21 +1,21 @@
 const { inspect } = require('util');
 
 const logger = require('../logger');
-const { TokenBlackList } = require('../models');
+const { TokenBlacklist } = require('../models');
 const { databaseError } = require('../errors/builders');
 
-exports.getTokenBlackListBy = filters => {
-  logger.info(`Attempting to get token in the black list with filters: ${inspect(filters)}`);
-  return TokenBlackList.findOne({ where: filters }).catch(err => {
+exports.getTokenBlacklistBy = filters => {
+  logger.info(`Attempting to get token in the blacklist with filters: ${inspect(filters)}`);
+  return TokenBlacklist.findOne({ where: filters }).catch(err => {
     logger.error(inspect(err));
     throw databaseError(`Error getting a token in the black list, reason: ${err.message}`);
   });
 };
 
-exports.createTokenBlackList = attrs => {
-  logger.info(`Attempting to create token in the black list with attributes: ${inspect(attrs)}`);
-  return TokenBlackList.upsert(attrs).catch(err => {
+exports.createTokenBlacklist = attrs => {
+  logger.info(`Attempting to create token in the blacklist with attributes: ${inspect(attrs)}`);
+  return TokenBlacklist.upsert(attrs).catch(err => {
     logger.error(inspect(err));
-    throw databaseError(`Error creating a token in the black list, reason: ${err.message}`);
+    throw databaseError(`Error creating a token in the blacklist, reason: ${err.message}`);
   });
 };

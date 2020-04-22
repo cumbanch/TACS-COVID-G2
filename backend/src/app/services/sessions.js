@@ -13,20 +13,18 @@ const {
   secret
 } = require('../../config').session;
 const logger = require('../logger');
-const { invalidToken } = require('../errors/builders');
-const { TokenBlackList } = require('../models');
+const { invalidToken, databaseError } = require('../errors/builders');
 
-const signPromise = promisify(jwt.sign);
-const verifyPromise = promisify(jwt.verify);
-const decodePromise = promisify(jwt.decode);
+const signJwtPromise = promisify(jwt.sign);
+const verifyJwtPromise = promisify(jwt.verify);
 
 const getIss = req => `${req.protocol}://${req.get('host')}`;
 
 exports.generateTokens = ({ req, user }) => {
-  logger.info(`Attempting to generate tokens to user with id: ${user.id}`);
+  logger.info(`Attempting to generate tokens for the user with id: ${user.id}`);
   const iss = getIss(req);
-  logger.info('Iss was generated successful');
-  const accessPromise = signPromise(
+  logger.info('Iss was generated successfully');
+  const accessPromise = signJwtPromise(
     {
       token_use: 'access',
       admin: user.admin,
@@ -43,7 +41,7 @@ exports.generateTokens = ({ req, user }) => {
       subject: `${user.id}`
     }
   );
-  const refreshPromise = signPromise(
+  const refreshPromise = signJwtPromise(
     {
       token_use: 'refresh',
       nbf: moment().unix(),
@@ -59,7 +57,7 @@ exports.generateTokens = ({ req, user }) => {
       subject: `${user.id}`
     }
   );
-  const idPromise = signPromise(
+  const idPromise = signJwtPromise(
     {
       token_use: 'id',
       email: user.email,
@@ -85,30 +83,35 @@ exports.generateTokens = ({ req, user }) => {
   });
 };
 
-exports.verifyToken = ({ type, req }) => {
+exports.verifyAndCreateToken = ({ type, req }) => {
   logger.info(
     `Attempting to verify token ${req.body.refresh_token} generated for the user with id :${req.user.id}`
   );
-  return verifyPromise(req.body.refresh_token, secret).then(decodedToken => {
-    logger.info('Token verified successful');
-    if (decodedToken.token_use !== type) throw invalidToken('The provider token is invalid');
-    logger.info('Attempting to generate new access token');
-    return signPromise(
-      {
-        token_use: 'access',
-        admin: req.user.admin,
-        nbf: moment().unix(),
-        exp: moment()
-          .clone()
-          .add(parseInt(expirationValueAccessToken), expirationUnitAccessToken)
-          .unix()
-      },
-      secret,
-      {
-        issuer: getIss(req),
-        jwtid: uuid(),
-        subject: `${req.user.id}`
-      }
-    );
-  });
+  return verifyJwtPromise(req.body.refresh_token, secret)
+    .then(decodedToken => {
+      logger.info('Token verified successful');
+      if (decodedToken.token_use !== type) throw invalidToken('The provider token is invalid');
+      logger.info('Attempting to generate new access token');
+      return signJwtPromise(
+        {
+          token_use: 'access',
+          admin: req.user.admin,
+          nbf: moment().unix(),
+          exp: moment()
+            .clone()
+            .add(parseInt(expirationValueAccessToken), expirationUnitAccessToken)
+            .unix()
+        },
+        secret,
+        {
+          issuer: getIss(req),
+          jwtid: uuid(),
+          subject: `${req.user.id}`
+        }
+      );
+    })
+    .catch(err => {
+      logger.error(inspect(err));
+      throw databaseError(`There was an error generating the token: ${err.message}`);
+    });
 };

@@ -1,68 +1,9 @@
 const { inspect } = require('util');
 
 const logger = require('../logger');
-const { moment } = require('../utils/moment');
 const { List, CountryByList, sequelizeInstance, Country } = require('../models');
 const { databaseError, notFound } = require('../errors/builders');
 const { getCountry } = require('./countries');
-
-const countriesMock = [
-  {
-    dataValues: {
-      id: 1,
-      name: 'Argentina',
-      iso2: 'AR',
-      iso3: 'ARG',
-      latitude: -34,
-      longitude: -64,
-      createdAt: moment().format(),
-      updatedAt: moment().format(),
-      deletedAt: null
-    },
-    latest: {},
-    timeseries: {}
-  },
-  {
-    dataValues: {
-      id: 2,
-      name: 'Brazil',
-      iso2: 'BR',
-      iso3: 'BRA',
-      latitude: -10,
-      longitude: -55,
-      createdAt: moment().format(),
-      updatedAt: moment().format(),
-      deletedAt: null
-    },
-    latest: {},
-    timeseries: {}
-  }
-];
-
-const listsMock = [
-  {
-    dataValues: {
-      id: 1,
-      name: 'Lista 1',
-      createdAt: moment().format(),
-      updatedAt: moment().format(),
-      deletedAt: null
-    },
-    latest: {},
-    countries: countriesMock
-  },
-  {
-    dataValues: {
-      id: 2,
-      name: 'Lista 2',
-      createdAt: moment().format(),
-      updatedAt: moment().format(),
-      deletedAt: null
-    },
-    latest: {},
-    countries: countriesMock
-  }
-];
 
 const getCountriesToDeleteAndCreate = (list, attributes) => {
   const countriesByListToDelete = list.countryByList.filter(
@@ -111,17 +52,26 @@ exports.getList = (filters, options = {}) => {
   });
 };
 
+exports.getListWithCountries = filters =>
+  this.getList(filters, {
+    include: [
+      {
+        model: Country,
+        as: 'countries'
+      }
+    ]
+  });
+
 exports.deleteList = filters => {
   logger.info(`Attempting to delete list with filters: ${inspect(filters)}`);
-  const options = { include: [{ model: CountryByList, as: 'countryByList' }] };
-  return this.getList(filters, options).then(list => {
+  return this.getListWithCountries(filters).then(list => {
     if (!list) {
       throw notFound('The list was not found');
     }
     return sequelizeInstance
       .transaction(transaction =>
         Promise.all(
-          list.countryByList.map(countryByList => countryByList.destroy({ transaction }))
+          list.countries.map(({ CountryByList: countryByList }) => countryByList.destroy({ transaction }))
         ).then(() => list.destroy({ transaction }))
       )
       .catch(err => {
@@ -133,10 +83,19 @@ exports.deleteList = filters => {
 
 exports.createList = attributes => {
   logger.info(`Attempting to create list with attributes: ${inspect(attributes)}`);
-  return List.create(attributes).catch(err => {
-    logger.error(inspect(err));
-    throw databaseError(`There was an error creating the list: ${err.message}`);
-  });
+  return sequelizeInstance
+    .transaction(transaction =>
+      List.create(attributes, { transaction }).then(({ id: listId }) => {
+        const countriesByListPromises = attributes.countriesIds.map(countryId =>
+          CountryByList.create({ countryId, listId }, { transaction })
+        );
+        return Promise.all([countriesByListPromises]);
+      })
+    )
+    .catch(err => {
+      logger.error(inspect(err));
+      throw databaseError(`There was an error creating the list: ${err.message}`);
+    });
 };
 
 exports.updateList = attributes => {

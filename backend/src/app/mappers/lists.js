@@ -16,7 +16,7 @@ exports.getListsMapper = req => ({ ...pagination(req), name: req.query.name, use
 
 exports.getListMapper = req => ({ userId: req.user.id, ...idParam(req) });
 
-exports.deleteListMapper = idParam;
+exports.deleteListMapper = req => ({ ...idParam(req), userId: req.user.id });
 
 exports.createListMapper = listAttributesMapper;
 
@@ -33,6 +33,6 @@ exports.createCountriesByListMapper = countryByListAttributes;
 
 exports.deleteCountriesByListMapper = countryByListAttributes;
 
-exports.getLatestMapper = idParam;
+exports.getLatestMapper = req => ({ ...idParam(req), userId: req.user.id });
 
-exports.getHistoryMapper = req => ({ ...idParam(req) });
+exports.getHistoryMapper = req => ({ ...idParam(req), userId: req.user.id });
