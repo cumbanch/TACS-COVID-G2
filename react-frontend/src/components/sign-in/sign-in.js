@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {Redirect} from "react-router-dom";
 import {ValidatorForm} from "react-form-validator-core";
-import ValidatableField from "../validation/validable-field";
-import useSignUpForm from "../sign-up/hooks/custom-hooks";
+import ValidatableField from "../validation/validatable-field";
+import useSignUpForm from "../../hooks/custom-hooks";
 import {SignIn} from "../../services/sessions";
 
 const SignInComponent = () => {
