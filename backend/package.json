@@ -16,7 +16,7 @@
     "migrations-undo": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo",
     "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
     "migrations-reset": "npm run migrations-undo-all && npm run migrations",
-    "test": "jest --runInBand --detectOpenHandles --coverage",
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
     "start:dev": "npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
     "start:prod": "npm run migrations; node src/server.js",
     "start:test": "npm run migrations-reset; npm test",
@@ -42,6 +42,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
+    "bluebird": "^3.7.2",
     "body-parser": "^1.18.2",
     "dotenv": "^8.2.0",
     "express": "^4.16.2",
