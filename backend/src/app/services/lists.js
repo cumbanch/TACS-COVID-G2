@@ -2,7 +2,7 @@ const { inspect } = require('util');
 
 const logger = require('../logger');
 const { List, CountryByList, sequelizeInstance, Country } = require('../models');
-const { databaseError, notFound } = require('../errors/builders');
+const { databaseError, notFound, invalidCountries } = require('../errors/builders');
 const { getCountry } = require('./countries');
 
 const getCountriesToDeleteAndCreate = (list, attributes) => {
@@ -83,18 +83,26 @@ exports.deleteList = filters => {
 
 exports.createList = attributes => {
   logger.info(`Attempting to create list with attributes: ${inspect(attributes)}`);
-  return sequelizeInstance
-    .transaction(transaction =>
-      List.create(attributes, { transaction }).then(({ id: listId }) => {
-        const countriesByListPromises = attributes.countriesIds.map(countryId =>
-          CountryByList.create({ countryId, listId }, { transaction })
-        );
-        return Promise.all([countriesByListPromises]);
-      })
-    )
+  return Country.count({ where: { id: attributes.countriesIds } })
     .catch(err => {
       logger.error(inspect(err));
-      throw databaseError(`There was an error creating the list: ${err.message}`);
+      throw databaseError(`There was an error verifying the countries: ${err.message}`);
+    })
+    .then(count => {
+      if (attributes.countriesIds.length !== count) throw invalidCountries();
+      return sequelizeInstance
+        .transaction(transaction =>
+          List.create(attributes, { transaction }).then(({ id: listId }) => {
+            const countriesByListPromises = attributes.countriesIds.map(countryId =>
+              CountryByList.create({ countryId, listId }, { transaction })
+            );
+            return Promise.all([countriesByListPromises]);
+          })
+        )
+        .catch(err => {
+          logger.error(inspect(err));
+          throw databaseError(`There was an error creating the list: ${err.message}`);
+        });
     });
 };
 
@@ -172,20 +180,18 @@ exports.createCountriesByList = attributes => {
 
 exports.deleteCountriesByList = attributes => {
   logger.info(`Attempting to delete countries by list with attributes: ${inspect(attributes)}`);
-  return this.getList(attributes)
-    .then(list => {
-      if (!list) {
-        throw notFound('The list was not found');
+  return this.getList(attributes).then(list => {
+    if (!list) {
+      throw notFound('The list was not found');
+    }
+    return CountryByList.destroy({
+      where: {
+        countryId: attributes.countryId,
+        listId: attributes.id
       }
-      return CountryByList.destroy({
-        where: {
-          countryId: attributes.countryId,
-          listId: attributes.id
-        }
-      });
-    })
-    .catch(err => {
+    }).catch(err => {
       logger.error(inspect(err));
       throw databaseError(`There was an error deleting country of the list: ${err.message}`);
     });
+  });
 };
