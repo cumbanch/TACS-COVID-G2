@@ -37,7 +37,11 @@ const config = {
     timeserieEndpoint:
       process.env.COVID_API_TIMESERIE_ENDPOINT || '/jhu-edu/timeseries?onlyCountries=true&iso2=',
     latestEndpoint: process.env.COVID_API_LATEST_ENDPOINT || '/jhu-edu/latest?onlyCountries=true&iso2='
+  },
+  telegram: {
+    apiKey: process.env.TELEGRAM_API_KEY || '1244127670:AAE4BG084X7XA0IsVkLUcYkbuRbgl1P171M',
   }
+
 };
 
 module.exports = config;
