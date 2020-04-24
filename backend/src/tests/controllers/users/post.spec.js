@@ -1,7 +1,6 @@
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { buildUser } = require('../../factories/users');
 const { User } = require('../../../app/models');
-const { token } = require('../../factories/tokens');
 
 describe('POST /users', () => {
   let successfulResponse = {};
@@ -15,8 +14,7 @@ describe('POST /users', () => {
     successfulResponse = await getResponse({
       endpoint: '/users',
       method: 'post',
-      body: { name, last_name: lastName, password, email },
-      headers: { Authorization: token }
+      body: { name, last_name: lastName, password, email }
     });
     usersCreated = await User.findAll();
     invalidParamsResponse = await getResponse({
@@ -59,13 +57,6 @@ describe('POST /users', () => {
     it('Should return an error indicating the provider last_name is not valid', () => {
       expect(
         invalidParamsResponse.body.message.includes('last_name must be a string and be contained in body')
-      ).toBe(true);
-    });
-    it('Should return an error indicating the provider authorization header is not valid', () => {
-      expect(
-        invalidParamsResponse.body.message.includes(
-          'Authorization must be a jwt token and must be contained in headers'
-        )
       ).toBe(true);
     });
   });

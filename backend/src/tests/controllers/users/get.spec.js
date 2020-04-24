@@ -1,6 +1,6 @@
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createManyUsers, createUser } = require('../../factories/users');
-const { token } = require('../../factories/tokens');
+const { generateToken } = require('../../factories/tokens');
 const { orderBy, omit } = require('../../../app/utils/lodash');
 const { objectToSnakeCase } = require('../../../app/utils/objects');
 const { getPaginationData, expectedPaginationKeys } = require('../../utils/paginations');
@@ -30,6 +30,7 @@ describe('GET /users', () => {
   let successWithPaginationResponse = {};
   let invalidParamsResponse = {};
   beforeAll(async () => {
+    const token = await generateToken();
     await truncateDatabase();
     await createManyUsers({ quantity: totalUsers });
     successfulResponse = await getResponse({
@@ -162,6 +163,7 @@ describe('GET /users/:id', () => {
   let invalidParamsResponse = {};
   let userCreated = {};
   beforeAll(async () => {
+    const token = await generateToken();
     await truncateDatabase();
     userCreated = await createUser();
     successfulResponse = await getResponse({
