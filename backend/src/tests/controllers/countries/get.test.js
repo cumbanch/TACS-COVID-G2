@@ -1,6 +1,7 @@
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createManyCountries } = require('../../factories/countries');
-const { token } = require('../../factories/tokens');
+const { createUser } = require('../../factories/users');
+const { generateToken } = require('../../factories/tokens');
 const { getPaginationData, expectedPaginationKeys } = require('../../utils/paginations');
 
 const expectedCountriesKeys = [
@@ -26,7 +27,9 @@ describe('GET /countries', () => {
   let successResponseWithoutFilters = {};
   let invalidParamsResponse = {};
   beforeAll(async () => {
+    const token = await generateToken();
     await truncateDatabase();
+    await createUser();
     await createManyCountries({ quantity: countFakeCountries, country: { name: 'fake' } });
     await createManyCountries({ quantity: countTestCountries, country: { name: 'tests' } });
     successResponseFiltered = await getResponse({
