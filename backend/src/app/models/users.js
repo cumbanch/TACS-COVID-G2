@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
     'User',
     {
       name: { type: DataTypes.STRING, allowNull: false },
-      email: { type: DataTypes.STRING, allowNull: false },
+      email: { type: DataTypes.STRING, allowNull: false, unique: true },
+      lastName: { type: DataTypes.STRING, allowNull: false },
       password: { type: DataTypes.STRING, allowNull: false },
       lastAccess: { type: DataTypes.DATE },
       admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
@@ -14,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
     { timestamps: true, underscored: true, paranoid: true, tableName: 'users' }
   );
   User.associate = models => {
-    User.belongsTo(models.Country, { as: 'userCountry', foreignKey: 'countryId' });
     User.hasMany(models.List, { as: 'userList', foreignKey: 'userId' });
   };
   return User;

@@ -29,7 +29,16 @@ module.exports = {
         longitude: {
           type: Sequelize.STRING,
           allowNull: false
-        }
+        },
+        created_at: {
+          type: Sequelize.DATE,
+          allowNull: false
+        },
+        updated_at: {
+          type: Sequelize.DATE,
+          allowNull: false
+        },
+        deleted_at: Sequelize.DATE
       })
       .then(() =>
         queryInterface

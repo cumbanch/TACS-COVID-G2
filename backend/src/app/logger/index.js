@@ -1,7 +1,7 @@
-require('dotenv').config();
-
+const { minLevel } = require('../../config').logger;
+// eslint-disable-next-line import/order
 const logger = require('pino')({
-  level: process.env.LOGGER_MIN_LEVEL,
+  level: minLevel,
   prettyPrint: {
     translateTime: true,
     colorize: true

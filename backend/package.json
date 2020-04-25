@@ -9,14 +9,14 @@
   "scripts": {
     "eslint-check": "eslint --print-config ./src/.eslintrc.js --ignore-pattern ./src/.eslintrc.js | eslint-config-prettier-check",
     "lint": "eslint \"**/*.js\" --ignore-pattern ./src/.eslintrc.js",
-    "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
+    "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint --ignore-pattern ./src/.eslintrc.js",
     "lint-fix": "npm run lint -- --fix",
     "create-migration": "npx sequelize migration:create --options-path=src/.sequelizerc --name",
     "migrations": "npx sequelize --options-path=src/.sequelizerc db:migrate",
     "migrations-undo": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo",
     "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
     "migrations-reset": "npm run migrations-undo-all && npm run migrations",
-    "test": "jest",
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
     "start:dev": "npm run migrations; nodemon --inspect=0.0.0.0 src/server.js",
     "start:prod": "npm run migrations; node src/server.js",
     "start:test": "npm run migrations-reset; npm test",
@@ -39,17 +39,25 @@
     "url": "/issues"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
+    "bluebird": "^3.7.2",
     "body-parser": "^1.18.2",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.16.2",
+    "express-validator": "^6.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
+    "moment-timezone": "^0.5.28",
     "pg": "^8.0.2",
     "pino": "^6.1.1",
     "pino-pretty": "^4.0.0",
     "sequelize": "^5.21.6",
     "sequelize-cli": "^5.5.1",
     "swagger-ui-express": "^4.1.4",
-    "umzug": "^2.3.0"
+    "umzug": "^2.3.0",
+    "uuidv4": "^6.0.7"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -66,14 +74,39 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint-diff",
-      "pre-push": "npm test"
+      "pre-commit": "npm run lint-diff;"
     }
   },
   "jest": {
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    },
+    "collectCoverageFrom": [
+      "**/*.js",
+      "!**/node_modules/**",
+      "!**/migrations/**",
+      "!**/config/**",
+      "!**/app/models/**",
+      "!**/tests/factories/**",
+      "!**/coverage/**",
+      "!**/server.js"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "clover",
+      "json-summary"
+    ],
+    "coverageDirectory": "./src/coverage"
   }
 }
