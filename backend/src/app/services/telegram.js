@@ -35,12 +35,11 @@ exports.deleteTelegram = filters => {
   
   exports.createTelegram = attributes => {
     logger.info(`Attempting to create telegram with attributes: ${inspect(attributes)}`);
-    return sequelizeInstance
-      .transaction(transaction =>
-        Telegram.create(attributes, { transaction })
-      )
-      .catch(err => {
-        logger.error(inspect(err));
-        throw databaseError(`There was an error telegram the list: ${err.message}`);
-      });
+    return Telegram.findOne({ where: { chatId: attributes.chatId }})
+    .then(item => {
+        if (!item) {
+          return Telegram.create(attributes);
+        }
+        return Telegram.update(attributes, { where: { chatId: attributes.chatId }});
+    });
   };

@@ -2,7 +2,7 @@ const TeleBot = require('telebot');
 const { apiKey } = require('../../config').telegram;
 
 const { getUserBy } = require('../services/users');
-//const { getAllList } = require('../services/lists');
+const { getAllList } = require('../services/lists');
 const { getTelegram, createTelegram, deleteTelegram } = require('../services/telegram');
 
 
@@ -29,25 +29,23 @@ Please, start to login`;
 }
 
 exports.login = (email, password, chatId) =>
-    getUserBy({ email: email , password: password })
+    getUserBy({ email: email, password: password })
         .then(user => {
             if (!user) return 'User not found';
-            createTelegram({ chatId: chatId, userId: user.id });
+            createTelegram({ chatId: `${chatId}`, userId: user.id });
             return `Welcome ${user.name} ${user.lastName}!`
         });
-/*
-exports.lists = (chatId) =>
-    getTelegram({ chatId: chatId }) //, password: password })
-        .then(telegram =>
-            getAllList({ userId = telegram.userId })
-                .then(lists => {
-                    const inlineKeyboard = [];                    
-                    lists.forEach(list => inlineKeyboard.push(bot.inlineButton(list.name, {callback: `/lists/${list.id}`})));
-                    const replyMarkup = bot.inlineKeyboard(inlineKeyboard);
-                    // Send message with keyboard markup
-                    return bot.sendMessage(chatId, 'Choose one of your lists.', {replyMarkup});
-                }));
-*/
+
+exports.latestoflist = (chatId, listName) =>
+    getTelegram({ chatId: chatId })
+        .then(telegram => getListWithCountries({ userId: telegram.userId, name: listName })
+            .then(list => {
+                if (!list) throw notFound('List not found');
+                return getLatestByList(list);
+            })
+            .catch(next)
+        );
+
 exports.telegram = () => {
     const bot = new TeleBot({
         token: apiKey,
@@ -58,6 +56,8 @@ exports.telegram = () => {
         this.login(props.match[1], props.match[2], msg.from.id)
             .then((response) => msg.reply.text(response));
     });
-    //bot.on(/^\/lists$/, (msg, props) => this.lists(msg.from.id));
+    bot.on(/^\/latestoflist (.+)$/, (msg, props) => this.lists(msg.from.id, props.match[1])
+        .then((response) => msg.reply.text(response))
+    );
     bot.start();
 }
