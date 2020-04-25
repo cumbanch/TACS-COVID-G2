@@ -7,7 +7,7 @@ const statusCodes = {
   [errors.DEFAULT_ERROR]: 500,
   [errors.NOT_FOUND]: 404,
   [errors.INVALID_PARAMS]: 400,
-  [errors.NON_EMPTY_BODY]: 400,
+  [errors.EMPTY_BODY]: 400,
   [errors.INVALID_TOKEN]: 400,
   [errors.EXTERNAL_SERVICE_ERROR]: 503,
   [errors.INVALID_COUNTRIES]: 400

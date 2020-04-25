@@ -54,7 +54,7 @@ describe('DELETE /lists/:id', () => {
     it('Should return internal_code not_found', () => {
       expect(listNotFoundResponse.body.internal_code).toBe('not_found');
     });
-    it('Should return message indicating the provided list was not founded', () => {
+    it('Should return message indicating the provided list was not found', () => {
       expect(listNotFoundResponse.body.message).toBe('The list was not found');
     });
   });

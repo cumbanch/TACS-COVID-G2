@@ -65,10 +65,10 @@ describe('PUT /lists/:id', () => {
     it('Should return status code 400', () => {
       expect(emptyBodyResponse.statusCode).toEqual(400);
     });
-    it('Should return internal_code non_empty_body', () => {
-      expect(emptyBodyResponse.body.internal_code).toBe('non_empty_body');
+    it('Should return internal_code empty_body', () => {
+      expect(emptyBodyResponse.body.internal_code).toBe('empty_body');
     });
-    it('Should return message indicating the provided body are invalid', () => {
+    it('Should return message indicating the provided body is invalid', () => {
       expect(emptyBodyResponse.body.message).toBe("The body musn't be empty");
     });
   });
@@ -76,7 +76,7 @@ describe('PUT /lists/:id', () => {
     it('Should return status code 400', () => {
       expect(invalidCountriesResponse.statusCode).toEqual(400);
     });
-    it('Should return internal_code not_found', () => {
+    it('Should return internal_code invalid_countries', () => {
       expect(invalidCountriesResponse.body.internal_code).toBe('invalid_countries');
     });
     it('Should return message indicating the provided countries are invalid', () => {
