@@ -13,7 +13,7 @@ services:
       - "9229:9229"
       - "8080:8080"
     volumes:
-      - ./src:/usr/local/src
+      - ./src:/usr/local/src:ro
     command: ["npm", "run", "start:dev"]
     networks:
       - covid-19
