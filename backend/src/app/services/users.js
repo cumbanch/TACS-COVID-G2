@@ -24,6 +24,7 @@ exports.getUsers = params => {
     order: params.orderColumn ? [[params.orderColumn, params.orderType || 'ASC']] : undefined
   };
   return User.findAndCountAll(sequelizeOptions).catch(err => {
+    /* istanbul ignore next */
     logger.error(inspect(err));
     throw databaseError(`Error getting users, reason: ${err.message}`);
   });
@@ -32,7 +33,9 @@ exports.getUsers = params => {
 exports.getUserByPk = ({ id }) => {
   logger.info(`Attempting to get user with pk: ${inspect(id)}`);
   return User.findByPk(id).catch(err => {
+    /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`Error getting a user, reason: ${err.message}`);
   });
 };
@@ -41,7 +44,9 @@ exports.createUser = attrs => {
   logger.info(`Attempting to create user with attributes: ${inspect(attrs)}`);
   return User.findCreateFind({ where: { email: attrs.email }, defaults: attrs })
     .catch(err => {
+      /* istanbul ignore next */
       logger.error(inspect(err));
+      /* istanbul ignore next */
       throw databaseError(`Error creating a user, reason: ${err.message}`);
     })
     .then(([instance, created]) => {
@@ -53,7 +58,9 @@ exports.createUser = attrs => {
 exports.getUserBy = filters => {
   logger.info(`Attempting to get user with filters: ${inspect(filters)}`);
   return User.findOne({ where: filters }).catch(err => {
+    /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`Error getting a user, reason: ${err.message}`);
   });
 };

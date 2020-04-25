@@ -11,6 +11,7 @@ describe('DELETE /lists/:id', () => {
   let invalidParamsResponse = {};
   let listDeleted = null;
   let countryByListDeleted = null;
+  let listNotFoundResponse = {};
   beforeAll(async () => {
     const token = await generateToken();
     await truncateDatabase();
@@ -25,6 +26,11 @@ describe('DELETE /lists/:id', () => {
     });
     listDeleted = await List.findOne({ where: { id: listId } });
     countryByListDeleted = await CountryByList.findOne({ where: { id: listId } });
+    listNotFoundResponse = await getResponse({
+      endpoint: '/lists/14',
+      method: 'delete',
+      headers: { Authorization: token }
+    });
     invalidParamsResponse = await getResponse({
       endpoint: '/lists/asdasd',
       method: 'delete'
@@ -39,6 +45,17 @@ describe('DELETE /lists/:id', () => {
     });
     it('Should delete country by list', () => {
       expect(countryByListDeleted).toBeNull();
+    });
+  });
+  describe('Fail for list not found', () => {
+    it('Should return status code 404', () => {
+      expect(listNotFoundResponse.statusCode).toEqual(404);
+    });
+    it('Should return internal_code not_found', () => {
+      expect(listNotFoundResponse.body.internal_code).toBe('not_found');
+    });
+    it('Should return message indicating the provided list was not found', () => {
+      expect(listNotFoundResponse.body.message).toBe('The list was not found');
     });
   });
   describe('Fail for invalid request', () => {

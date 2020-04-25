@@ -22,7 +22,9 @@ exports.getAllCountries = params => {
     order: params.orderColumn ? [[params.orderColumn, params.orderType || 'ASC']] : undefined
   };
   return Country.findAndCountAll(sequelizeOptions).catch(err => {
+    /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`Error getting countries, reason: ${err.message}`);
   });
 };
@@ -30,6 +32,9 @@ exports.getAllCountries = params => {
 exports.getCountry = filters => {
   logger.info(`Attempting to get country with filters: ${inspect(filters)}`);
   return Country.findByPk(filters.id).catch(error => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`There was an error getting country: ${error.message}`);
   });
 };

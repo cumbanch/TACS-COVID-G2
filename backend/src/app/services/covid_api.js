@@ -46,7 +46,7 @@ exports.getLatestByList = list => {
   return axios
     .all(promises)
     .then(responses => {
-      const latestResults = responses.map(({ data }) => data.latest);
+      const latestResults = responses.filter(({ data }) => data.latest).map(({ data }) => data.latest);
       const sumOfLatest = latestResults.reduce((previous, current) => ({
         confirmed: previous.confirmed + current.confirmed,
         deaths: previous.deaths + current.deaths,

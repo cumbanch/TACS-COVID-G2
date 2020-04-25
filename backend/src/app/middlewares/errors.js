@@ -7,18 +7,14 @@ const statusCodes = {
   [errors.DEFAULT_ERROR]: 500,
   [errors.NOT_FOUND]: 404,
   [errors.INVALID_PARAMS]: 400,
-  [errors.NON_EMPTY_BODY]: 400,
+  [errors.EMPTY_BODY]: 400,
   [errors.INVALID_TOKEN]: 400,
   [errors.EXTERNAL_SERVICE_ERROR]: 503,
   [errors.INVALID_COUNTRIES]: 400
 };
 
 exports.handle = (error, req, res, next) => {
-  if (error.internalCode) res.status(statusCodes[error.internalCode] || DEFAULT_STATUS_CODE);
-  else {
-    // Unrecognized error, notifying it to rollbar.
-    next(error);
-    res.status(DEFAULT_STATUS_CODE);
-  }
+  /* istanbul ignore next */
+  res.status((error.internalCode && statusCodes[error.internalCode]) || DEFAULT_STATUS_CODE);
   return res.send({ message: error.message, internal_code: error.internalCode });
 };
