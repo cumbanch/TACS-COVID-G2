@@ -88,7 +88,15 @@ exports.getLatest = (req, res, next) => {
   return getListWithCountries(params)
     .then(list => {
       if (!list) throw notFound('List not found');
-      return getLatestByList(list).then(latestResult => res.status(200).send(latestResult));
+      return getLatestByList(list).then(latestResult =>
+        res.status(200).send(
+          latestResult || {
+            confirmed: 0,
+            deaths: 0,
+            recovered: 0
+          }
+        )
+      );
     })
     .catch(next);
 };

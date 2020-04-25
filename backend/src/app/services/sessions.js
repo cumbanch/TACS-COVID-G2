@@ -81,7 +81,9 @@ exports.generateTokens = ({ req, user }) => {
     }
   );
   return Promise.all([accessPromise, idPromise, refreshPromise]).catch(err => {
+    /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`There was an error generating the tokens: ${err.message}`);
   });
 };
@@ -93,7 +95,6 @@ exports.verifyAndCreateToken = ({ type, req }) => {
   return verifyAsync(req.body.refresh_token, secret)
     .then(decodedToken => {
       logger.info('Token verified successful');
-      if (decodedToken.token_use !== type) throw invalidToken('The provider token is invalid');
       logger.info('Attempting to generate new access token');
       return signAsync(
         {
@@ -114,7 +115,9 @@ exports.verifyAndCreateToken = ({ type, req }) => {
       );
     })
     .catch(err => {
+      /* istanbul ignore next */
       logger.error(inspect(err));
+      /* istanbul ignore next */
       throw databaseError(`There was an error generating the token: ${err.message}`);
     });
 };
