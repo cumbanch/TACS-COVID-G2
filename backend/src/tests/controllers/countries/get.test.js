@@ -31,15 +31,21 @@ describe('GET /countries', () => {
     await truncateDatabase();
     await createUser();
     await createManyCountries({ quantity: countFakeCountries, country: { name: 'fake' } });
-    await createManyCountries({ quantity: countTestCountries, country: { name: 'tests' } });
+    await createManyCountries({
+      quantity: countTestCountries,
+      country: { name: 'tests', iso2: 'iso2', iso3: 'iso3' }
+    });
     successResponseFiltered = await getResponse({
       endpoint: '/countries',
       method: 'get',
       headers: { Authorization: token },
       query: {
         name: 'test',
+        isocode2: 'iso',
+        isocode3: 'iso',
         page: expectedPaginationWithFilter.page,
-        limit: expectedPaginationWithFilter.limit
+        limit: expectedPaginationWithFilter.limit,
+        order_column: 'id'
       }
     });
     successResponseWithoutFilters = await getResponse({
@@ -48,7 +54,7 @@ describe('GET /countries', () => {
       headers: { Authorization: token }
     });
     invalidParamsResponse = await getResponse({
-      endpoint: '/users',
+      endpoint: '/countries',
       method: 'get',
       query: { limit: 'name', page: 'forty', order_column: 'delivery_name', order_type: 'ascendent' }
     });
