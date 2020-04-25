@@ -69,7 +69,7 @@ describe('GET /users', () => {
       expect(successfulResponse.body.page).toBe(expectedPaginationWithoutParams.page);
     });
     it(`Should return limit ${expectedPaginationWithoutParams.limit}`, () => {
-      expect(successfulResponse.body.limit).toBe(expectedPaginationWithoutParams.limit);
+      expect(parseInt(successfulResponse.body.limit)).toBe(expectedPaginationWithoutParams.limit);
     });
     it(`Should return ${expectedPaginationWithoutParams.limit} results`, () => {
       expect(successfulResponse.body.data.length).toBe(expectedPaginationWithoutParams.limit);
