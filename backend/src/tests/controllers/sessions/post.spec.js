@@ -49,10 +49,10 @@ describe('POST /sessions/login', () => {
     it('Should return internal_code invalid_params', () => {
       expect(invalidParamsResponse.body.internal_code).toBe('invalid_params');
     });
-    it('Should return an error indicating the provider email is not valid', () => {
+    it('Should return an error indicating the provided email is not valid', () => {
       expect(invalidParamsResponse.body.message).toContain('email must be a string and be contained in body');
     });
-    it('Should return an error indicating the provider password is not valid', () => {
+    it('Should return an error indicating the provided password is not valid', () => {
       expect(invalidParamsResponse.body.message).toContain(
         'password must be a string, be a hash and be contained in body'
       );
@@ -65,7 +65,7 @@ describe('POST /sessions/login', () => {
     it('Should return internal_code not_found', () => {
       expect(notFoundResponse.body.internal_code).toBe('not_found');
     });
-    it("Should return an error indicating the provider user doesn't exist", () => {
+    it("Should return an error indicating the provided user doesn't exist", () => {
       expect(notFoundResponse.body.message).toEqual('User not found');
     });
   });
@@ -121,7 +121,7 @@ describe('POST /sessions/logout', () => {
     it('Should return internal_code invalid_params', () => {
       expect(invalidParamsResponse.body.internal_code).toBe('invalid_params');
     });
-    it('Should return an error indicating the provider authorization header is not valid', () => {
+    it('Should return an error indicating the provided authorization header is not valid', () => {
       expect(invalidParamsResponse.body.message).toContain(
         'Authorization must be a jwt token and must be contained in headers'
       );

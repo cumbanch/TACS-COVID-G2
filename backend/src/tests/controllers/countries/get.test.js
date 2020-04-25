@@ -48,7 +48,7 @@ describe('GET /countries', () => {
       headers: { Authorization: token }
     });
     invalidParamsResponse = await getResponse({
-      endpoint: '/users',
+      endpoint: '/countries',
       method: 'get',
       query: { limit: 'name', page: 'forty', order_column: 'delivery_name', order_type: 'ascendent' }
     });
