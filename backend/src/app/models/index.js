@@ -4,11 +4,12 @@ const Sequelize = require('sequelize');
 
 const config = require('../../config');
 
-const { dialect, username, password, port, database, host } = config.database;
+const { dialect, username, password, port, database, host, logging } = config.database;
+const options = { logging: logging.toLowerCase() == 'true' };
 const connectionString = `${dialect}://${username}:${password}@${host}:${port}/${database}`;
 const basename = path.basename(__filename);
 const db = {};
-const sequelize = new Sequelize(connectionString);
+const sequelize = new Sequelize(connectionString, options);
 
 const requireAllModels = () =>
   fs
