@@ -56,7 +56,7 @@ describe('POST /lists', () => {
     it('Should return an error indicating the provided name is not valid', () => {
       expect(invalidParamsResponse.body.message).toContain('name must be a string and be contained in body');
     });
-    it('Should return an error indicating the provided countries is not valid', () => {
+    it('Should return an error indicating the provided countries are not valid', () => {
       expect(invalidParamsResponse.body.message).toContain('countries must be an array of integers');
     });
     it('Should return an error indicating the provided authorization header is not valid', () => {
@@ -69,7 +69,7 @@ describe('POST /lists', () => {
     it('Should return status code 400', () => {
       expect(invalidCountriesResponse.statusCode).toEqual(400);
     });
-    it('Should return internal_code not_found', () => {
+    it('Should return internal_code invalid_countries', () => {
       expect(invalidCountriesResponse.body.internal_code).toBe('invalid_countries');
     });
     it('Should return message indicating the provided countries are invalid', () => {
@@ -128,7 +128,7 @@ describe('POST /lists/:id/countries', () => {
     it('Should return internal_code not_found', () => {
       expect(listNotFoundResponse.body.internal_code).toBe('not_found');
     });
-    it('Should return message indicating the provided list was not founded', () => {
+    it('Should return message indicating the provided list was not found', () => {
       expect(listNotFoundResponse.body.message).toBe('The list was not found');
     });
   });
@@ -139,7 +139,7 @@ describe('POST /lists/:id/countries', () => {
     it('Should return internal_code not_found', () => {
       expect(invalidCountriesResponse.body.internal_code).toBe('not_found');
     });
-    it('Should return message indicating the provided country is invalid', () => {
+    it('Should return message indicating the country was not found', () => {
       expect(invalidCountriesResponse.body.message).toBe('The country was not found');
     });
   });
