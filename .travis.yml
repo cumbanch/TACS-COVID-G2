@@ -13,3 +13,7 @@ before_script:
   - rpl dev test .env.testing
 
 script: npm run testing
+
+branches:
+  only:
+    - "master"
