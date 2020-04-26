@@ -5,6 +5,17 @@ node_js:
 services:
   - docker
 
-before_script: cd backend
+before_script:
+  - cd backend
+  - touch backend/.env.testing
 
 script: npm run testing
+
+env:
+  - POSTGRES_HOST=covid-19-db-test
+  - POSTGRES_PORT=5432
+  - POSTGRES_USER=admin
+  - POSTGRES_PASSWORD=admin
+  - POSTGRES_DB=covid19
+  - POSTGRES_LOGGING=true
+  - LOGGER_MIN_LEVEL=debug
