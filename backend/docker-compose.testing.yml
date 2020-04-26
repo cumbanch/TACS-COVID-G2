@@ -8,6 +8,8 @@ services:
     container_name: covid-19-test
     env_file:
       - .env.testing
+    environment:
+      - WAIT_HOSTS=covid-19-db-test:5432
     depends_on:
       - covid-19-db-test
     networks:

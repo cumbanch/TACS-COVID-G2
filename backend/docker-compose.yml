@@ -6,6 +6,8 @@ services:
     container_name: covid-19
     env_file:
       - .env
+    environment:
+      - WAIT_HOSTS=covid-19-db:5432
     depends_on:
       - covid-19-db
     ports:

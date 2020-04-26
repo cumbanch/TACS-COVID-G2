@@ -8,6 +8,8 @@ services:
     container_name: covid-19-dev
     env_file:
       - .env.development
+    environment:
+      - WAIT_HOSTS=covid-19-db-dev:5432
     depends_on:
       - covid-19-db-dev
     ports:
@@ -24,7 +26,7 @@ services:
     env_file:
       - .env.development
     ports:
-      - "35432:5432"
+      - "5432:5432"
     networks:
       - covid-19
 
