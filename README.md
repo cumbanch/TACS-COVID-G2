@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/molinajulian/TACS-COVID-G2.png?branch=master)](https://travis-ci.org/molinajulian/TACS-COVID-G2)
 
   
 
