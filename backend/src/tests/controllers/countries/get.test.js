@@ -117,7 +117,7 @@ describe('GET /countries', () => {
       expect(successResponseWithoutFilters.body.page).toBe(expectedPaginationWithoutFilters.page);
     });
     it(`Should return limit ${expectedPaginationWithoutFilters.limit}`, () => {
-      expect(successResponseWithoutFilters.body.limit).toBe(expectedPaginationWithoutFilters.limit);
+      expect(parseInt(successResponseWithoutFilters.body.limit)).toBe(expectedPaginationWithoutFilters.limit);
     });
     it(`Should return ${expectedPaginationWithoutFilters.limit} results`, () => {
       expect(successResponseWithoutFilters.body.data.length).toBe(expectedPaginationWithoutFilters.limit);
