@@ -23,5 +23,5 @@ branches:
     - "master"
 
 after_success:
-  - docker cp covid-19-test:/usr/local/coverage ./
-  - codecov --file coverage/lcov.info --disable search
+  - docker cp covid-19-test:/usr/local/coverage/lcov.info ./
+  - codecov --file ./lcov.info --disable search
