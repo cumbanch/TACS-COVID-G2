@@ -10,7 +10,9 @@ const statusCodes = {
   [errors.EMPTY_BODY]: 400,
   [errors.INVALID_TOKEN]: 400,
   [errors.EXTERNAL_SERVICE_ERROR]: 503,
-  [errors.INVALID_COUNTRIES]: 400
+  [errors.INVALID_COUNTRIES]: 400,
+  [errors.INVALID_CREDENTIALS]: 401,
+  [errors.DEPENDENCY_ERROR]: 500
 };
 
 exports.handle = (error, req, res, next) => {
