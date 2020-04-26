@@ -3,21 +3,26 @@ version: "3.4"
 services:
   covid-19-dev:
     build:
-      context: ./
-      dockerfile: Dockerfile.development
+      context: .
+      args:
+        - NODE_ENV=development
+        - USER=node
     container_name: covid-19-dev
     env_file:
       - .env.development
-    depends_on:
-      - covid-19-db-dev
+    environment:
+      - WAIT_HOSTS=covid-19-db-dev:5432
     ports:
-      - "8080:8080"
       - "9229:9229"
+      - "8080:8080"
+    volumes:
+      - ./src:/usr/local/src:ro
+    command: sh -c "/wait && npm run start:dev"
     networks:
       - covid-19
-    volumes:
-      - ./src:/usr/local/src
-
+    depends_on:
+      - covid-19-db-dev
+  
   covid-19-db-dev:
     image: postgres:12-alpine
     container_name: covid-19-db-dev
