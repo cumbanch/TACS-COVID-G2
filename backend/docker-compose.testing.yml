@@ -1,12 +1,12 @@
 version: "3.4"
 
 services:
-  covid-19-dev:
+  covid-19-test:
     build:
       context: .
       args:
         - NODE_ENV=testing
-    container_name: covid-19-dev
+    container_name: covid-19-test
     env_file:
       - .env.testing
     environment:
