@@ -8,6 +8,6 @@ services:
 before_script:
   - cd backend
   - cp .env.example .env.testing
-  - sed -i '' -e 's/dev/test' .env.testing
+  - sed -i 's/dev/test' .env.testing
 
 script: npm run testing
