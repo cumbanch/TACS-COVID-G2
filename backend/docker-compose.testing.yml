@@ -14,7 +14,7 @@ services:
       - "8080:8080"
     volumes:
       - ./src:/usr/local/src:ro
-    command: ["npm", "run", "start:dev"]
+    command: ["npm", "run", "start:test"]
     networks:
       - covid-19
     depends_on:
@@ -24,7 +24,7 @@ services:
     image: postgres:12-alpine
     container_name: covid-19-db-test
     env_file:
-      - .env.test
+      - .env.testing
     ports:
       - "5432:5432"
     networks:
