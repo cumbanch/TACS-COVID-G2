@@ -5,6 +5,7 @@ ENV NODE_ENV=$NODE_ENV
 RUN echo $NODE_ENV
 
 WORKDIR /usr/local/
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.2/wait /wait
 
 COPY package*.json /usr/local/
 
@@ -12,7 +13,9 @@ RUN if [ "$NODE_ENV" = "production" ]; then npm install --production; else npm i
 
 COPY src /usr/local/src
 
-EXPOSE 8080
-USER node
+RUN chmod +x /wait
 
-CMD ["npm", "run", "start:prod"]
+EXPOSE 443
+USER $USER
+
+CMD  /wait && npm run start:prod

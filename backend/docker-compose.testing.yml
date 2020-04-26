@@ -1,20 +1,20 @@
 version: "3.4"
 
 services:
-  covid-19-dev:
+  covid-19-test:
     build:
       context: .
       args:
         - NODE_ENV=testing
-    container_name: covid-19-dev
+        - USER=root
+    container_name: covid-19-test
     env_file:
       - .env.testing
-    ports:
-      - "9229:9229"
-      - "8080:8080"
+    environment:
+      - WAIT_HOSTS=covid-19-db-test:5432
     volumes:
       - ./src:/usr/local/src:ro
-    command: ["npm", "run", "start:test"]
+    command: sh -c "/wait && npm run start:test"
     networks:
       - covid-19
     depends_on:
@@ -26,7 +26,7 @@ services:
     env_file:
       - .env.testing
     ports:
-      - "5432:5432"
+      - "45432:5432"
     networks:
       - covid-19
 
