@@ -2,13 +2,33 @@ version: "3.4"
 
 services:
   covid-19-dev:
-    container_name: covid-19-test
+    build:
+      context: .
+      args:
+        - NODE_ENV=testing
+    container_name: covid-19-dev
     env_file:
       - .env.testing
-    command: ["npm", "run", "start:test"]
-    environment:
-      - NODE_ENV="testing"
+    ports:
+      - "9229:9229"
+      - "8080:8080"
+    volumes:
+      - ./src:/usr/local/src:ro
+    command: ["npm", "run", "start:dev"]
+    networks:
+      - covid-19
+    depends_on:
+      - covid-19-db-test
   
-  covid-19-db-dev:
+  covid-19-db-test:
+    image: postgres:12-alpine
+    container_name: covid-19-db-test
     env_file:
-      - .env.testing
+      - .env.test
+    ports:
+      - "5432:5432"
+    networks:
+      - covid-19
+
+networks:
+  covid-19:
