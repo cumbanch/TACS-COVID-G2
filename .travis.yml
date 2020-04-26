@@ -3,7 +3,9 @@ node_js: 10.14.1
 
 services: docker
 
-before_install: apt-get install rpl
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install rpl
 
 before_script:
   - cd backend
