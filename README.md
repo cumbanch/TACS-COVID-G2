@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/molinajulian/TACS-COVID-G2.png?branch=master)](https://travis-ci.org/molinajulian/TACS-COVID-G2)
 
-![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/molinajulian/TACS-COVID-G2.svg)  
+[![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/molinajulian/TACS-COVID-G2.svg)](https://codecov.io/github/molinajulian/TACS-COVID-G2?branch=master) 
 
 # TACS-COVID-G2
   
