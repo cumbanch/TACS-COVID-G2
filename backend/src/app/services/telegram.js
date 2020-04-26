@@ -8,8 +8,7 @@ exports.getTelegram = (filters, options = {}) => {
     logger.info(`Attempting to get telegram with filters: ${inspect(filters)}`);
     return Telegram.findOne({
       where: {
-        id: filters.id,
-        userId: filters.userId
+        chatId: `${filters.chatId}`
       },
       ...options
     }).catch(err => {
