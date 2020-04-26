@@ -6,14 +6,22 @@ services: docker
 before_install:
   - sudo apt-get update
   - sudo apt-get install rpl
+  - pip install --user codecov
 
 before_script:
   - cd backend
   - cp .env.example .env.testing
   - rpl dev test .env.testing
 
+env:
+  - CODECOV_TOKEN="a72c65b4-7ce0-472c-b960-c822fa15960f"  
+
 script: npm run testing
 
 branches:
   only:
     - "master"
+
+after_success:
+  - docker cp covid-19-test:/usr/local/coverage ./
+  - codecov --file coverage/lcov.info --disable search
