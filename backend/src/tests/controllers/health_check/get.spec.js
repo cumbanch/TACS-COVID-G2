@@ -7,7 +7,7 @@ describe('Health check endpoint', () => {
       res = await getResponse({ endpoint: '/health', method: 'get' });
     });
     it('Should return status code 200', () => {
-      expect(res.statusCode).toEqual(300);
+      expect(res.statusCode).toEqual(200);
     });
     it('Should return the uptime', () => {
       expect(res.body).toHaveProperty('uptime');
