@@ -1,14 +1,13 @@
 language: node_js
-node_js:
-  - 10.14.1
+node_js: 10.14.1
 
-services:
-  - docker
+services: docker
+
+before_install: apt-get install rpl
 
 before_script:
   - cd backend
   - cp .env.example .env.testing
-  - cat .env.testing
-  - sed -i '' -e 's/dev/test' .env.testing
+  - rpl dev test .env.testing
 
 script: npm run testing
