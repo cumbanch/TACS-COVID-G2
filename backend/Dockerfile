@@ -1,17 +1,21 @@
 FROM node:10.14.1-alpine
 
+ARG NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
+RUN echo $NODE_ENV
+
 WORKDIR /usr/local/
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.2/wait /wait
 
 COPY package*.json /usr/local/
 
-RUN npm install --production
+RUN if [ "$NODE_ENV" = "production" ]; then npm install --production; else npm install; fi
 
 COPY src /usr/local/src
 
 RUN chmod +x /wait
 
-EXPOSE 80
-ENV NODE_ENV production
+EXPOSE 8080
+USER node
 
 CMD  /wait && npm run start:prod
