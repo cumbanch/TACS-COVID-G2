@@ -25,7 +25,7 @@ services:
     env_file:
       - .env.testing
     ports:
-      - "35432:5432"
+      - "45432:5432"
     networks:
       - covid-19
 
