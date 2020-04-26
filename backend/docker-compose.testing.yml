@@ -11,9 +11,6 @@ services:
       - .env.testing
     environment:
       - WAIT_HOSTS=covid-19-db-test:5432
-    ports:
-      - "9229:9229"
-      - "8080:8080"
     volumes:
       - ./src:/usr/local/src
     command: sh -c "/wait && npm run start:test"]
