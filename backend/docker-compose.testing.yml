@@ -13,7 +13,7 @@ services:
       - WAIT_HOSTS=covid-19-db-test:5432
     volumes:
       - ./src:/usr/local/src
-    command: sh -c "/wait && npm run start:test"]
+    command: sh -c "/wait && npm run start:test"
     networks:
       - covid-19
     depends_on:
