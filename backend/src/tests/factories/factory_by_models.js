@@ -61,7 +61,7 @@ const getChanceNameAndOptions = key => {
   const isName = key.toLowerCase().includes('name');
   const isLastName = isName && key.toLowerCase().includes('last');
   const isPassword = key.toLowerCase().includes('password');
-  if (isEmail) return { name: 'email', options: { domain: 'gmail.com' } };
+  if (isEmail) return { name: 'email', options: { sequence: true } };
   if (isName) return { name: 'name' };
   if (isLastName) return { name: 'last' };
   if (isPassword) return { name: 'hash', options: { length: 10 } };
@@ -73,7 +73,10 @@ const generatorByDatatype = (type, model, key) => {
   const { name, options = {} } = getChanceNameAndOptions(key);
   return {
     [INTEGER]: intValidation(model, key),
-    [STRING]: factory.chance(name, options),
+    [STRING]:
+      options && options.sequence
+        ? factory.sequence(`${model.name}.email`, n => `dummy-user-${n}@gmail.com`)
+        : factory.chance(name, options),
     [BOOLEAN]: factory.chance('bool'),
     [TEXT]: factory.chance('paragraph'),
     [DATE]: factory.chance('date', { string: true }),

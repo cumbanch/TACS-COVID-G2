@@ -2,7 +2,7 @@ const { inspect } = require('util');
 
 const logger = require('../logger');
 const { List, CountryByList, sequelizeInstance, Country } = require('../models');
-const { databaseError, notFound } = require('../errors/builders');
+const { databaseError, notFound, invalidCountries } = require('../errors/builders');
 const { getCountry } = require('./countries');
 
 const getCountriesToDeleteAndCreate = (list, attributes) => {
@@ -33,7 +33,9 @@ exports.getAllList = filters => {
     limit: filters.limit,
     order: filters.orderColumn ? [[filters.orderColumn, filters.orderType || 'ASC']] : undefined
   }).catch(err => {
+    /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`There was an error getting the lists: ${err.message}`);
   });
 };
@@ -47,7 +49,9 @@ exports.getList = (filters, options = {}) => {
     },
     ...options
   }).catch(err => {
+    /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`There was an error getting the list: ${err.message}`);
   });
 };
@@ -75,7 +79,9 @@ exports.deleteList = filters => {
         ).then(() => list.destroy({ transaction }))
       )
       .catch(err => {
+        /* istanbul ignore next */
         logger.error(inspect(err));
+        /* istanbul ignore next */
         throw databaseError(`There was an error deleting the list: ${err.message}`);
       });
   });
@@ -83,18 +89,30 @@ exports.deleteList = filters => {
 
 exports.createList = attributes => {
   logger.info(`Attempting to create list with attributes: ${inspect(attributes)}`);
-  return sequelizeInstance
-    .transaction(transaction =>
-      List.create(attributes, { transaction }).then(({ id: listId }) => {
-        const countriesByListPromises = attributes.countriesIds.map(countryId =>
-          CountryByList.create({ countryId, listId }, { transaction })
-        );
-        return Promise.all([countriesByListPromises]);
-      })
-    )
+  return Country.count({ where: { id: attributes.countriesIds } })
     .catch(err => {
+      /* istanbul ignore next */
       logger.error(inspect(err));
-      throw databaseError(`There was an error creating the list: ${err.message}`);
+      /* istanbul ignore next */
+      throw databaseError(`There was an error verifying the countries: ${err.message}`);
+    })
+    .then(count => {
+      if (attributes.countriesIds.length !== count) throw invalidCountries();
+      return sequelizeInstance
+        .transaction(transaction =>
+          List.create(attributes, { transaction }).then(({ id: listId }) => {
+            const countriesByListPromises = attributes.countriesIds.map(countryId =>
+              CountryByList.create({ countryId, listId }, { transaction })
+            );
+            return Promise.all([countriesByListPromises]);
+          })
+        )
+        .catch(err => {
+          /* istanbul ignore next */
+          logger.error(inspect(err));
+          /* istanbul ignore next */
+          throw databaseError(`There was an error creating the list: ${err.message}`);
+        });
     });
 };
 
@@ -105,20 +123,32 @@ exports.updateList = attributes => {
     if (!list) {
       throw notFound('The list was not found');
     }
-    return sequelizeInstance
-      .transaction(transaction => {
-        const { countriesByListToDelete, countriesByListToCreate } = getCountriesToDeleteAndCreate(
-          list,
-          attributes
-        );
-        return Promise.all([
-          ...countriesByListToDelete.map(countryByList => countryByList.destroy({ transaction })),
-          CountryByList.bulkCreate(countriesByListToCreate, { transaction })
-        ]);
-      })
+    return Country.count({ where: { id: attributes.countriesIds } })
       .catch(err => {
+        /* istanbul ignore next */
         logger.error(inspect(err));
-        throw databaseError(`There was an error updating the list: ${err.message}`);
+        /* istanbul ignore next */
+        throw databaseError(`There was an error verifying the countries: ${err.message}`);
+      })
+      .then(count => {
+        if (attributes.countriesIds.length !== count) throw invalidCountries();
+        return sequelizeInstance
+          .transaction(transaction => {
+            const { countriesByListToDelete, countriesByListToCreate } = getCountriesToDeleteAndCreate(
+              list,
+              attributes
+            );
+            return Promise.all([
+              ...countriesByListToDelete.map(countryByList => countryByList.destroy({ transaction })),
+              CountryByList.bulkCreate(countriesByListToCreate, { transaction })
+            ]);
+          })
+          .catch(err => {
+            /* istanbul ignore next */
+            logger.error(inspect(err));
+            /* istanbul ignore next */
+            throw databaseError(`There was an error updating the list: ${err.message}`);
+          });
       });
   });
 };
@@ -143,7 +173,9 @@ exports.getCountriesByList = filters => {
         count: countriesByList.count
       }))
       .catch(err => {
+        /* istanbul ignore next */
         logger.error(inspect(err));
+        /* istanbul ignore next */
         throw databaseError(`There was an error getting countries of the list: ${err.message}`);
       });
   });
@@ -163,7 +195,9 @@ exports.createCountriesByList = attributes => {
         countryId: attributes.countryId,
         listId: attributes.id
       }).catch(err => {
+        /* istanbul ignore next */
         logger.error(inspect(err));
+        /* istanbul ignore next */
         throw databaseError(`There was an error creating country of the list: ${err.message}`);
       });
     });
@@ -172,20 +206,20 @@ exports.createCountriesByList = attributes => {
 
 exports.deleteCountriesByList = attributes => {
   logger.info(`Attempting to delete countries by list with attributes: ${inspect(attributes)}`);
-  return this.getList(attributes)
-    .then(list => {
-      if (!list) {
-        throw notFound('The list was not found');
+  return this.getList(attributes).then(list => {
+    if (!list) {
+      throw notFound('The list was not found');
+    }
+    return CountryByList.destroy({
+      where: {
+        countryId: attributes.countryId,
+        listId: attributes.id
       }
-      return CountryByList.destroy({
-        where: {
-          countryId: attributes.countryId,
-          listId: attributes.id
-        }
-      });
-    })
-    .catch(err => {
+    }).catch(err => {
+      /* istanbul ignore next */
       logger.error(inspect(err));
+      /* istanbul ignore next */
       throw databaseError(`There was an error deleting country of the list: ${err.message}`);
     });
+  });
 };
