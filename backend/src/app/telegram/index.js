@@ -1,9 +1,7 @@
 const TeleBot = require('telebot');
 const { apiKey } = require('../../config').telegram;
 
-const { getUserBy } = require('../services/users');
-const { getAllList } = require('../services/lists');
-const { getTelegram, createTelegram, deleteTelegram } = require('../services/telegram');
+const { getTelegramLogin } = require('../telegram/sessions');
 
 
 exports.help = () => {
@@ -28,35 +26,13 @@ You can control me by sending these commands:
 Please, start to login`;
 }
 
-exports.login = (email, password, chatId) =>
-    getUserBy({ email: email, password: password })
-        .then(user => {
-            if (!user) return 'User not found';
-            createTelegram({ chatId: `${chatId}`, userId: user.id });
-            return `Welcome ${user.name} ${user.lastName}!`
-        });
-
-exports.latestoflist = (chatId, listName) =>
-    getTelegram({ chatId: chatId })
-        .then(telegram => getListWithCountries({ userId: telegram.userId, name: listName })
-            .then(list => {
-                if (!list) throw notFound('List not found');
-                return getLatestByList(list);
-            })
-            .catch(next)
-        );
-
 exports.telegram = () => {
     const bot = new TeleBot({
         token: apiKey,
         usePlugins: ['commandButton']
     });
     bot.on(['/start', '/help'], (msg) => msg.reply.text(this.help()));
-    bot.on(/^\/login (.+) (.+)$/, (msg, props) => {
-        this.login(props.match[1], props.match[2], msg.from.id)
-            .then((response) => msg.reply.text(response));
-    });
-    bot.on(/^\/latestoflist (.+)$/, (msg, props) => this.lists(msg.from.id, props.match[1])
+    bot.on(/^\/login (.+) (.+)$/, (msg, props) => getTelegramLogin(props.match[1], props.match[2], msg.from.id)
         .then((response) => msg.reply.text(response))
     );
     bot.start();
