@@ -1,7 +1,7 @@
 const { getUserBy } = require('../services/users');
 const { createTelegram } = require('../services/telegram');
 
-exports.telegramLogin = (email, password, chatId) =>
+exports.getTelegramLogin = (email, password, chatId) =>
     getUserBy({ email: email, password: password })
         .then(user => {
             if (!user) return 'User not found';
