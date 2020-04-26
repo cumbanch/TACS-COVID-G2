@@ -16,6 +16,6 @@ COPY src /usr/local/src
 RUN chmod +x /wait
 
 EXPOSE 443
-USER node
+USER $USER
 
 CMD  /wait && npm run start:prod

@@ -6,6 +6,7 @@ services:
       context: .
       args:
         - NODE_ENV=production
+        - USER=node
     container_name: covid-19
     env_file:
       - .env

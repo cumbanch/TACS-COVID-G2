@@ -6,13 +6,14 @@ services:
       context: .
       args:
         - NODE_ENV=testing
+        - USER=root
     container_name: covid-19-test
     env_file:
       - .env.testing
     environment:
       - WAIT_HOSTS=covid-19-db-test:5432
     volumes:
-      - ./src:/usr/local/src
+      - ./src:/usr/local/src:ro
     command: sh -c "/wait && npm run start:test"
     networks:
       - covid-19
