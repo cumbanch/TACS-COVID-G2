@@ -10,9 +10,12 @@ const statusCodes = {
   [errors.EMPTY_BODY]: 400,
   [errors.INVALID_TOKEN]: 400,
   [errors.EXTERNAL_SERVICE_ERROR]: 503,
-  [errors.INVALID_COUNTRIES]: 400
+  [errors.INVALID_COUNTRIES]: 400,
+  [errors.INVALID_CREDENTIALS]: 401,
+  [errors.INTERNAL_SERVER_ERROR]: 500
 };
 
+// eslint-disable-next-line
 exports.handle = (error, req, res, next) => {
   /* istanbul ignore next */
   res.status((error.internalCode && statusCodes[error.internalCode]) || DEFAULT_STATUS_CODE);

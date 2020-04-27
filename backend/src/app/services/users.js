@@ -7,7 +7,8 @@ const {
   sequelizePackage: { Op }
 } = require('../models');
 const { deleteUndefined } = require('../utils/objects');
-const { databaseError, alreadyExist } = require('../errors/builders');
+const { databaseError, alreadyExist, internalServerError } = require('../errors/builders');
+const { hashPassword } = require('./sessions');
 
 exports.getUsers = params => {
   logger.info(`Attempting to get users with params: ${inspect(params)}`);
@@ -42,16 +43,25 @@ exports.getUserByPk = ({ id }) => {
 
 exports.createUser = attrs => {
   logger.info(`Attempting to create user with attributes: ${inspect(attrs)}`);
-  return User.findCreateFind({ where: { email: attrs.email }, defaults: attrs })
+  return hashPassword(attrs.password)
+    .then(hash =>
+      User.findCreateFind({ where: { email: attrs.email }, defaults: { ...attrs, password: hash } })
+        .catch(err => {
+          /* istanbul ignore next */
+          logger.error(inspect(err));
+          /* istanbul ignore next */
+          throw databaseError(`Error creating a user, reason: ${err.message}`);
+        })
+        .then(([instance, created]) => {
+          if (!created) throw alreadyExist('User already exist');
+          return instance;
+        })
+    )
     .catch(err => {
       /* istanbul ignore next */
       logger.error(inspect(err));
       /* istanbul ignore next */
-      throw databaseError(`Error creating a user, reason: ${err.message}`);
-    })
-    .then(([instance, created]) => {
-      if (!created) throw alreadyExist('User already exist');
-      return instance;
+      throw internalServerError(err.message);
     });
 };
 

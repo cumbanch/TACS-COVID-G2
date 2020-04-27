@@ -2,6 +2,7 @@ const { uuid } = require('uuidv4');
 const { promisifyAll } = require('bluebird');
 const { signAsync, verifyAsync } = promisifyAll(require('jsonwebtoken'));
 const { inspect } = require('util');
+const { hash, compare, genSalt } = require('bcryptjs');
 
 const { moment } = require('../utils/moment');
 const {
@@ -11,10 +12,11 @@ const {
   expirationValueAccessToken,
   expirationValueIdToken,
   expirationValueRefreshToken,
-  secret
+  secret,
+  hashingSalts
 } = require('../../config').session;
 const logger = require('../logger');
-const { invalidToken, databaseError } = require('../errors/builders');
+const { databaseError, internalServerError } = require('../errors/builders');
 
 const getIss = req => `${req.protocol}://${req.get('host')}`;
 
@@ -88,12 +90,12 @@ exports.generateTokens = ({ req, user }) => {
   });
 };
 
-exports.verifyAndCreateToken = ({ type, req }) => {
+exports.verifyAndCreateToken = ({ req }) => {
   logger.info(
     `Attempting to verify token ${req.body.refresh_token} generated for the user with id :${req.user.id}`
   );
   return verifyAsync(req.body.refresh_token, secret)
-    .then(decodedToken => {
+    .then(() => {
       logger.info('Token verified successful');
       logger.info('Attempting to generate new access token');
       return signAsync(
@@ -121,3 +123,21 @@ exports.verifyAndCreateToken = ({ type, req }) => {
       throw databaseError(`There was an error generating the token: ${err.message}`);
     });
 };
+
+exports.hashPassword = password =>
+  genSalt(parseInt(hashingSalts))
+    .then(salt => hash(password, salt))
+    .catch(err => {
+      /* istanbul ignore next */
+      logger.error(inspect(err));
+      /* istanbul ignore next */
+      throw internalServerError(err.message);
+    });
+
+exports.comparePassword = (password, hashedPassword) =>
+  compare(password, hashedPassword).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
+    throw internalServerError(err.message);
+  });

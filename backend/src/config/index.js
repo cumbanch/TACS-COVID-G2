@@ -29,7 +29,8 @@ const config = {
     expirationUnitIdToken: process.env.EXPIRATION_UNIT_ID_TOKEN || 'minutes',
     expirationValueAccessToken: process.env.EXPIRATION_VALUE_ACCESS_TOKEN || 15,
     expirationValueRefreshToken: process.env.EXPIRATION_VALUE_REFRESH_TOKEN || 24,
-    expirationValueIdToken: process.env.EXPIRATION_VALUE_ID_TOKEN || 10
+    expirationValueIdToken: process.env.EXPIRATION_VALUE_ID_TOKEN || 10,
+    hashingSalts: process.env.HASHING_SALTS || 10
   },
   covidApi: {
     baseUrl: process.env.COVID_API_BASE || 'https://wuhan-coronavirus-api.laeyoung.endpoint.ainize.ai',
