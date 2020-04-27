@@ -1,4 +1,7 @@
+const { promisifyAll } = require('bluebird');
+const { signAsync } = promisifyAll(require('jsonwebtoken'));
+const { secret } = require('../../config').session;
+
 module.exports = {
-  token:
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcyNDQwNzN9.mykG7ZsKObwa1U44Ow8iSUZf5wC6zcqptLk7ZoO4rM4'
+  generateToken: (userId = 1, type = 'access') => signAsync({ sub: userId, token_use: type }, secret)
 };

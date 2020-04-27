@@ -1,8 +1,8 @@
+[![Build Status](https://travis-ci.org/molinajulian/TACS-COVID-G2.png?branch=master)](https://travis-ci.org/molinajulian/TACS-COVID-G2)
 
-  
+[![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/molinajulian/TACS-COVID-G2.svg)](https://codecov.io/github/molinajulian/TACS-COVID-G2?branch=master) 
 
 # TACS-COVID-G2
-
   
 
 The application allows following the progression of the COVID-19 pandemic using different tools. The following API will be used as the data source: https://github.com/Laeyoung/COVID-19-API
@@ -38,7 +38,7 @@ The containers will be run in background with the following names:
 The application will be accesible from [http://localhost:8080/](http://localhost:8080/) and the port **9229** will be available to link a debugger.
 In this mode the data connection of the database is:
 
- - **Host**: covid-19-db-dev
+ - **Host**: localhost
  - **Port**: 35432
  - **Username**: admin
  - **Password**: admin
@@ -60,7 +60,7 @@ The containers will be run in background with the following names:
 The application will be accesible from [http://localhost:443/](http://localhost:443/).
 In this mode the data connection of the database is:
 
- - **Host**: covid-19-db
+ - **Host**: localhost
  - **Port**: 5432
  - **Username**: admin
  - **Password**: admin

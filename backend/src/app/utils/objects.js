@@ -1,25 +1,12 @@
-const { isObject, snakeCase, camelCase } = require('./lodash');
+const { snakeCase } = require('./lodash');
 
-const changeCaseObject = ({ originalObject, caseFunction, nestedCaseFunction }) => {
+const changeCaseObject = ({ originalObject, caseFunction }) => {
   const newObject = {};
   Object.entries(originalObject).forEach(([key, value]) => {
-    if (isObject(value) && Object.keys(value).length) {
-      newObject[caseFunction(key)] = value.length
-        ? value.map(nestedCaseFunction)
-        : nestedCaseFunction(value.dataValues || value);
-    } else {
-      newObject[caseFunction(key)] = value;
-    }
+    newObject[caseFunction(key)] = value;
   });
   return newObject;
 };
-
-exports.objectToCamelCase = snakeCaseObject =>
-  changeCaseObject({
-    originalObject: snakeCaseObject,
-    caseFunction: camelCase,
-    nestedCaseFunction: exports.objectToCamelCase
-  });
 
 exports.objectToSnakeCase = camelCaseObject =>
   changeCaseObject({

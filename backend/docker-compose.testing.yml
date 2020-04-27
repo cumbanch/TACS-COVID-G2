@@ -3,21 +3,30 @@ version: "3.4"
 services:
   covid-19-test:
     build:
-      context: ./
-      dockerfile: Dockerfile.testing
+      context: .
+      args:
+        - NODE_ENV=testing
+        - USER=root
     container_name: covid-19-test
     env_file:
       - .env.testing
-    depends_on:
-      - covid-19-db-test
+    environment:
+      - WAIT_HOSTS=covid-19-db-test:5432
+    volumes:
+      - ./src:/usr/local/src:ro
+    command: sh -c "/wait && npm run start:test"
     networks:
       - covid-19
-
+    depends_on:
+      - covid-19-db-test
+  
   covid-19-db-test:
     image: postgres:12-alpine
     container_name: covid-19-db-test
     env_file:
       - .env.testing
+    ports:
+      - "45432:5432"
     networks:
       - covid-19
 

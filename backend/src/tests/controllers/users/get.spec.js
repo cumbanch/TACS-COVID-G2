@@ -1,6 +1,6 @@
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createManyUsers, createUser } = require('../../factories/users');
-const { token } = require('../../factories/tokens');
+const { generateToken } = require('../../factories/tokens');
 const { orderBy, omit } = require('../../../app/utils/lodash');
 const { objectToSnakeCase } = require('../../../app/utils/objects');
 const { getPaginationData, expectedPaginationKeys } = require('../../utils/paginations');
@@ -22,7 +22,7 @@ const limit = 4;
 const page = 3;
 const orderColumn = 'name';
 const orderType = 'asc';
-const expectedPaginationWithoutParams = getPaginationData({ total: totalUsers });
+const expectedPaginationNoParams = getPaginationData({ total: totalUsers });
 const expectedPaginationWithParams = getPaginationData({ total: totalUsers, limit, page });
 
 describe('GET /users', () => {
@@ -30,6 +30,7 @@ describe('GET /users', () => {
   let successWithPaginationResponse = {};
   let invalidParamsResponse = {};
   beforeAll(async () => {
+    const token = await generateToken();
     await truncateDatabase();
     await createManyUsers({ quantity: totalUsers });
     successfulResponse = await getResponse({
@@ -61,17 +62,17 @@ describe('GET /users', () => {
     it(`Should return total count ${totalUsers}`, () => {
       expect(successfulResponse.body.total_count).toBe(totalUsers);
     });
-    it(`Should return total pages ${expectedPaginationWithoutParams.totalPages}`, () => {
-      expect(successfulResponse.body.total_pages).toBe(expectedPaginationWithoutParams.totalPages);
+    it(`Should return total pages ${expectedPaginationNoParams.totalPages}`, () => {
+      expect(successfulResponse.body.total_pages).toBe(expectedPaginationNoParams.totalPages);
     });
-    it(`Should return page ${expectedPaginationWithoutParams.page}`, () => {
-      expect(successfulResponse.body.page).toBe(expectedPaginationWithoutParams.page);
+    it(`Should return page ${expectedPaginationNoParams.page}`, () => {
+      expect(successfulResponse.body.page).toBe(expectedPaginationNoParams.page);
     });
-    it(`Should return limit ${expectedPaginationWithoutParams.limit}`, () => {
-      expect(successfulResponse.body.limit).toBe(expectedPaginationWithoutParams.limit);
+    it(`Should return limit ${expectedPaginationNoParams.limit}`, () => {
+      expect(parseInt(successfulResponse.body.limit)).toBe(expectedPaginationNoParams.limit);
     });
-    it(`Should return ${expectedPaginationWithoutParams.limit} results`, () => {
-      expect(successfulResponse.body.data.length).toBe(expectedPaginationWithoutParams.limit);
+    it(`Should return ${expectedPaginationNoParams.limit} results`, () => {
+      expect(successfulResponse.body.data.length).toBe(expectedPaginationNoParams.limit);
     });
     it('Should return the correct keys in each user', () => {
       successfulResponse.body.data.forEach(user => {
@@ -162,6 +163,7 @@ describe('GET /users/:id', () => {
   let invalidParamsResponse = {};
   let userCreated = {};
   beforeAll(async () => {
+    const token = await generateToken();
     await truncateDatabase();
     userCreated = await createUser();
     successfulResponse = await getResponse({

@@ -1,6 +1,8 @@
 const { uuid } = require('uuidv4');
-const jwt = require('jsonwebtoken');
-const { promisify, inspect } = require('util');
+const { promisifyAll } = require('bluebird');
+const { signAsync, verifyAsync } = promisifyAll(require('jsonwebtoken'));
+const { inspect } = require('util');
+const { hash, compare, genSalt } = require('bcryptjs');
 
 const { moment } = require('../utils/moment');
 const {
@@ -10,21 +12,18 @@ const {
   expirationValueAccessToken,
   expirationValueIdToken,
   expirationValueRefreshToken,
-  secret
+  secret,
+  hashingSalts
 } = require('../../config').session;
 const logger = require('../logger');
-const { invalidToken, databaseError } = require('../errors/builders');
-
-const signJwtPromise = promisify(jwt.sign);
-const verifyJwtPromise = promisify(jwt.verify);
+const { databaseError, internalServerError } = require('../errors/builders');
 
 const getIss = req => `${req.protocol}://${req.get('host')}`;
 
-exports.generateTokens = ({ req, user }) => {
-  logger.info(`Attempting to generate tokens for the user with id: ${user.id}`);
-  const iss = getIss(req);
-  logger.info('Iss was generated successfully');
-  const accessPromise = signJwtPromise(
+exports.verifyAccessToken = token => verifyAsync(token, secret);
+
+exports.generateAccessToken = (user, req) =>
+  signAsync(
     {
       token_use: 'access',
       admin: user.admin,
@@ -36,12 +35,18 @@ exports.generateTokens = ({ req, user }) => {
     },
     secret,
     {
-      issuer: iss,
+      issuer: getIss(req),
       jwtid: uuid(),
       subject: `${user.id}`
     }
   );
-  const refreshPromise = signJwtPromise(
+
+exports.generateTokens = ({ req, user }) => {
+  logger.info(`Attempting to generate tokens for the user with id: ${user.id}`);
+  const iss = getIss(req);
+  logger.info('Iss was generated successfully');
+  const accessPromise = this.generateAccessToken(user, req);
+  const refreshPromise = signAsync(
     {
       token_use: 'refresh',
       nbf: moment().unix(),
@@ -57,7 +62,7 @@ exports.generateTokens = ({ req, user }) => {
       subject: `${user.id}`
     }
   );
-  const idPromise = signJwtPromise(
+  const idPromise = signAsync(
     {
       token_use: 'id',
       email: user.email,
@@ -78,21 +83,22 @@ exports.generateTokens = ({ req, user }) => {
     }
   );
   return Promise.all([accessPromise, idPromise, refreshPromise]).catch(err => {
+    /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`There was an error generating the tokens: ${err.message}`);
   });
 };
 
-exports.verifyAndCreateToken = ({ type, req }) => {
+exports.verifyAndCreateToken = ({ req }) => {
   logger.info(
     `Attempting to verify token ${req.body.refresh_token} generated for the user with id :${req.user.id}`
   );
-  return verifyJwtPromise(req.body.refresh_token, secret)
-    .then(decodedToken => {
+  return verifyAsync(req.body.refresh_token, secret)
+    .then(() => {
       logger.info('Token verified successful');
-      if (decodedToken.token_use !== type) throw invalidToken('The provider token is invalid');
       logger.info('Attempting to generate new access token');
-      return signJwtPromise(
+      return signAsync(
         {
           token_use: 'access',
           admin: req.user.admin,
@@ -111,7 +117,27 @@ exports.verifyAndCreateToken = ({ type, req }) => {
       );
     })
     .catch(err => {
+      /* istanbul ignore next */
       logger.error(inspect(err));
+      /* istanbul ignore next */
       throw databaseError(`There was an error generating the token: ${err.message}`);
     });
 };
+
+exports.hashPassword = password =>
+  genSalt(parseInt(hashingSalts))
+    .then(salt => hash(password, salt))
+    .catch(err => {
+      /* istanbul ignore next */
+      logger.error(inspect(err));
+      /* istanbul ignore next */
+      throw internalServerError(err.message);
+    });
+
+exports.comparePassword = (password, hashedPassword) =>
+  compare(password, hashedPassword).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
+    throw internalServerError(err.message);
+  });
