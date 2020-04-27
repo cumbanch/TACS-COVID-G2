@@ -144,7 +144,7 @@ describe('GET /lists/:id/history', () => {
       expect(successResponse.statusCode).toEqual(200);
     });
     it('Should return the correct keys in body', () => {
-      successResponse.body.map(country => {
+      successResponse.body.forEach(country => {
         expect(Object.keys(country)).toStrictEqual(expect.arrayContaining(expectedHistoryKeys));
       });
     });
