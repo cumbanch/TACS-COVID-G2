@@ -16,7 +16,7 @@ const {
   hashingSalts
 } = require('../../config').session;
 const logger = require('../logger');
-const { databaseError } = require('../errors/builders');
+const { databaseError, internalServerError } = require('../errors/builders');
 
 const getIss = req => `${req.protocol}://${req.get('host')}`;
 
@@ -124,6 +124,20 @@ exports.verifyAndCreateToken = ({ req }) => {
     });
 };
 
-exports.hashPassword = password => genSalt(parseInt(hashingSalts)).then(salt => hash(password, salt));
+exports.hashPassword = password =>
+  genSalt(parseInt(hashingSalts))
+    .then(salt => hash(password, salt))
+    .catch(err => {
+      /* istanbul ignore next */
+      logger.error(inspect(err));
+      /* istanbul ignore next */
+      throw internalServerError(err.message);
+    });
 
-exports.comparePassword = compare;
+exports.comparePassword = (password, hashedPassword) =>
+  compare(password, hashedPassword).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
+    throw internalServerError(err.message);
+  });

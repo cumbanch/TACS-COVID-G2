@@ -7,7 +7,7 @@ const {
   sequelizePackage: { Op }
 } = require('../models');
 const { deleteUndefined } = require('../utils/objects');
-const { databaseError, alreadyExist, dependencyError } = require('../errors/builders');
+const { databaseError, alreadyExist, internalServerError } = require('../errors/builders');
 const { hashPassword } = require('./sessions');
 
 exports.getUsers = params => {
@@ -61,7 +61,7 @@ exports.createUser = attrs => {
       /* istanbul ignore next */
       logger.error(inspect(err));
       /* istanbul ignore next */
-      throw dependencyError(err);
+      throw internalServerError(err);
     });
 };
 
