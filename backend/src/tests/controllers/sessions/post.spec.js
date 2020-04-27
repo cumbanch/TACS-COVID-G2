@@ -6,7 +6,7 @@ const { hashPassword } = require('../../../app/services/sessions');
 
 const expectedKeys = ['access_token', 'id_token', 'refresh_token'];
 
-describe.only('POST /sessions/login', () => {
+describe('POST /sessions/login', () => {
   let successfulResponse = {};
   let notFoundResponse = {};
   let invalidParamsResponse = {};
@@ -18,7 +18,7 @@ describe.only('POST /sessions/login', () => {
     successfulResponse = await getResponse({
       endpoint: '/sessions/login',
       method: 'post',
-      body: { email, password: hashedPassword }
+      body: { email, password }
     });
     notFoundResponse = await getResponse({
       endpoint: '/sessions/login',
