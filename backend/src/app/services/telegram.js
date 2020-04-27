@@ -4,7 +4,7 @@ const logger = require('../logger');
 const { Telegram, sequelizeInstance } = require('../models');
 const { databaseError, notFound } = require('../errors/builders');
 
-exports.getTelegram = (filters, options = {}) => {
+exports.getTelegramBy = (filters, options = {}) => {
     logger.info(`Attempting to get telegram with filters: ${inspect(filters)}`);
     return Telegram.findOne({
       where: {
@@ -19,7 +19,7 @@ exports.getTelegram = (filters, options = {}) => {
   
 exports.deleteTelegram = filters => {
     logger.info(`Attempting to delete telegram with filters: ${inspect(filters)}`);
-    return this.getTelegram(filters).then(telegram => {
+    return this.getTelegramBy(filters).then(telegram => {
       if (!telegram) {
         throw notFound('The telegram was not found');
       }
