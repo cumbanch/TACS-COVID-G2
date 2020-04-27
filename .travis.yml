@@ -13,9 +13,6 @@ before_script:
   - cp .env.example .env.testing
   - rpl dev test .env.testing
 
-env:
-  - CODECOV_TOKEN="a72c65b4-7ce0-472c-b960-c822fa15960f"  
-
 script: npm run testing
 
 branches:
