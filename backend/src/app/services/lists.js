@@ -116,39 +116,47 @@ exports.createList = attributes => {
     });
 };
 
+const checkCountriesAndUpdateList = attributes =>
+  Country.count({ where: { id: attributes.countriesIds } })
+    .catch(err => {
+      /* istanbul ignore next */
+      logger.error(inspect(err));
+      /* istanbul ignore next */
+      throw databaseError(`There was an error verifying the countries: ${err.message}`);
+    })
+    .then(count => {
+      if (attributes.countriesIds.length !== count) throw invalidCountries();
+      return sequelizeInstance
+        .transaction(transaction => {
+          const { countriesByListToDelete, countriesByListToCreate } = getCountriesToDeleteAndCreate(
+            list,
+            attributes
+          );
+          return Promise.all([
+            ...countriesByListToDelete.map(countryByList => countryByList.destroy({ transaction })),
+            CountryByList.bulkCreate(countriesByListToCreate, { transaction })
+          ]);
+        })
+        .catch(err => {
+          /* istanbul ignore next */
+          logger.error(inspect(err));
+          /* istanbul ignore next */
+          throw databaseError(`There was an error updating the list: ${err.message}`);
+        });
+    });
+
 exports.updateList = attributes => {
   logger.info(`Attempting to update list with attributes: ${inspect(attributes)}`);
   const options = { include: [{ model: CountryByList, as: 'countryByList' }] };
   return this.getList(attributes, options).then(list => {
-    if (!list) {
-      throw notFound('The list was not found');
-    }
-    return Country.count({ where: { id: attributes.countriesIds } })
-      .catch(err => {
-        /* istanbul ignore next */
+    if (!list) throw notFound('The list was not found');
+    return attributes.countriesIds && attributes.countriesIds.length
+      ? checkCountriesAndUpdateList(attributes)
+      : list.update({ name: attributes.name }).catch(err => {
+          /* istanbul ignore next */
         logger.error(inspect(err));
         /* istanbul ignore next */
-        throw databaseError(`There was an error verifying the countries: ${err.message}`);
-      })
-      .then(count => {
-        if (attributes.countriesIds.length !== count) throw invalidCountries();
-        return sequelizeInstance
-          .transaction(transaction => {
-            const { countriesByListToDelete, countriesByListToCreate } = getCountriesToDeleteAndCreate(
-              list,
-              attributes
-            );
-            return Promise.all([
-              ...countriesByListToDelete.map(countryByList => countryByList.destroy({ transaction })),
-              CountryByList.bulkCreate(countriesByListToCreate, { transaction })
-            ]);
-          })
-          .catch(err => {
-            /* istanbul ignore next */
-            logger.error(inspect(err));
-            /* istanbul ignore next */
-            throw databaseError(`There was an error updating the list: ${err.message}`);
-          });
+        throw databaseError(`There was an error updating the list: ${err.message}`);
       });
   });
 };
