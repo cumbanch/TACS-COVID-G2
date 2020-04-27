@@ -6,3 +6,5 @@ exports.ALREADY_EXIST = 'already_exist';
 exports.INVALID_TOKEN = 'invalid_token';
 exports.EXTERNAL_SERVICE_ERROR = 'external_service_error';
 exports.INVALID_COUNTRIES = 'invalid_countries';
+exports.INVALID_CREDENTIALS = 'invalid_credentials';
+exports.INTERNAL_SERVER_ERROR = 'internal_server_error';

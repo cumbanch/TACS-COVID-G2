@@ -18,7 +18,7 @@ const expectedCountriesKeys = [
 const countFakeCountries = 15;
 const countTestCountries = 15;
 const expectedPaginationWithFilter = getPaginationData({ total: countTestCountries });
-const expectedPaginationWithoutFilters = getPaginationData({
+const expectedPaginationNoFilters = getPaginationData({
   total: countFakeCountries + countTestCountries
 });
 
@@ -103,24 +103,20 @@ describe('GET /countries', () => {
         Object.keys(successResponseWithoutFilters.body).every(key => expectedPaginationKeys.includes(key))
       ).toBe(true);
     });
-    it(`Should return total count ${expectedPaginationWithoutFilters.totalCount}`, () => {
-      expect(successResponseWithoutFilters.body.total_count).toBe(
-        expectedPaginationWithoutFilters.totalCount
-      );
+    it(`Should return total count ${expectedPaginationNoFilters.totalCount}`, () => {
+      expect(successResponseWithoutFilters.body.total_count).toBe(expectedPaginationNoFilters.totalCount);
     });
-    it(`Should return total pages ${expectedPaginationWithoutFilters.totalPages}`, () => {
-      expect(successResponseWithoutFilters.body.total_pages).toBe(
-        expectedPaginationWithoutFilters.totalPages
-      );
+    it(`Should return total pages ${expectedPaginationNoFilters.totalPages}`, () => {
+      expect(successResponseWithoutFilters.body.total_pages).toBe(expectedPaginationNoFilters.totalPages);
     });
-    it(`Should return page ${expectedPaginationWithoutFilters.page}`, () => {
-      expect(successResponseWithoutFilters.body.page).toBe(expectedPaginationWithoutFilters.page);
+    it(`Should return page ${expectedPaginationNoFilters.page}`, () => {
+      expect(successResponseWithoutFilters.body.page).toBe(expectedPaginationNoFilters.page);
     });
-    it(`Should return limit ${expectedPaginationWithoutFilters.limit}`, () => {
-      expect(parseInt(successResponseWithoutFilters.body.limit)).toBe(expectedPaginationWithoutFilters.limit);
+    it(`Should return limit ${expectedPaginationNoFilters.limit}`, () => {
+      expect(parseInt(successResponseWithoutFilters.body.limit)).toBe(expectedPaginationNoFilters.limit);
     });
-    it(`Should return ${expectedPaginationWithoutFilters.limit} results`, () => {
-      expect(successResponseWithoutFilters.body.data.length).toBe(expectedPaginationWithoutFilters.limit);
+    it(`Should return ${expectedPaginationNoFilters.limit} results`, () => {
+      expect(successResponseWithoutFilters.body.data.length).toBe(expectedPaginationNoFilters.limit);
     });
     it('Should return the correct keys in each country', () => {
       successResponseWithoutFilters.body.data.forEach(country => {

@@ -1,7 +1,8 @@
 const { getResponse, truncateDatabase } = require('../../utils/app');
-const { createUser } = require('../../factories/users');
+const { createUser, buildUser } = require('../../factories/users');
 const { generateToken } = require('../../factories/tokens');
 const { TokenBlacklist } = require('../../../app/models');
+const { hashPassword } = require('../../../app/services/sessions');
 
 const expectedKeys = ['access_token', 'id_token', 'refresh_token'];
 
@@ -11,9 +12,9 @@ describe('POST /sessions/login', () => {
   let invalidParamsResponse = {};
   beforeAll(async () => {
     await truncateDatabase();
-    const {
-      dataValues: { password, email }
-    } = await createUser();
+    const { email, password } = await buildUser();
+    const hashedPassword = await hashPassword(password);
+    await createUser({ email, password: hashedPassword });
     successfulResponse = await getResponse({
       endpoint: '/sessions/login',
       method: 'post',
