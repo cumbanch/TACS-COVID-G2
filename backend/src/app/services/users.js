@@ -61,7 +61,7 @@ exports.createUser = attrs => {
       /* istanbul ignore next */
       logger.error(inspect(err));
       /* istanbul ignore next */
-      throw internalServerError(err);
+      throw internalServerError(err.message);
     });
 };
 
