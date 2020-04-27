@@ -1,7 +1,6 @@
 const TeleBot = require('telebot');
 
 const { apiKey } = require('../../config').telegram;
-
 const { getTelegramLogin } = require('../telegram/sessions');
 
 const help = `Welcome to the COVID-19 Bot!
