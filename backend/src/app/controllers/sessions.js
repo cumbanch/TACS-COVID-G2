@@ -8,13 +8,12 @@ exports.login = (req, res, next) =>
   getUserBy({ email: req.body.email })
     .then(user => {
       if (!user) throw notFound('User not found');
-      return comparePassword(req.body.password, user.password)
-        .then(match => {
-          if (!match) throw invalidCredentials();
-          return generateTokens({ user, req }).then(([accessToken, idToken, refreshToken]) =>
-            res.status(200).send(login({ accessToken, idToken, refreshToken }))
-          );
-        })
+      return comparePassword(req.body.password, user.password).then(match => {
+        if (!match) throw invalidCredentials();
+        return generateTokens({ user, req }).then(([accessToken, idToken, refreshToken]) =>
+          res.status(200).send(login({ accessToken, idToken, refreshToken }))
+        );
+      });
     })
     .catch(next);
 

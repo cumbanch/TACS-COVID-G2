@@ -16,7 +16,7 @@ const {
   hashingSalts
 } = require('../../config').session;
 const logger = require('../logger');
-const { invalidToken, databaseError } = require('../errors/builders');
+const { databaseError } = require('../errors/builders');
 
 const getIss = req => `${req.protocol}://${req.get('host')}`;
 
@@ -90,12 +90,12 @@ exports.generateTokens = ({ req, user }) => {
   });
 };
 
-exports.verifyAndCreateToken = ({ type, req }) => {
+exports.verifyAndCreateToken = ({ req }) => {
   logger.info(
     `Attempting to verify token ${req.body.refresh_token} generated for the user with id :${req.user.id}`
   );
   return verifyAsync(req.body.refresh_token, secret)
-    .then(decodedToken => {
+    .then(() => {
       logger.info('Token verified successful');
       logger.info('Attempting to generate new access token');
       return signAsync(
@@ -126,4 +126,4 @@ exports.verifyAndCreateToken = ({ type, req }) => {
 
 exports.hashPassword = password => genSalt(parseInt(hashingSalts)).then(salt => hash(password, salt));
 
-exports.comparePassword = (password, hash) => compare(password, hash);
+exports.comparePassword = compare;

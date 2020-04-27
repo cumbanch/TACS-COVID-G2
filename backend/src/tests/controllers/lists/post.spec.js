@@ -11,6 +11,7 @@ describe('POST /lists', () => {
   let listCreated = {};
   let countriesByListCreated = {};
   let invalidParamsResponse = {};
+  let invalidCountriesResponse = {};
   beforeAll(async () => {
     const token = await generateToken();
     await truncateDatabase();
@@ -83,6 +84,7 @@ describe('POST /lists/:id/countries', () => {
   let countriesByListCreated = {};
   let invalidParamsResponse = {};
   let listNotFoundResponse = {};
+  let invalidCountriesResponse = {};
   beforeAll(async () => {
     const token = await generateToken();
     await truncateDatabase();

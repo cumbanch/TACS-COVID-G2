@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createManyLists, createList } = require('../../factories/lists');
 const { createManyCountries } = require('../../factories/countries');
@@ -8,9 +10,9 @@ const { getPaginationData, expectedPaginationKeys } = require('../../utils/pagin
 
 const expectedListsKeys = ['id', 'created_at', 'updated_at', 'deleted_at', 'name'];
 const countList = 10;
-const expectedPagination = getPaginationData({ total: countList });
 
 describe('GET /lists', () => {
+  const expectedPagination = getPaginationData({ total: countList });
   let successResponse = {};
   let invalidParamsResponse = {};
   beforeAll(async () => {

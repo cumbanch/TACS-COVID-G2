@@ -15,7 +15,7 @@ const statusCodes = {
   [errors.DEPENDENCY_ERROR]: 500
 };
 
-exports.handle = (error, req, res, next) => {
+exports.handle = (error, req, res) => {
   /* istanbul ignore next */
   res.status((error.internalCode && statusCodes[error.internalCode]) || DEFAULT_STATUS_CODE);
   return res.send({ message: error.message, internal_code: error.internalCode });

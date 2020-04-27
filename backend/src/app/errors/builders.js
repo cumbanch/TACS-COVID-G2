@@ -25,4 +25,5 @@ exports.invalidToken = message => buildError(message, INVALID_TOKEN);
 exports.externalService = message => buildError(message, EXTERNAL_SERVICE_ERROR);
 exports.invalidCountries = () => buildError('The provided countries are invalid', INVALID_COUNTRIES);
 exports.invalidCredentials = () => buildError('The credentials are not correct', INVALID_CREDENTIALS);
-exports.dependencyError = message => buildError(`There was a problem with one of our dependencies, reason: ${message}`, DEPENDENCY_ERROR);
+exports.dependencyError = message =>
+  buildError(`There was a problem with one of our dependencies, reason: ${message}`, DEPENDENCY_ERROR);
