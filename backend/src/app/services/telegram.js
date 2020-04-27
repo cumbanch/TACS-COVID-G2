@@ -28,6 +28,6 @@ exports.deleteTelegram = filters => {
 };
 
 exports.createTelegram = attributes => {
-  logger.info(`Attempting to create telegram with attributes: ${inspect(attributes)}`);
-  return Telegram.createOrUpdate(attributes, { chatId: attributes.chatId });
+  logger.info(`Attempting to create or update telegram with attributes: ${inspect(attributes)}`);
+  return Telegram.upsert(attributes);
 };
