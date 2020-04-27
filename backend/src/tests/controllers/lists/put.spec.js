@@ -69,7 +69,7 @@ describe('PUT /lists/:id', () => {
       expect(emptyBodyResponse.body.internal_code).toBe('empty_body');
     });
     it('Should return message indicating the provided body is invalid', () => {
-      expect(emptyBodyResponse.body.message).toBe("The body musn't be empty");
+      expect(emptyBodyResponse.body.message).toBe("The body mustn't be empty");
     });
   });
   describe('Fail for invalid countries', () => {
