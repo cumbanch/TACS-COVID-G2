@@ -11,7 +11,7 @@ const DashboardComponent = (props) => {
     const userIcon = <FontAwesomeIcon icon={faUser} />
     const countryIcon = <FontAwesomeIcon icon={faGlobeAmericas} />
     return (
-        <div id="test">
+        <div id="dash">
             <div id="page-wrap">
                 <Menu pageWrapId={"inner-container"} outerContainerId={"root"}  >
                     <MenuItemComponent anId="Users" anIcon={userIcon} urlRef="/users" aTitle="USUARIOS" />
