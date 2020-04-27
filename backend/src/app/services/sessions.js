@@ -2,6 +2,7 @@ const { uuid } = require('uuidv4');
 const { promisifyAll } = require('bluebird');
 const { signAsync, verifyAsync } = promisifyAll(require('jsonwebtoken'));
 const { inspect } = require('util');
+const { hash, compare, genSalt } = require('bcryptjs');
 
 const { moment } = require('../utils/moment');
 const {
@@ -11,7 +12,8 @@ const {
   expirationValueAccessToken,
   expirationValueIdToken,
   expirationValueRefreshToken,
-  secret
+  secret,
+  hashingSalts
 } = require('../../config').session;
 const logger = require('../logger');
 const { invalidToken, databaseError } = require('../errors/builders');
@@ -121,3 +123,7 @@ exports.verifyAndCreateToken = ({ type, req }) => {
       throw databaseError(`There was an error generating the token: ${err.message}`);
     });
 };
+
+exports.hashPassword = password => genSalt(parseInt(hashingSalts)).then(salt => hash(password, salt));
+
+exports.comparePassword = (password, hash) => compare(password, hash);
