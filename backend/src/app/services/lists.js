@@ -116,7 +116,15 @@ exports.createList = attributes => {
     });
 };
 
-const checkCountriesAndUpdateList = attributes =>
+const updateList = (attributes, list) =>
+  list.update({ name: attributes.name }).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
+    throw databaseError(`There was an error updating the list: ${err.message}`);
+  });
+
+const checkCountriesAndUpdateList = (attributes, list) =>
   Country.count({ where: { id: attributes.countriesIds } })
     .catch(err => {
       /* istanbul ignore next */
@@ -135,7 +143,7 @@ const checkCountriesAndUpdateList = attributes =>
           return Promise.all([
             ...countriesByListToDelete.map(countryByList => countryByList.destroy({ transaction })),
             CountryByList.bulkCreate(countriesByListToCreate, { transaction })
-          ]);
+          ]).then(() => updateList({ name: attributes.name }, list));
         })
         .catch(err => {
           /* istanbul ignore next */
@@ -151,13 +159,8 @@ exports.updateList = attributes => {
   return this.getList(attributes, options).then(list => {
     if (!list) throw notFound('The list was not found');
     return attributes.countriesIds && attributes.countriesIds.length
-      ? checkCountriesAndUpdateList(attributes)
-      : list.update({ name: attributes.name }).catch(err => {
-          /* istanbul ignore next */
-        logger.error(inspect(err));
-        /* istanbul ignore next */
-        throw databaseError(`There was an error updating the list: ${err.message}`);
-      });
+      ? checkCountriesAndUpdateList(attributes, list)
+      : updateList(attributes, list);
   });
 };
 
