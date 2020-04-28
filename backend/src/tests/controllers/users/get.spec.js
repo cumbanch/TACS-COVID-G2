@@ -1,5 +1,9 @@
+/* eslint-disable max-lines */
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createManyUsers, createUser } = require('../../factories/users');
+const { createList } = require('../../factories/lists');
+const { createManyCountries } = require('../../factories/countries');
+const { createCountryByList } = require('../../factories/country_by_list');
 const { generateToken } = require('../../factories/tokens');
 const { orderBy, omit } = require('../../../app/utils/lodash');
 const { objectToSnakeCase } = require('../../../app/utils/objects');
@@ -14,8 +18,7 @@ const expectedUserKeys = [
   'admin',
   'name',
   'last_name',
-  'email',
-  'password'
+  'email'
 ];
 const totalUsers = 25;
 const limit = 4;
@@ -182,16 +185,25 @@ describe('GET /users/:id', () => {
   let successfulResponse = {};
   let userNotFoundResponse = {};
   let invalidParamsResponse = {};
-  let userCreated = {};
   let unauthorizedResponse = {};
+  let userNoAdmin = {};
+  const amountOfCountries = 4;
   beforeAll(async () => {
     const token = await generateToken();
     await truncateDatabase();
-    userCreated = await createUser({ admin: true });
-    await createUser();
+    await createUser({ admin: true });
+    userNoAdmin = await createUser();
+    await createManyCountries({ quantity: amountOfCountries });
+    const { id: firstListId } = await createList({ userId: userNoAdmin.id });
+    const { id: secondListId } = await createList({ userId: userNoAdmin.id });
+    await createCountryByList({ listId: firstListId, countryId: 1 });
+    await createCountryByList({ listId: firstListId, countryId: 2 });
+    await createCountryByList({ listId: firstListId, countryId: 3 });
+    await createCountryByList({ listId: secondListId, countryId: 1 });
+    await createCountryByList({ listId: secondListId, countryId: 4 });
     const unauthorizedToken = await generateToken(2);
     successfulResponse = await getResponse({
-      endpoint: `/users/${userCreated.id}`,
+      endpoint: `/users/${userNoAdmin.id}`,
       method: 'get',
       headers: { Authorization: token }
     });
@@ -215,19 +227,35 @@ describe('GET /users/:id', () => {
       expect(successfulResponse.statusCode).toEqual(200);
     });
     it('Should return the correct keys in body', () => {
-      expect(Object.keys(successfulResponse.body).every(key => expectedUserKeys.includes(key))).toBe(true);
+      expect(Object.keys(successfulResponse.body)).toStrictEqual(
+        expect.arrayContaining([...expectedUserKeys, 'lists'])
+      );
     });
     it('Should return the user created', () => {
-      expect(
-        omit(successfulResponse.body, ['created_at', 'updated_at', 'deleted_at', 'last_access'])
-      ).toMatchObject(
-        omit(objectToSnakeCase(userCreated.dataValues), [
-          'created_at',
-          'updated_at',
-          'deleted_at',
-          'last_access'
-        ])
-      );
+      const actualValues = omit(successfulResponse.body, [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'last_access',
+        'lists'
+      ]);
+      const expectedValues = omit(objectToSnakeCase(userNoAdmin.dataValues), [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'last_access',
+        'password'
+      ]);
+      expect(actualValues).toStrictEqual(expect.objectContaining(expectedValues));
+    });
+    it('The user should have 2 lists', () => {
+      expect(successfulResponse.body.lists.length).toBe(2);
+    });
+    it('The first list should have 3 countries', () => {
+      expect(successfulResponse.body.lists[0].countries_amount).toBe(3);
+    });
+    it('The second list should have 2 countries', () => {
+      expect(successfulResponse.body.lists[1].countries_amount).toBe(2);
     });
   });
   describe('Fail for user not found', () => {
