@@ -6,7 +6,6 @@ services:
       context: .
       args:
         - NODE_ENV=development
-        - USER=node
     container_name: covid-19-dev
     env_file:
       - .env.development
