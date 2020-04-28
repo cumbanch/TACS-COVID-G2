@@ -129,7 +129,7 @@ describe('GET /users', () => {
     it('Should return internal_code unauthorized', () => {
       expect(unauthorizedResponse.body.internal_code).toBe('unauthorized');
     });
-    it('Should return message "User not found"', () => {
+    it('Should return message "The provided user is not authorized to access the resource"', () => {
       expect(unauthorizedResponse.body.message).toBe(
         'The provided user is not authorized to access the resource'
       );
@@ -248,7 +248,7 @@ describe('GET /users/:id', () => {
     it('Should return internal_code unauthorized', () => {
       expect(unauthorizedResponse.body.internal_code).toBe('unauthorized');
     });
-    it('Should return message "User not found"', () => {
+    it('Should return message "The provided user is not authorized to access the resource"', () => {
       expect(unauthorizedResponse.body.message).toBe(
         'The provided user is not authorized to access the resource'
       );
