@@ -12,7 +12,8 @@ const statusCodes = {
   [errors.EXTERNAL_SERVICE_ERROR]: 503,
   [errors.INVALID_COUNTRIES]: 400,
   [errors.INVALID_CREDENTIALS]: 401,
-  [errors.INTERNAL_SERVER_ERROR]: 500
+  [errors.INTERNAL_SERVER_ERROR]: 500,
+  [errors.UNAUTHORIZED]: 401
 };
 
 // eslint-disable-next-line

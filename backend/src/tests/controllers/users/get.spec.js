@@ -17,7 +17,7 @@ const expectedUserKeys = [
   'email',
   'password'
 ];
-const totalUsers = 24;
+const totalUsers = 25;
 const limit = 4;
 const page = 3;
 const orderColumn = 'name';
@@ -29,14 +29,22 @@ describe('GET /users', () => {
   let successfulResponse = {};
   let successWithPaginationResponse = {};
   let invalidParamsResponse = {};
+  let unauthorizedResponse = {};
   beforeAll(async () => {
     const token = await generateToken();
     await truncateDatabase();
-    await createManyUsers({ quantity: totalUsers });
+    await createManyUsers({ quantity: totalUsers - 1, user: { admin: true } });
+    await createUser({ admin: false });
+    const noPermissionsToken = await generateToken(totalUsers);
     successfulResponse = await getResponse({
       endpoint: '/users',
       method: 'get',
       headers: { Authorization: token }
+    });
+    unauthorizedResponse = await getResponse({
+      endpoint: '/users',
+      method: 'get',
+      headers: { Authorization: noPermissionsToken }
     });
     successWithPaginationResponse = await getResponse({
       endpoint: '/users',
@@ -114,6 +122,19 @@ describe('GET /users', () => {
       });
     });
   });
+  describe('Fail for user without permissions', () => {
+    it('Should return status code 401', () => {
+      expect(unauthorizedResponse.statusCode).toEqual(401);
+    });
+    it('Should return internal_code unauthorized', () => {
+      expect(unauthorizedResponse.body.internal_code).toBe('unauthorized');
+    });
+    it('Should return message "The provided user is not authorized to access the resource"', () => {
+      expect(unauthorizedResponse.body.message).toBe(
+        'The provided user is not authorized to access the resource'
+      );
+    });
+  });
   describe('Fail for invalid request', () => {
     it('Should return status code 400', () => {
       expect(invalidParamsResponse.statusCode).toEqual(400);
@@ -162,10 +183,13 @@ describe('GET /users/:id', () => {
   let userNotFoundResponse = {};
   let invalidParamsResponse = {};
   let userCreated = {};
+  let unauthorizedResponse = {};
   beforeAll(async () => {
     const token = await generateToken();
     await truncateDatabase();
-    userCreated = await createUser();
+    userCreated = await createUser({ admin: true });
+    await createUser();
+    const unauthorizedToken = await generateToken(2);
     successfulResponse = await getResponse({
       endpoint: `/users/${userCreated.id}`,
       method: 'get',
@@ -175,6 +199,11 @@ describe('GET /users/:id', () => {
       endpoint: '/users/13',
       method: 'get',
       headers: { Authorization: token }
+    });
+    unauthorizedResponse = await getResponse({
+      endpoint: '/users',
+      method: 'get',
+      headers: { Authorization: unauthorizedToken }
     });
     invalidParamsResponse = await getResponse({
       endpoint: '/users/wrongId',
@@ -210,6 +239,19 @@ describe('GET /users/:id', () => {
     });
     it('Should return message "User not found"', () => {
       expect(userNotFoundResponse.body.message).toBe('User not found');
+    });
+  });
+  describe('Fail for user without permissions', () => {
+    it('Should return status code 401', () => {
+      expect(unauthorizedResponse.statusCode).toEqual(401);
+    });
+    it('Should return internal_code unauthorized', () => {
+      expect(unauthorizedResponse.body.internal_code).toBe('unauthorized');
+    });
+    it('Should return message "The provided user is not authorized to access the resource"', () => {
+      expect(unauthorizedResponse.body.message).toBe(
+        'The provided user is not authorized to access the resource'
+      );
     });
   });
   describe('Fail for invalid params', () => {
