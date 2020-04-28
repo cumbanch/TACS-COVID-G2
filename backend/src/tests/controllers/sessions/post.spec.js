@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createUser, buildUser } = require('../../factories/users');
 const { generateToken } = require('../../factories/tokens');
@@ -10,6 +11,7 @@ describe('POST /sessions/login', () => {
   let successfulResponse = {};
   let notFoundResponse = {};
   let invalidParamsResponse = {};
+  let invalidCredentialsResponse = {};
   beforeAll(async () => {
     await truncateDatabase();
     const { email, password } = await buildUser();
@@ -19,6 +21,11 @@ describe('POST /sessions/login', () => {
       endpoint: '/sessions/login',
       method: 'post',
       body: { email, password }
+    });
+    invalidCredentialsResponse = await getResponse({
+      endpoint: '/sessions/login',
+      method: 'post',
+      body: { email, password: 'wrong' }
     });
     notFoundResponse = await getResponse({
       endpoint: '/sessions/login',
@@ -68,6 +75,17 @@ describe('POST /sessions/login', () => {
     });
     it("Should return an error indicating the provided user doesn't exist", () => {
       expect(notFoundResponse.body.message).toEqual('User not found');
+    });
+  });
+  describe('Fail for invalid credentials', () => {
+    it('Should return status code 401', () => {
+      expect(invalidCredentialsResponse.statusCode).toEqual(401);
+    });
+    it('Should return internal_code invalid_credentials', () => {
+      expect(invalidCredentialsResponse.body.internal_code).toBe('invalid_credentials');
+    });
+    it("Should return an error indicating the provided user doesn't exist", () => {
+      expect(invalidCredentialsResponse.body.message).toEqual('The credentials are not correct');
     });
   });
 });

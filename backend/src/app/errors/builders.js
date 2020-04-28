@@ -8,7 +8,8 @@ const {
   EXTERNAL_SERVICE_ERROR,
   INVALID_COUNTRIES,
   INVALID_CREDENTIALS,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
+  UNAUTHORIZED
 } = require('./internal_codes');
 
 const buildError = (message, internalCode) => ({
@@ -27,3 +28,5 @@ exports.invalidCountries = () => buildError('The provided countries are invalid'
 exports.invalidCredentials = () => buildError('The credentials are not correct', INVALID_CREDENTIALS);
 exports.internalServerError = message =>
   buildError(`There was an unexpected error, reason: ${message}`, INTERNAL_SERVER_ERROR);
+exports.unauthorized = () =>
+  buildError('The provided user is not authorized to access the resource', UNAUTHORIZED);
