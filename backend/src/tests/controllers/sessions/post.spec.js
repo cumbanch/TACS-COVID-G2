@@ -2,8 +2,9 @@
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createUser, buildUser } = require('../../factories/users');
 const { generateToken } = require('../../factories/tokens');
-const { TokenBlacklist } = require('../../../app/models');
+const { TokenBlacklist, User } = require('../../../app/models');
 const { hashPassword } = require('../../../app/services/sessions');
+const { moment } = require('../../../app/utils/moment');
 
 const expectedKeys = ['access_token', 'id_token', 'refresh_token'];
 
@@ -12,16 +13,18 @@ describe('POST /sessions/login', () => {
   let notFoundResponse = {};
   let invalidParamsResponse = {};
   let invalidCredentialsResponse = {};
+  let userCreated = {};
   beforeAll(async () => {
     await truncateDatabase();
     const { email, password } = await buildUser();
     const hashedPassword = await hashPassword(password);
-    await createUser({ email, password: hashedPassword });
+    const { id } = await createUser({ email, password: hashedPassword });
     successfulResponse = await getResponse({
       endpoint: '/sessions/login',
       method: 'post',
       body: { email, password }
     });
+    userCreated = await User.findOne({ where: { id } });
     invalidCredentialsResponse = await getResponse({
       endpoint: '/sessions/login',
       method: 'post',
@@ -48,6 +51,11 @@ describe('POST /sessions/login', () => {
       Object.values(successfulResponse.body).forEach(token => {
         expect(token).toMatch(new RegExp(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/));
       });
+    });
+    it('Should update the last access field for the user', () => {
+      expect(moment(userCreated.lastAccess).format('YYYY-MM-DD HH:mm')).toBe(
+        moment().format('YYYY-MM-DD HH:mm')
+      );
     });
   });
   describe('Fail for invalid request', () => {

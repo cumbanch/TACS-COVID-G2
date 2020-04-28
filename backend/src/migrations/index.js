@@ -1,6 +1,6 @@
 const Umzug = require('umzug');
 
-const { automaticallyUp = false } = require('./../config').migrations;
+const { automaticallyUp } = require('./../config').migrations;
 const { sequelizeInstance: sequelize } = require('../app/models');
 const logger = require('../app/logger');
 
