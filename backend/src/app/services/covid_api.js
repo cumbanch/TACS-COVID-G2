@@ -2,7 +2,7 @@ const axios = require('axios');
 const { inspect } = require('util');
 
 const logger = require('../logger');
-const { baseUrl, timeserieEndpoint, latestEndpoint } = require('../../config').covidApi;
+const { baseUrl, timeseriesEndpoint, latestEndpoint } = require('../../config').covidApi;
 const { externalService } = require('../errors/builders');
 
 const getLatestByIso2 = (iso2, transformResponse) => {
@@ -17,7 +17,7 @@ const getTimeseriesByIso2 = (iso2, transformResponse) => {
   const options = {
     transformResponse: [transformResponse]
   };
-  const url = `${baseUrl}${timeserieEndpoint}${iso2}`;
+  const url = `${baseUrl}${timeseriesEndpoint}${iso2}`;
   return axios.get(url, options);
 };
 
