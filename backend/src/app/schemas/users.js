@@ -32,6 +32,6 @@ exports.getUserSchema = {
 exports.createUserSchema = {
   name: { in: ['body'], isString: true, trim: true, errorMessage: userName },
   email: { in: ['body'], isString: true, trim: true, isEmail: true, errorMessage: email },
-  password: { in: ['body'], isString: true, trim: true, errorMessage: password },
+  password: { in: ['body'], isString: true, errorMessage: password },
   last_name: { in: ['body'], isString: true, trim: true, errorMessage: lastName }
 };
