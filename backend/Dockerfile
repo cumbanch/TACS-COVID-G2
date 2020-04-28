@@ -1,8 +1,11 @@
 FROM node:10.14.1-alpine
 
 ARG NODE_ENV=production
+ARG USER=node
 ENV NODE_ENV=$NODE_ENV
+ENV USER=$USER
 RUN echo $NODE_ENV
+RUN echo $USER
 
 WORKDIR /usr/local/
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.2/wait /wait
