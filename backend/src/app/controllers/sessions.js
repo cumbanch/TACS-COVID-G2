@@ -1,4 +1,4 @@
-const { getUserBy } = require('../services/users');
+const { getUserBy, updateLastAccess } = require('../services/users');
 const { notFound, invalidCredentials } = require('../errors/builders');
 const { generateTokens, verifyAndCreateToken, comparePassword } = require('../services/sessions');
 const { login, refresh } = require('../serializers/sessions');
@@ -11,7 +11,10 @@ exports.login = (req, res, next) =>
       return comparePassword(req.body.password, user.password).then(match => {
         if (!match) throw invalidCredentials();
         return generateTokens({ user, req }).then(([accessToken, idToken, refreshToken]) =>
-          res.status(200).send(login({ accessToken, idToken, refreshToken }))
+          updateLastAccess(user).then(userUpdated => {
+            console.log(userUpdated.dataValues);
+            res.status(200).send(login({ accessToken, idToken, refreshToken }));
+          })
         );
       });
     })

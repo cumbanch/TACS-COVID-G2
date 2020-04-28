@@ -74,3 +74,16 @@ exports.getUserBy = filters => {
     throw databaseError(`Error getting a user, reason: ${err.message}`);
   });
 };
+
+exports.updateUser = ({ instance, attributes }) => {
+  logger.info(`Attempting to update user with id: ${instance.id}`);
+  return instance.update(attributes).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
+    throw databaseError(`Error updating a user, reason: ${err.message}`);
+  });
+};
+
+exports.updateLastAccess = instance =>
+  this.updateUser({ instance, attributes: { lastAccess: moment().format() } });
