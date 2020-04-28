@@ -11,10 +11,9 @@ exports.login = (req, res, next) =>
       return comparePassword(req.body.password, user.password).then(match => {
         if (!match) throw invalidCredentials();
         return generateTokens({ user, req }).then(([accessToken, idToken, refreshToken]) =>
-          updateLastAccess(user).then(userUpdated => {
-            console.log(userUpdated.dataValues);
-            res.status(200).send(login({ accessToken, idToken, refreshToken }));
-          })
+          updateLastAccess(user).then(() =>
+            res.status(200).send(login({ accessToken, idToken, refreshToken }))
+          )
         );
       });
     })
