@@ -1,3 +1,7 @@
+const {
+  USER_ROLES: { REGULAR }
+} = require('../utils/constants');
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
@@ -7,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       lastName: { type: DataTypes.STRING, allowNull: false },
       password: { type: DataTypes.STRING, allowNull: false },
       lastAccess: { type: DataTypes.DATE },
-      admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+      type: { type: DataTypes.STRING, allowNull: false, defaultValue: REGULAR },
       createdAt: { type: DataTypes.DATE, allowNull: false },
       updatedAt: { type: DataTypes.DATE, allowNull: false },
       deletedAt: DataTypes.DATE

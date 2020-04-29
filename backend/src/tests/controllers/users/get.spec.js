@@ -4,6 +4,9 @@ const { generateToken } = require('../../factories/tokens');
 const { orderBy, omit } = require('../../../app/utils/lodash');
 const { objectToSnakeCase } = require('../../../app/utils/objects');
 const { getPaginationData, expectedPaginationKeys } = require('../../utils/paginations');
+const {
+  USER_ROLES: { ADMIN, REGULAR }
+} = require('../.././../app/utils/constants');
 
 const expectedUserKeys = [
   'id',
@@ -11,7 +14,7 @@ const expectedUserKeys = [
   'updated_at',
   'deleted_at',
   'last_access',
-  'admin',
+  'type',
   'name',
   'last_name',
   'email',
@@ -33,8 +36,8 @@ describe('GET /users', () => {
   beforeAll(async () => {
     const token = await generateToken();
     await truncateDatabase();
-    await createManyUsers({ quantity: totalUsers - 1, user: { admin: true } });
-    await createUser({ admin: false });
+    await createManyUsers({ quantity: totalUsers - 1, user: { type: ADMIN } });
+    await createUser({ type: REGULAR });
     const noPermissionsToken = await generateToken(totalUsers);
     successfulResponse = await getResponse({
       endpoint: '/users',
@@ -187,7 +190,7 @@ describe('GET /users/:id', () => {
   beforeAll(async () => {
     const token = await generateToken();
     await truncateDatabase();
-    userCreated = await createUser({ admin: true });
+    userCreated = await createUser({ type: ADMIN });
     await createUser();
     const unauthorizedToken = await generateToken(2);
     successfulResponse = await getResponse({
