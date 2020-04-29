@@ -194,7 +194,7 @@ describe('GET /users/:id', () => {
   beforeAll(async () => {
     const token = await generateToken();
     await truncateDatabase();
-    await createUser({ admin: true });
+    await createUser({ type: ADMIN });
     userNoAdmin = await createUser();
     await createManyCountries({ quantity: amountOfCountries });
     const { id: firstListId } = await createList({ userId: userNoAdmin.id });
