@@ -1,8 +1,10 @@
+/* eslint-disable max-lines */
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createUser, buildUser } = require('../../factories/users');
 const { generateToken } = require('../../factories/tokens');
-const { TokenBlacklist } = require('../../../app/models');
+const { TokenBlacklist, User } = require('../../../app/models');
 const { hashPassword } = require('../../../app/services/sessions');
+const { moment } = require('../../../app/utils/moment');
 
 const expectedKeys = ['access_token', 'id_token', 'refresh_token'];
 
@@ -10,15 +12,23 @@ describe('POST /sessions/login', () => {
   let successfulResponse = {};
   let notFoundResponse = {};
   let invalidParamsResponse = {};
+  let invalidCredentialsResponse = {};
+  let userCreated = {};
   beforeAll(async () => {
     await truncateDatabase();
     const { email, password } = await buildUser();
     const hashedPassword = await hashPassword(password);
-    await createUser({ email, password: hashedPassword });
+    const { id } = await createUser({ email, password: hashedPassword });
     successfulResponse = await getResponse({
       endpoint: '/sessions/login',
       method: 'post',
       body: { email, password }
+    });
+    userCreated = await User.findOne({ where: { id } });
+    invalidCredentialsResponse = await getResponse({
+      endpoint: '/sessions/login',
+      method: 'post',
+      body: { email, password: 'wrong' }
     });
     notFoundResponse = await getResponse({
       endpoint: '/sessions/login',
@@ -41,6 +51,11 @@ describe('POST /sessions/login', () => {
       Object.values(successfulResponse.body).forEach(token => {
         expect(token).toMatch(new RegExp(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/));
       });
+    });
+    it('Should update the last access field for the user', () => {
+      expect(moment(userCreated.lastAccess).format('YYYY-MM-DD HH:mm')).toBe(
+        moment().format('YYYY-MM-DD HH:mm')
+      );
     });
   });
   describe('Fail for invalid request', () => {
@@ -68,6 +83,17 @@ describe('POST /sessions/login', () => {
     });
     it("Should return an error indicating the provided user doesn't exist", () => {
       expect(notFoundResponse.body.message).toEqual('User not found');
+    });
+  });
+  describe('Fail for invalid credentials', () => {
+    it('Should return status code 401', () => {
+      expect(invalidCredentialsResponse.statusCode).toEqual(401);
+    });
+    it('Should return internal_code invalid_credentials', () => {
+      expect(invalidCredentialsResponse.body.internal_code).toBe('invalid_credentials');
+    });
+    it("Should return an error indicating the provided user doesn't exist", () => {
+      expect(invalidCredentialsResponse.body.message).toEqual('The credentials are not correct');
     });
   });
 });
