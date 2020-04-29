@@ -1,8 +1,7 @@
-const { getUsers, getUserByPk, createUser } = require('../services/users');
+const { getUsers, getUserWithLists, createUser } = require('../services/users');
 const { getUsersMapper, getUserMapper, createUserMapper } = require('../mappers/users');
 const { paginateResponse } = require('../serializers/paginations');
 const { getUserSerializer } = require('../serializers/users');
-const { notFound } = require('../errors/builders');
 
 exports.getUsers = (req, res, next) => {
   const filters = getUsersMapper(req);
@@ -12,11 +11,8 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.getUser = (req, res, next) =>
-  getUserByPk(getUserMapper(req))
-    .then(user => {
-      if (!user) throw notFound('User not found');
-      return res.status(200).send(getUserSerializer(user));
-    })
+  getUserWithLists(getUserMapper(req))
+    .then(user => res.status(200).send(getUserSerializer(user)))
     .catch(next);
 
 exports.createUser = (req, res, next) =>
