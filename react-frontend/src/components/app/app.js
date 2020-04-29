@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './app.css'
-import NavBarComponent from '../dashboards/navBarCov'
+import NavBarComponent from '../dashboards/navbar-Cov'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import SignInComponent from '../sign-in/sign-in';
 import SignUpComponent from '../sign-up/sign-up';
@@ -13,7 +13,7 @@ import "../../assets/sass/burger-menu.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faUser, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
 import { elastic as Menu } from 'react-burger-menu';
-import MenuItemComponent from '../dashboards/menuItem'
+import MenuItemComponent from '../dashboards/menu-item'
 const AppComponent = (props) => {
     const chartIcon = <FontAwesomeIcon icon={faChartBar} />
     const userIcon = <FontAwesomeIcon icon={faUser} />
