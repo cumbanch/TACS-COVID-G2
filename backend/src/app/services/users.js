@@ -90,7 +90,7 @@ exports.updateUser = ({ instance, attributes }) => {
 exports.updateLastAccess = instance =>
   this.updateUser({ instance, attributes: { lastAccess: moment().format() } });
 
-exports.getListUserData = ({ id }) =>
+exports.getUserWithLists = ({ id }) =>
   this.getUserByPk({ id }).then(user => {
     if (!user) throw notFound('User not found');
     return user
@@ -105,6 +105,6 @@ exports.getListUserData = ({ id }) =>
         /* istanbul ignore next */
         logger.error(inspect(err));
         /* istanbul ignore next */
-        throw databaseError(`Error getting lists for the provided user, reason: ${err.message}`);
+        throw databaseError(`Error getting user with lists, reason: ${err.message}`);
       });
   });

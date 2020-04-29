@@ -1,4 +1,4 @@
-const { getUsers, getListUserData, createUser } = require('../services/users');
+const { getUsers, getUserWithLists, createUser } = require('../services/users');
 const { getUsersMapper, getUserMapper, createUserMapper } = require('../mappers/users');
 const { paginateResponse } = require('../serializers/paginations');
 const { getUserSerializer } = require('../serializers/users');
@@ -11,7 +11,7 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.getUser = (req, res, next) =>
-  getListUserData(getUserMapper(req))
+  getUserWithLists(getUserMapper(req))
     .then(user => res.status(200).send(getUserSerializer(user)))
     .catch(next);
 
