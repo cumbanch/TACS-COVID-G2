@@ -1,8 +1,8 @@
 const { inspect } = require('util');
 
 const logger = require('../logger');
-const { Telegram, sequelizeInstance } = require('../models');
-const { databaseError, notFound } = require('../errors/builders');
+const { Telegram } = require('../models');
+const { databaseError } = require('../errors/builders');
 
 exports.getTelegramBy = (filters, options = {}) => {
   logger.info(`Attempting to get telegram with filters: ${inspect(filters)}`);
