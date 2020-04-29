@@ -4,11 +4,13 @@ const logger = require('../logger');
 const { moment } = require('../utils/moment');
 const {
   User,
-  sequelizePackage: { Op }
+  sequelizePackage: { Op },
+  Country
 } = require('../models');
 const { deleteUndefined } = require('../utils/objects');
-const { databaseError, alreadyExist, internalServerError } = require('../errors/builders');
+const { databaseError, alreadyExist, internalServerError, notFound } = require('../errors/builders');
 const { hashPassword } = require('./sessions');
+const { omit } = require('../utils/lodash');
 
 exports.getUsers = params => {
   logger.info(`Attempting to get users with params: ${inspect(params)}`);
@@ -87,3 +89,22 @@ exports.updateUser = ({ instance, attributes }) => {
 
 exports.updateLastAccess = instance =>
   this.updateUser({ instance, attributes: { lastAccess: moment().format() } });
+
+exports.getUserWithLists = ({ id }) =>
+  this.getUserByPk({ id }).then(user => {
+    if (!user) throw notFound('User not found');
+    return user
+      .getUserList({ include: [{ model: Country, as: 'countries' }] })
+      .then(lists => {
+        const countriesByList = lists.map(({ countries, dataValues }) => ({
+          dataValues: { ...omit(dataValues, ['countries']), countriesAmount: countries.length }
+        }));
+        return { ...user, lists: countriesByList };
+      })
+      .catch(err => {
+        /* istanbul ignore next */
+        logger.error(inspect(err));
+        /* istanbul ignore next */
+        throw databaseError(`Error getting user with lists, reason: ${err.message}`);
+      });
+  });
