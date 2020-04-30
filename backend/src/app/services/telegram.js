@@ -4,13 +4,12 @@ const logger = require('../logger');
 const { Telegram } = require('../models');
 const { databaseError } = require('../errors/builders');
 
-exports.getTelegramBy = (filters, options = {}) => {
+exports.getTelegramBy = filters => {
   logger.info(`Attempting to get telegram with filters: ${inspect(filters)}`);
   return Telegram.findOne({
     where: {
       chatId: `${filters.chatId}`
-    },
-    ...options
+    }
   }).catch(err => {
     logger.error(inspect(err));
     throw databaseError(`There was an error getting the telegram: ${err.message}`);
