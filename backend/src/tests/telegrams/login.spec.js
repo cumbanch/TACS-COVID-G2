@@ -37,17 +37,17 @@ describe('TELEGRAM BOT /login', () => {
   });
   describe('Fail login wrong email', () => {
     it('Should return Invalid credentials message', () => {
-      expect(failLoginWrongEmail).toBe(telegramErrorsMessages);
+      expect(failLoginWrongEmail).toBe(telegramErrorsMessages.invalidCredentials);
     });
   });
   describe('Fail login wrong password', () => {
     it('Should return Invalid credentials message', () => {
-      expect(failLoginWrongPassword).toBe(telegramErrorsMessages);
+      expect(failLoginWrongPassword).toBe(telegramErrorsMessages.invalidCredentials);
     });
   });
   describe('Fail login wrong email and password', () => {
     it('Should return Invalid credentials message', () => {
-      expect(failLoginWrongEmailAndPassword).toBe(telegramErrorsMessages);
+      expect(failLoginWrongEmailAndPassword).toBe(telegramErrorsMessages.invalidCredentials);
     });
   });
 });

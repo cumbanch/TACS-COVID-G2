@@ -8,9 +8,9 @@ const telegramErrorsMessages = {
 
 exports.getTelegramLogin = (email, password, chatId) =>
   getUserBy({ email }).then(user => {
-    if (!user) return telegramErrorsMessages;
+    if (!user) return telegramErrorsMessages.invalidCredentials;
     return comparePassword(password, user.password).then(match => {
-      if (!match) return telegramErrorsMessages;
+      if (!match) return telegramErrorsMessages.invalidCredentials;
       return createTelegram({ chatId: `${chatId}`, userId: user.id }).then(
         () => `Welcome ${user.name} ${user.lastName}!`
       );
