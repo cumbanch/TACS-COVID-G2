@@ -12,12 +12,14 @@ The application allows following the progression of the COVID-19 pandemic using 
 
 * [Prerequisites](#prerequisites)
 * [Backend](#backend)
-  * [Starting the application](#starting)
-	  * [Environment variables](#environment)
-  * [Development mode](#development)
-  * [Testing mode](#testing)
-  * [Documentation](#documentation)
- * [Frontend](#frontend)
+    * [Starting the application](#starting-be)
+        * [Environment variables](#environment-be)
+    * [Development mode](#development)
+    * [Testing mode](#testing)
+    * [Documentation](#documentation)
+* [Frontend](#frontend)
+    * [Starting the application](#starting-fe)
+        * [Environment variables](#environment-fe)
 
 <a id="prerequisites"></a>
 ## Prerequisites
@@ -32,12 +34,12 @@ You need to have installed:
 ## Backend
 Inside this section we assume the `backend` folder as the root of the project.
 
-<a id="starting"></a>
+<a id="starting-be"></a>
 ### Starting the application
 
-The backend consists in two containers, one for the application and the other for the database. You can start the application in two different modes (development or testing) and in both of them you need to create an environment file (`.env.development` or `.env.testing`) in the root folder. These are the environment variables (you can also check the `.env.example` file for guidance):
+The backend consists in two containers, one for the application and the other for the database. You can start the application in two different modes (development or testing) and in both of them you need to create an environment file (`.env.development` or `.env.testing`) in the root folder. These are the environment variables:
 
-<a id="environment"></a>
+<a id="environment-be"></a>
 #### Environment variables
 You can also check the `.env.example` file for guidance:
 ##### `POSTGRES_HOST` (required)
@@ -116,4 +118,15 @@ The documentation is written with [Swagger](https://swagger.io/) and can be acce
 
 <a id="frontend"></a>
 ## Frontend
-In construction
+Inside this section we assume the `react-frontend` folder as the root of the project.
+
+<a id="starting-fe"></a>
+### Starting the application
+
+The frontend consists in one container for the React application You need to create an environment file (`.env.development`) in the root folder. These are the environment variables:
+
+<a id="environment-fe"></a>
+#### Environment variables
+You can also check the `.env.example` file for guidance:
+##### `REACT_APP_API_BASE_URL` (required)
+The host of the backend API.
