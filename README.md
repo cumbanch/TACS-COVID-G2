@@ -40,7 +40,7 @@ In this section we will explain how to run the application as a whole. If you ne
 
 *Note: for more information, visit the [backend](#environment-be) or [frontend](#environment-fe) environment variables sections.*
 
-Once the environment files were created, we can start the application as a whole running `docker-compose up` in the root of the project.
+Once the environment files were created, we can start the application as a whole running `docker-compose up` in the root of the project. Now you just need to go to [http://localhost:8081](http://localhost:8081) for accessing the application.
 
 <a id="backend"></a>
 ## Backend
