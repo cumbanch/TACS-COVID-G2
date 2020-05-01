@@ -138,7 +138,7 @@ Inside this section we assume the `react-frontend` folder as the root of the pro
 <a id="starting-fe"></a>
 ### Starting the frontend
 
-The frontend consists in one container for the React application. You need to create an environment file (`.env.development`) in the root folder and then run `npm start. These are the environment variables:
+The frontend consists in one container for the React application. You need to create an environment file (`.env.development`) in the root folder and then run `npm start`. These are the environment variables:
 
 <a id="environment-fe"></a>
 #### Environment variables
