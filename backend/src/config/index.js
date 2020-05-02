@@ -36,6 +36,9 @@ const config = {
     timeseriesEndpoint:
       process.env.COVID_API_TIMESERIES_ENDPOINT || '/jhu-edu/timeseries?onlyCountries=true&iso2=',
     latestEndpoint: process.env.COVID_API_LATEST_ENDPOINT || '/jhu-edu/latest?onlyCountries=true&iso2='
+  },
+  telegram: {
+    apiKey: process.env.TELEGRAM_API_KEY
   }
 };
 
