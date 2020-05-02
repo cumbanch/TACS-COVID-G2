@@ -67,7 +67,11 @@ exports.telegram = () => {
       bot.on(/^\/latest$/, msg => getListButtons(msg, 1, bot));
       bot.on(/^\/latest\/(.+)$/, (msg, props) =>  getListButtons(msg, parseInt(props.match[1]), bot));
       bot.on(/^\/lists\/(.+)\/latest$/, (msg, props) =>
-        getTelegramLatestByList(msg.from.id, props.match[1]).then(response => msg.reply.text(response))
+        getTelegramLatestByList(msg.from.id, props.match[1]).then(response => 
+          { 
+            console.log(msg);
+            bot.answerCallbackQuery(msg.id, response, true);
+          })
       );
       bot.start();
     };
