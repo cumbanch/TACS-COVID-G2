@@ -124,7 +124,7 @@ In this mode you can connect your host machine to the database with the followin
  ##### Testing mode
  
 You have to run `npm run testing`.
-The containers will be run in foreground, run the tests, print the coverage and finally will be stopped.
+The container (in foreground) will be run the tests, print the coverage and finally will be stopped.
 
 <a id="documentation"></a>
 ### Documentation
