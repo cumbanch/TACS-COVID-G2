@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { NavLink } from 'react-router-dom'
 
 const NavBarComponent = (props) => {
+    const [params, setParams] = useState({ id: props.id });
 
     return (
 
-        <nav className="navbar navbar-expand-lg navbar-light fixed-top" style={{ zIndex: "900" }}   >
+        <nav className="navbar navbar-expand-lg navbar-light fixed-top" style={{ zIndex: "900" }} id={params.id}  >
             <div className="container" id="inner-container" >
 
                 <NavLink className="navbar-brand" to={"/sign-in"} style={{ textAlign: "right", width: "600px" }}> Covid 19 - TACS - G2 </NavLink>

@@ -74,10 +74,15 @@ body, html, .App, #root, .auth-wrapper {
 }
 .layout-dashboard 
 {
+  display: flex;        /* Lay out each item using flex layout */
+  flex-flow: column;    /* Lay out item’s contents vertically  */
   background-color: white;
   position: relative;
-  width: 100%;
+  width:75%;
   height: 100%;
   left: 100px;
   top: 60px;
+}
+.flag-component-item{
+border-radius: 200px ;
 }

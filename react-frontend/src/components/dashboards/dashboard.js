@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 
 const DashboardComponent = (props) => {
-    const [params, setParams] = useState('');
+    const [params, setParams] = useState({});
 
     return (
         <div id="dash">
