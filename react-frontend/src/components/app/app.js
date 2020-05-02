@@ -9,6 +9,7 @@ import HomeComponent from "../home/home";
 import GraphicsComponent from '../dashboards/graphics-dashboard'
 import UsersComponent from '../dashboards/users-dashboards'
 import CountriesComponent from '../dashboards/countries-dashboard'
+import NotFoundPage from '../not-found-page/notfoundpage'
 import "../../assets/sass/burger-menu.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faUser, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
@@ -28,8 +29,11 @@ const AppComponent = (props) => {
                 <MenuItemComponent anId="Paises" anIcon={countryIcon} urlRef="/countries" aTitle="PAISES" />
             </Menu>
 
-
-            <NavBarComponent id="navCovid" />
+            // Le paso la prop isUserLogged a NavBarComponent para que pueda
+            // decidir si renderizar:
+            //      isUserLogged: true -> Muestra LogOut solamente 
+            //      isUserLogged: false -> Muestra SignIn y SignUp pero no LogOut
+            <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
 
 
             <Switch>
@@ -40,6 +44,9 @@ const AppComponent = (props) => {
                 <Route path="/users" component={UsersComponent} />
                 <Route path="/countries" component={CountriesComponent} />
                 <Route path="/home" component={HomeComponent} />
+                // Agrego el caso de page not found: todo uri que no sea una de 
+                // las anteriores entra en esta
+                <Route component={NotFoundPage} />
             </Switch>
         </div>
 
