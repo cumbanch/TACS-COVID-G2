@@ -1,9 +1,9 @@
 
-[![Build Status](https://travis-ci.org/molinajulian/TACS-COVID-G2.png?branch=master)](https://travis-ci.org/molinajulian/TACS-COVID-G2)
+[![Build Status](https://travis-ci.org/cumbanch/TACS-COVID-G2.png?branch=master)](https://travis-ci.org/cumbanch/TACS-COVID-G2)
 
-[![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/molinajulian/TACS-COVID-G2.svg)](https://codecov.io/github/molinajulian/TACS-COVID-G2?branch=master) 
+[![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/cumbanch/TACS-COVID-G2.svg)](https://codecov.io/github/cumbanch/TACS-COVID-G2?branch=master) 
 
-[![Known Vulnerabilities](https://snyk.io/test/github/molinajulian/TACS-COVID-G2/badge.svg?targetFile=backend/package.json)](https://snyk.io/test/github/molinajulian/TACS-COVID-G2?targetFile=backend/package.json)
+[![Known Vulnerabilities](https://snyk.io/test/github/cumbanch/TACS-COVID-G2/badge.svg?targetFile=backend/package.json)](https://snyk.io/test/github/cumbanch/TACS-COVID-G2?targetFile=backend/package.json)
 
 # TACS-COVID-G2
 
