@@ -42,7 +42,7 @@ The backend consists in two containers, one for the application and the other fo
 You can also check the `.env.example` file for guidance:
 ##### `POSTGRES_HOST` (required)
 The host of the database.
-##### `POSTGRES_PORT` (required)asd
+##### `POSTGRES_PORT` (required)
 The port of the database.
 ##### `POSTGRES_USER` (required)
 The user for accessing the database.
