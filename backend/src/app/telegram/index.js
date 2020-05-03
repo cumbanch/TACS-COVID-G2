@@ -36,7 +36,6 @@ const callbackButtons = {
   }
 }
 
-
 const getListButtons = (msg, page, bot, callbackButton) =>
   getTelegramLists(msg.from.id, page).then(lists => {
     if (lists.count == 0) {
