@@ -65,12 +65,9 @@ exports.telegram = () => {
   );
   bot.on(/^\/latest$/, msg => getListButtons(msg, 1, bot));
   bot.on(/^\/latest\/(.+)$/, (msg, props) => getListButtons(msg, parseInt(props.match[1]), bot));
-  bot.on(/^\/lists\/(.+)\/latest$/, (msg, props) => {
-    getTelegramLatestByList(msg.from.id, parseInt(props.match[1])).then(latest => {
-      console.log(latest);
-      bot.sendMessage(msg.from.id, latest);
-    })
-      .catch(err => bot.sendMessage(msg.from.id, err.message));
-  });
+  bot.on(/^\/lists\/(.+)\/latest$/, (msg, props) => getTelegramLatestByList(msg.from.id, parseInt(props.match[1]))
+    .then(latest => bot.sendMessage(msg.from.id, `Confirmed: ${latest.confirmed}, Deaths: ${latest.deaths}, Recovered: ${latest.recovered}`))
+    .catch(err => bot.sendMessage(msg.from.id, err.message))
+  );
   bot.start();
 };

@@ -37,7 +37,6 @@ exports.getLatestByList = list => {
           delete countryFounded.dataValues.CountryByList;
         }
         const latest = parsedData && {
-          country_name: country.name,
           confirmed: parsedData.confirmed,
           deaths: parsedData.deaths,
           recovered: parsedData.recovered
@@ -48,12 +47,12 @@ exports.getLatestByList = list => {
     return axios
       .all(promises)
       .then(responses => {
-        const latestResults = responses.filter(({ data }) => data.latest).map(({ data }) => data.latest);
+        const latestResults = responses.map(({ data }) => data.latest);
         const sumOfLatest = latestResults.reduce((previous, current) => ({
           confirmed: previous.confirmed + current.confirmed,
           deaths: previous.deaths + current.deaths,
           recovered: previous.recovered + current.recovered
-        }), { confirmed: 0, deaths: 0, recovered: 0 });
+        }));
         return sumOfLatest;
       })
       .catch(err => {
