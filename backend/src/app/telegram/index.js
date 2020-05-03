@@ -48,7 +48,7 @@ const getListButtons = (msg, page, bot, callbackButton) =>
     let listButtons = [];
     let messageTitle = 'You have not more lists';
     if (lists.rows.length > 0) {
-      listButtons = chunkArray(
+      listButtons = chunk(
         lists.rows.map(list =>
           bot.inlineButton(list.dataValues.name, { callback: callbackButton.action.replace('id', list.dataValues.id) })
         ),
