@@ -78,7 +78,7 @@ exports.telegram = () => {
   );
   bot.on(/^\/latest\/?(\d)?$/, (msg, props) => getListButtons(msg, props.match[1] ? parseInt(props.match[1]) : 1, bot, callbackButtons.latest));
   bot.on(/^\/lists\/(\d)\/latest$/, (msg, props) => getTelegramLatestByList(msg.from.id, parseInt(props.match[1]))
-    .then(latest => bot.sendMessage(msg.from.id, `Confirmed: ${latest.confirmed}</br> Deaths: ${latest.deaths}</br> Recovered: ${latest.recovered}`))
+    .then(latest => bot.sendMessage(msg.from.id, `Confirmed: ${latest.confirmed}, Deaths: ${latest.deaths}, Recovered: ${latest.recovered}`))
     .catch(err => bot.sendMessage(msg.from.id, err.message))
   );
   bot.start();
