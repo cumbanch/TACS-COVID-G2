@@ -4,7 +4,6 @@ const { apiKey } = require('../../config').telegram;
 const { getTelegramLogin } = require('../telegram/sessions');
 const { getTelegramLists, getTelegramLatestByList } = require('../telegram/lists');
 const { chunkArray } = require('../utils/arrays');
-const { listPagination } = require('../../config').telegram;
 
 const help = `Welcome to the COVID-19 Bot!
 This bot was created by the Group 2 of TACS
@@ -56,22 +55,23 @@ getListButtons = (msg, page, bot) =>
 
 
 exports.telegram = () => {
-      const bot = new TeleBot({
-        token: apiKey,
-        usePlugins: ['commandButton']
-      });
-      bot.on(['/start', '/help'], msg => msg.reply.text(help));
-      bot.on(/^\/login (.+) (.+)$/, (msg, props) =>
-        getTelegramLogin(props.match[1], props.match[2], msg.from.id).then(response => msg.reply.text(response))
-      );
-      bot.on(/^\/latest$/, msg => getListButtons(msg, 1, bot));
-      bot.on(/^\/latest\/(.+)$/, (msg, props) =>  getListButtons(msg, parseInt(props.match[1]), bot));
-      bot.on(/^\/lists\/(.+)\/latest$/, (msg, props) =>
-        getTelegramLatestByList(msg.from.id, props.match[1]).then(response => 
-          { 
-            console.log(msg);
-            bot.answerCallbackQuery(msg.id, response, true);
-          })
-      );
-      bot.start();
-    };
+  const bot = new TeleBot({
+    token: apiKey,
+    usePlugins: ['commandButton']
+  });
+  bot.on(['/start', '/help'], msg => msg.reply.text(help));
+  bot.on(/^\/login (.+) (.+)$/, (msg, props) =>
+    getTelegramLogin(props.match[1], props.match[2], msg.from.id).then(response => msg.reply.text(response))
+  );
+  bot.on(/^\/latest$/, msg => getListButtons(msg, 1, bot));
+  bot.on(/^\/latest\/(.+)$/, (msg, props) => getListButtons(msg, parseInt(props.match[1]), bot));
+  bot.on(/^\/lists\/(.+)\/latest$/, (msg, props) => {
+    const list_id = parseInt(props.match[1]);
+    getTelegramLatestByList(msg.from.id, list_id).then(response => {
+      console.log(response);
+      bot.sendMessage(msg.from.id, "hola");
+    })
+      .catch(err => console.log(err.message));
+  });
+  bot.start();
+};
