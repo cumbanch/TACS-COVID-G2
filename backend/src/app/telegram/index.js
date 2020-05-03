@@ -1,8 +1,9 @@
 const TeleBot = require('telebot');
 
+const logger = require('../logger');
 const { apiKey } = require('../../config').telegram;
 const { getTelegramLogin } = require('../telegram/sessions');
-const { getTelegramLists, getTelegramLatestByList } = require('../telegram/lists');
+const { getTelegramLists, getTelegramLatestByList, addCountryToList } = require('../telegram/lists');
 const { chunkArray } = require('../utils/arrays');
 
 const help = `Welcome to the COVID-19 Bot!
@@ -25,27 +26,37 @@ You can control me by sending these commands:
 
 Please, start to login`;
 
-getListButtons = (msg, page, bot) =>
-  getTelegramLists(msg.from.id, page).then(lists => {
+const callbackButtons = {
+  latest: {
+    action: `/lists/id/latest`,
+    pagination: `/latest/page`
+  },
+  addCountry: {
+    action: `/lists/id/country`,
+    pagination: `/addcountry/page`
+  }
+}
 
+const getListButtons = (msg, page, bot, callbackButton) =>
+  getTelegramLists(msg.from.id, page).then(lists => {
+    const prevButton = bot.inlineButton('<< Previus', { callback: callbackButton.pagination.replace('page', page > 1 ? page - 1 : 1) });
     if (lists.count > 0) {
       let listButtons = [];
       let messageTitle = 'You have not more lists';
       if (lists.rows.length > 0) {
         listButtons = chunkArray(
           lists.rows.map(list =>
-            bot.inlineButton(list.dataValues.name, { callback: `/lists/${list.dataValues.id}/latest` })
+            bot.inlineButton(list.dataValues.name, { callback: callbackButton.action.replace('id', list.dataValues.id) })
           ),
           3
         );
-        listButtons.push([
-          bot.inlineButton('<< Previus', { callback: `/latest/${page > 1 ? page - 1 : 1}` }),
-          bot.inlineButton('Next >>', { callback: `/latest/${page + 1}` })
+        listButtons.push([prevButton,
+          bot.inlineButton('Next >>', { callback: callbackButton.pagination.replace('page', page + 1) })
         ]);
         messageTitle = `Select one of your lists (Page ${page}).`;
       }
       else {
-        listButtons.push([bot.inlineButton('<< Previus', { callback: `/latest/${page > 1 ? page - 1 : 1}` })]);
+        listButtons.push([prevButton]);
       }
       const replyMarkup = bot.inlineKeyboard(listButtons);
       return bot.sendMessage(msg.from.id, messageTitle, { replyMarkup });
@@ -57,17 +68,36 @@ getListButtons = (msg, page, bot) =>
 exports.telegram = () => {
   const bot = new TeleBot({
     token: apiKey,
-    usePlugins: ['commandButton']
+    usePlugins: ['commandButton', 'askUser']
   });
   bot.on(['/start', '/help'], msg => msg.reply.text(help));
   bot.on(/^\/login (.+) (.+)$/, (msg, props) =>
     getTelegramLogin(props.match[1], props.match[2], msg.from.id).then(response => msg.reply.text(response))
   );
-  bot.on(/^\/latest$/, msg => getListButtons(msg, 1, bot));
-  bot.on(/^\/latest\/(.+)$/, (msg, props) => getListButtons(msg, parseInt(props.match[1]), bot));
-  bot.on(/^\/lists\/(.+)\/latest$/, (msg, props) => getTelegramLatestByList(msg.from.id, parseInt(props.match[1]))
+  bot.on(/^\/latest\/?(\d)?$/, (msg, props) =>{
+    logger.debug("latest: " + JSON.stringify(props));
+    getListButtons(msg, props.match[1] ? parseInt(props.match[1]) : 1, bot, callbackButtons.latest)
+  });
+  bot.on(/^\/addcountry\/?(\d)?$/, (msg, props) =>{
+    logger.debug("addcountry: " +  JSON.stringify(props));
+    getListButtons(msg, props.match[1] ? parseInt(props.match[1]) : 1, bot, callbackButtons.addCountry)
+  });
+  bot.on(/^\/lists\/(\d)\/latest$/, (msg, props) => getTelegramLatestByList(msg.from.id, parseInt(props.match[1]))
     .then(latest => bot.sendMessage(msg.from.id, `Confirmed: ${latest.confirmed}, Deaths: ${latest.deaths}, Recovered: ${latest.recovered}`))
     .catch(err => bot.sendMessage(msg.from.id, err.message))
   );
+  bot.on(/^\/lists\/(\d)\/country$/, (msg, props) => {
+    console.log(props);
+    bot.sendMessage(msg.from.id, 'What country you want to add?', { ask: `country.${parseInt(props.match[1])}` })
+  });
+  bot.on(/^ask.country.(\d)$/, (msg, props) => {
+    logger.debug("ask country: " + JSON.stringify(msg));
+    const countryName = msg.text;
+    return bot.sendMessage(msg.from.id, `Adding the country ${countryName} to the list...`)
+      .then(re => addCountryToList(re.msg.id, parseInt(props.match[1]), countryName)
+        .then(() => bot.editMessageText({ chatID: msg.from.id, messageId: re.id }, `The country ${countryName} was successful added`))
+      );
+  });
   bot.start();
+
 };

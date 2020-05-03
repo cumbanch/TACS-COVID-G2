@@ -38,3 +38,18 @@ exports.getCountry = filters => {
     throw databaseError(`There was an error getting country: ${error.message}`);
   });
 };
+
+exports.getCountryBy = params => {
+  logger.info(`Attempting to get country with params: ${inspect(params)}`);
+  const filters = {
+    name: params.name && { [Op.iLike]: `%${params.name}%` }
+  };
+  const sequelizeOptions = {
+    where: deleteUndefined(filters),
+  };
+  return Country.first(sequelizeOptions).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    throw databaseError(`Error getting country, reason: ${err.message}`);
+  });
+};
