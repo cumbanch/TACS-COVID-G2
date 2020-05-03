@@ -66,12 +66,11 @@ exports.telegram = () => {
   bot.on(/^\/latest$/, msg => getListButtons(msg, 1, bot));
   bot.on(/^\/latest\/(.+)$/, (msg, props) => getListButtons(msg, parseInt(props.match[1]), bot));
   bot.on(/^\/lists\/(.+)\/latest$/, (msg, props) => {
-    const list_id = parseInt(props.match[1]);
-    getTelegramLatestByList(msg.from.id, list_id).then(response => {
-      console.log(response);
-      bot.sendMessage(msg.from.id, "hola");
+    getTelegramLatestByList(msg.from.id, parseInt(props.match[1])).then(latest => {
+      console.log(latest);
+      bot.sendMessage(msg.from.id, latest);
     })
-      .catch(err => console.log(err.message));
+      .catch(err => bot.sendMessage(msg.from.id, err.message));
   });
   bot.start();
 };
