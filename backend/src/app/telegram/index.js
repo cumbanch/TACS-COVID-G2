@@ -1,9 +1,9 @@
 const TeleBot = require('telebot');
+const { chunk } = require('lodash');
 
 const { apiKey } = require('../../config').telegram;
 const { getTelegramLogin } = require('../telegram/sessions');
 const { getTelegramLists, getTelegramLatestByList } = require('../telegram/lists');
-const { chunkArray } = require('../utils/arrays');
 
 const help = `Welcome to the COVID-19 Bot!
 This bot was created by the Group 2 of TACS
@@ -32,7 +32,7 @@ getListButtons = (msg, page, bot) =>
       let listButtons = [];
       let messageTitle = 'You have not more lists';
       if (lists.rows.length > 0) {
-        listButtons = chunkArray(
+        listButtons = chunk(
           lists.rows.map(list =>
             bot.inlineButton(list.dataValues.name, { callback: `/lists/${list.dataValues.id}/latest` })
           ),
