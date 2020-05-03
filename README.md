@@ -1,9 +1,9 @@
 
-[![Build Status](https://travis-ci.org/molinajulian/TACS-COVID-G2.png?branch=master)](https://travis-ci.org/molinajulian/TACS-COVID-G2)
+[![Build Status](https://travis-ci.org/cumbanch/TACS-COVID-G2.png?branch=master)](https://travis-ci.org/cumbanch/TACS-COVID-G2)
 
-[![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/molinajulian/TACS-COVID-G2.svg)](https://codecov.io/github/molinajulian/TACS-COVID-G2?branch=master) 
+[![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/cumbanch/TACS-COVID-G2.svg)](https://codecov.io/github/cumbanch/TACS-COVID-G2?branch=master) 
 
-[![Known Vulnerabilities](https://snyk.io/test/github/molinajulian/TACS-COVID-G2/badge.svg?targetFile=backend/package.json)](https://snyk.io/test/github/molinajulian/TACS-COVID-G2?targetFile=backend/package.json)
+[![Known Vulnerabilities](https://snyk.io/test/github/cumbanch/TACS-COVID-G2/badge.svg?targetFile=backend/package.json)](https://snyk.io/test/github/cumbanch/TACS-COVID-G2?targetFile=backend/package.json)
 
 # TACS-COVID-G2
 
@@ -107,7 +107,7 @@ In this mode you can connect your host machine to the database with the followin
  #### Testing mode
  
 You have to run `npm run testing`.
-The containers will be run in foreground, run the tests, print the coverage and finally will be stopped.
+The container (in foreground) will be run the tests, print the coverage and finally will be stopped.
 
 <a id="documentation"></a>
 ### Documentation
