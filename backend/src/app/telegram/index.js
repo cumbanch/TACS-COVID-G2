@@ -16,7 +16,7 @@ You can control me by sending these commands:
 
 /login - username and password
 
-/latestoflist - get the latest covid status for the all countries in the list
+/latest - get the latest covid status for the all countries in the list
 /latestofcountry - get the lastets covid status for a country
 
 /history - get a comparative table of the all countries in a list
