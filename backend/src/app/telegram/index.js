@@ -25,7 +25,7 @@ You can control me by sending these commands:
 
 Please, start to login`;
 
-getListButtons = (msg, page, bot) =>
+const getListButtons = (msg, page, bot) =>
   getTelegramLists(msg.from.id, page).then(lists => {
 
     if (lists.count > 0) {
