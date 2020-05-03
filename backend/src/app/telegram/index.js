@@ -25,32 +25,45 @@ You can control me by sending these commands:
 
 Please, start to login`;
 
-const getListButtons = (msg, page, bot) =>
-  getTelegramLists(msg.from.id, page).then(lists => {
+const callbackButtons = {
+  latest: {
+    action: `/lists/id/latest`,
+    pagination: `/latest/page`
+  },
+  addCountry: {
+    action: `/lists/id/country`,
+    pagination: `/addcountry/page`
+  }
+}
 
-    if (lists.count > 0) {
-      let listButtons = [];
-      let messageTitle = 'You have not more lists';
-      if (lists.rows.length > 0) {
-        listButtons = chunk(
-          lists.rows.map(list =>
-            bot.inlineButton(list.dataValues.name, { callback: `/lists/${list.dataValues.id}/latest` })
-          ),
-          3
-        );
-        listButtons.push([
-          bot.inlineButton('<< Previus', { callback: `/latest/${page > 1 ? page - 1 : 1}` }),
-          bot.inlineButton('Next >>', { callback: `/latest/${page + 1}` })
-        ]);
-        messageTitle = `Select one of your lists (Page ${page}).`;
-      }
-      else {
-        listButtons.push([bot.inlineButton('<< Previus', { callback: `/latest/${page > 1 ? page - 1 : 1}` })]);
-      }
-      const replyMarkup = bot.inlineKeyboard(listButtons);
-      return bot.sendMessage(msg.from.id, messageTitle, { replyMarkup });
+
+const getListButtons = (msg, page, bot, callbackButton) =>
+  getTelegramLists(msg.from.id, page).then(lists => {
+    if (lists.count == 0) {
+      return msg.reply.text('You dont have any list. Please, create a new list.');
     }
-    return msg.reply.text('You dont have any list. Please, create a new list.');
+
+    const prevButton = bot.inlineButton('<< Previus', { callback: callbackButton.pagination.replace('page', page > 1 ? page - 1 : 1) });
+
+    let listButtons = [];
+    let messageTitle = 'You have not more lists';
+    if (lists.rows.length > 0) {
+      listButtons = chunkArray(
+        lists.rows.map(list =>
+          bot.inlineButton(list.dataValues.name, { callback: callbackButton.action.replace('id', list.dataValues.id) })
+        ),
+        3
+      );
+      listButtons.push([prevButton,
+        bot.inlineButton('Next >>', { callback: callbackButton.pagination.replace('page', page + 1) })
+      ]);
+      messageTitle = `Select one of your lists (Page ${page}).`;
+    }
+    else {
+      listButtons.push([prevButton]);
+    }
+    const replyMarkup = bot.inlineKeyboard(listButtons);
+    return bot.sendMessage(msg.from.id, messageTitle, { replyMarkup });
   });
 
 
@@ -63,10 +76,9 @@ exports.telegram = () => {
   bot.on(/^\/login (.+) (.+)$/, (msg, props) =>
     getTelegramLogin(props.match[1], props.match[2], msg.from.id).then(response => msg.reply.text(response))
   );
-  bot.on(/^\/latest$/, msg => getListButtons(msg, 1, bot));
-  bot.on(/^\/latest\/(.+)$/, (msg, props) => getListButtons(msg, parseInt(props.match[1]), bot));
-  bot.on(/^\/lists\/(.+)\/latest$/, (msg, props) => getTelegramLatestByList(msg.from.id, parseInt(props.match[1]))
-    .then(latest => bot.sendMessage(msg.from.id, `Confirmed: ${latest.confirmed}, Deaths: ${latest.deaths}, Recovered: ${latest.recovered}`))
+  bot.on(/^\/latest\/?(\d)?$/, (msg, props) => getListButtons(msg, props.match[1] ? parseInt(props.match[1]) : 1, bot, callbackButtons.latest));
+  bot.on(/^\/lists\/(\d)\/latest$/, (msg, props) => getTelegramLatestByList(msg.from.id, parseInt(props.match[1]))
+    .then(latest => bot.sendMessage(msg.from.id, `Confirmed: ${latest.confirmed}</br> Deaths: ${latest.deaths}</br> Recovered: ${latest.recovered}`))
     .catch(err => bot.sendMessage(msg.from.id, err.message))
   );
   bot.start();
