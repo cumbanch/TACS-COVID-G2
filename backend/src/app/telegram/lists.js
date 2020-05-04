@@ -3,7 +3,7 @@ const { getAllList, getListWithCountries, createCountriesByList } = require('../
 const { getCountryBy } = require('../services/countries');
 const { getTelegramBy } = require('../services/telegram');
 const { getLatestByList } = require('../services/covid_api');
-const { invalidCountries } =require('../errors/builders');
+const { invalidCountries } = require('../errors/builders');
 
 exports.getTelegramLists = (chatId, page) =>
   getTelegramBy({ chatId }).then(telegram =>

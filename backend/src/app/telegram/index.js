@@ -101,13 +101,14 @@ exports.telegram = () => {
     const listId = parseInt(props.match[1]);
     const countryName = props.match[2];
     bot.sendMessage(msg.from.id, 'Adding the Country...').then(re => {
-      addCountryToList(msg.from.id, listId, countryName).then(() =>
-        bot.editMessageText(
-          { chatId: msg.from.id, messageId: re.message_id },
-          `The country ${countryName} was added to the list.`
+      addCountryToList(msg.from.id, listId, countryName)
+        .then(() =>
+          bot.editMessageText(
+            { chatId: msg.from.id, messageId: re.message_id },
+            `The country ${countryName} was added to the list.`
+          )
         )
-      )
-      .catch(err => bot.sendMessage(msg.from.id, err.message))
+        .catch(err => bot.sendMessage(msg.from.id, err.message));
     });
   });
   bot.start();
