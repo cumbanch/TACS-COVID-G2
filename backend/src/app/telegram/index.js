@@ -4,7 +4,7 @@ const { chunk } = require('lodash');
 const logger = require('../logger');
 const { apiKey } = require('../../config').telegram;
 const { getTelegramLogin } = require('../telegram/sessions');
-const { getTelegramLists, getTelegramLatestByList } = require('../telegram/lists');
+const { getTelegramLists, getTelegramLatestByList, addCountryToList } = require('../telegram/lists');
 
 const help = `Welcome to the COVID-19 Bot!
 This bot was created by the Group 2 of TACS
