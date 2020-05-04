@@ -27,40 +27,40 @@ const getTimeseries = (country, transformResponse) =>
   getTimeseriesByIso2(country.dataValues.iso2, transformResponse);
 
 exports.getLatestByList = list => {
-  if (list.countries.length > 0) {
-    const promises = list.countries.map(country =>
-      getLatest(country, data => {
-        const parsedData = JSON.parse(data)[0];
-        let countryFounded = {};
-        if (parsedData) {
-          countryFounded = list.countries.find(({ iso2 }) => iso2 === parsedData.countrycode.iso2);
-          delete countryFounded.dataValues.CountryByList;
-        }
-        const latest = parsedData && {
-          confirmed: parsedData.confirmed,
-          deaths: parsedData.deaths,
-          recovered: parsedData.recovered
-        };
-        return { ...countryFounded.dataValues, latest };
-      })
-    );
-    return axios
-      .all(promises)
-      .then(responses => {
-        const latestResults = responses.map(({ data }) => data.latest);
-        const sumOfLatest = latestResults.reduce((previous, current) => ({
-          confirmed: previous.confirmed + current.confirmed,
-          deaths: previous.deaths + current.deaths,
-          recovered: previous.recovered + current.recovered
-        }));
-        return sumOfLatest;
-      })
-      .catch(err => {
-        logger.error(inspect(err));
-        throw externalService(`There was an error getting the latest results, reason: ${err.message}`);
-      });
+  if (list.countries.length === 0) {
+    throw emptyList(`The list ${list.dataValues.name} is empty`);
   }
-  throw emptyList(`The list ${list.dataValues.name} is empty`);
+  const promises = list.countries.map(country =>
+    getLatest(country, data => {
+      const parsedData = JSON.parse(data)[0];
+      let countryFounded = {};
+      if (parsedData) {
+        countryFounded = list.countries.find(({ iso2 }) => iso2 === parsedData.countrycode.iso2);
+        delete countryFounded.dataValues.CountryByList;
+      }
+      const latest = parsedData && {
+        confirmed: parsedData.confirmed,
+        deaths: parsedData.deaths,
+        recovered: parsedData.recovered
+      };
+      return { ...countryFounded.dataValues, latest };
+    })
+  );
+  return axios
+    .all(promises)
+    .then(responses => {
+      const latestResults = responses.map(({ data }) => data.latest);
+      const sumOfLatest = latestResults.reduce((previous, current) => ({
+        confirmed: previous.confirmed + current.confirmed,
+        deaths: previous.deaths + current.deaths,
+        recovered: previous.recovered + current.recovered
+      }));
+      return sumOfLatest;
+    })
+    .catch(err => {
+      logger.error(inspect(err));
+      throw externalService(`There was an error getting the latest results, reason: ${err.message}`);
+    });
 };
 
 exports.getTimeseriesByList = list => {
