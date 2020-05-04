@@ -75,7 +75,7 @@ exports.telegram = () => {
     usePlugins: ['commandButton', 'askUser']
   });
   bot.on(['/start', '/help'], msg => msg.reply.text(help));
-  bot.on(/^\/login (.+) (.+)$/, (msg, props) =>
+  bot.on(/^\/login \w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+ (.+)$/, (msg, props) =>
     getTelegramLogin(props.match[1], props.match[2], msg.from.id).then(response => msg.reply.text(response))
   );
   bot.on(/^\/latest\/?(\d)?$/, (msg, props) =>
