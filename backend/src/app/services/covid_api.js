@@ -3,7 +3,7 @@ const { inspect } = require('util');
 
 const logger = require('../logger');
 const { baseUrl, timeseriesEndpoint, latestEndpoint } = require('../../config').covidApi;
-const { externalService, emptyList } = require('../errors/builders');
+const { externalService, emptyList, notFound } = require('../errors/builders');
 
 const getLatestByIso2 = (iso2, transformResponse) => {
   const options = {
@@ -27,6 +27,9 @@ const getTimeseries = (country, transformResponse) =>
   getTimeseriesByIso2(country.dataValues.iso2, transformResponse);
 
 exports.getLatestByList = list => {
+  if (!list) {
+    throw notFound('The list was not found');
+  }
   if (list.countries.length === 0) {
     throw emptyList(`The list ${list.dataValues.name} is empty`);
   }
