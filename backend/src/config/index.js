@@ -7,7 +7,7 @@ const config = {
     database: process.env.POSTGRES_DB,
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
-    logging: process.env.POSTGRES_LOGGING || false,
+    logging: process.env.POSTGRES_LOGGING || 'false',
     dialect: 'postgres'
   },
   migrations: {
