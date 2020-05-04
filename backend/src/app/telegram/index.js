@@ -1,7 +1,6 @@
 const TeleBot = require('telebot');
 const { chunk } = require('lodash');
 
-const logger = require('../logger');
 const { apiKey } = require('../../config').telegram;
 const { getTelegramLogin } = require('../telegram/sessions');
 const { getTelegramLists, getTelegramLatestByList, addCountryToList } = require('../telegram/lists');
@@ -32,8 +31,8 @@ const callbackButtons = {
     pagination: '/latest/page'
   },
   addCountry: {
-    action: '/lists/id/country',
-    pagination: '/addcountry/page'
+    action: '/lists/id/country/countryName',
+    pagination: '/addcountryname/countryName/page'
   }
 };
 
@@ -92,25 +91,24 @@ exports.telegram = () => {
       )
       .catch(err => bot.sendMessage(msg.from.id, err.message))
   );
-  bot.on(/^\/lists\/(\d)\/country$/, (msg, props) => {
-    console.log(props);
-    bot.sendMessage(msg.from.id, 'What country you want to add?', {
-      ask: `country.${parseInt(props.match[1])}`
-    });
-  });
-  bot.on(/^ask.country.(\d)$/, (msg, props) => {
-    logger.debug(`ask country: ${JSON.stringify(msg)}`);
-    const countryName = msg.text;
-    return bot
-      .sendMessage(msg.from.id, `Adding the country ${countryName} to the list...`)
-      .then(re =>
-        addCountryToList(re.msg.id, parseInt(props.match[1]), countryName).then(() =>
-          bot.editMessageText(
-            { chatID: msg.from.id, messageId: re.id },
-            `The country ${countryName} was successful added`
-          )
+  bot.on(/^\/addcountry (.+)\/?(\d)?$/, (msg, props) =>
+    getListButtons(msg, props.match[2] ? parseInt(props.match[2]) : 1, bot, {
+      action: callbackButtons.addCountry.action.replace('countryName', props.match[1]),
+      pagination: callbackButtons.addCountry.pagination.replace('countryName', props.match[1])
+    })
+  );
+  bot.on(/^\/lists\/(\d)\/country\/(.+)$/, (msg, props) => {
+    const listId = parseInt(props.match[1]);
+    const countryName = props.match[2];
+    bot.sendMessage(msg.from.id, 'Adding the Country...').then(re => {
+      addCountryToList(msg.from.id, listId, countryName).then(() =>
+        bot.editMessageText(
+          { chatId: msg.from.id, messageId: re.message_id },
+          `The country ${countryName} was added to the list.`
         )
-      );
+      )
+      .catch(err => bot.sendMessage(msg.from.id, err.message))
+    });
   });
   bot.start();
 };

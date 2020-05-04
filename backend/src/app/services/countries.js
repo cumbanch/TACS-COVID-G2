@@ -47,7 +47,7 @@ exports.getCountryBy = params => {
   const sequelizeOptions = {
     where: deleteUndefined(filters)
   };
-  return Country.first(sequelizeOptions).catch(err => {
+  return Country.findAndCountAll(sequelizeOptions).catch(err => {
     /* istanbul ignore next */
     logger.error(inspect(err));
     throw databaseError(`Error getting country, reason: ${err.message}`);
