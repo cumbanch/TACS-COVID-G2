@@ -3,6 +3,7 @@ import ComparisonItemComponent from './comparison-item'
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
+import MultiSelectWithItemsComponent from '../../app/multi-select-with-items'
 const ComparisonComponent = (props) => {
 
 
@@ -21,10 +22,17 @@ const ComparisonComponent = (props) => {
     const rowsTest2 = rowsTest.map(row => ({ date: row.date, deaths: row.deaths + 15 }));
     let dataForLines = rowsTest.map(row => ({ name: row.date, Mexico: row.deaths, Argentina: 0 }));
     dataForLines = dataForLines.map(row => ({ name: row.name, Mexico: row.Mexico, Argentina: rowsTest2.find(a_row => (a_row.date === row.name)).deaths }));
-
+    const countriesList = [{ id: 'Lista1', list: ['Brazil', 'Colombia', 'Suecia'] }, { id: 'Lista2', list: ['Botswana', 'Peru', 'Nigeria'] }]
     return (
         <div className="container layout-dashboard">
             <div style={{ display: "flex", flexFlow: "row" }}>
+                <MultiSelectWithItemsComponent id='ListSelect' countries={countriesList.map((unaLista) => (unaLista.id))} selectTitle={'Lista'} />
+                <MultiSelectWithItemsComponent id='CountriesSelect' countries={countriesList.map((unaLista) => (unaLista.list))} selectTitle={'Paises'} />
+            </div>
+
+
+            <div style={{ display: "flex", flexFlow: "row" }}>
+
                 <ComparisonItemComponent flag="https://myhero.com/images/guest/g237468/hero71945/g237468_u84849_mexico_flag.jpg" rows={rowsTest} />
                 <ComparisonItemComponent flag="https://image.shutterstock.com/image-vector/original-simple-argentina-flag-isolated-260nw-516324706.jpg" rows={rowsTest2} />
                 <LineChart
