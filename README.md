@@ -74,6 +74,10 @@ Base route of the COVID API which is used to get the numbers of confirmed, death
 Relative route of the COVID API's endpoint used for getting the day by day number of cases in a country.
 ##### `COVID_API_LATEST_ENDPOINT` (optional | default = `/jhu-edu/latest?onlyCountries=true&iso2=`)
 Relative route of the COVID API's endpoint used for getting the last update of cases in a country.
+##### `TELEGRAM_API_KEY` (required)
+The API KEY generated in the @BotFather fot the Telegram Bot.
+##### `TELEGRAM_LIST_PAGINATION` (optional | default = `15`)
+Number of results per page for paginated telegram responses.
 ##### `POSTGRES_LOGGING` (optional | default = `false`)
 If true, the application will log every database query.
 ##### `PORT` (optional | default = `8080`)

@@ -1,6 +1,7 @@
 exports.NOT_FOUND = 'not_found';
 exports.INVALID_PARAMS = 'invalid_params';
 exports.EMPTY_BODY = 'empty_body';
+exports.EMPTY_LIST = 'empty_list';
 exports.DATABASE_ERROR = 'database_error';
 exports.ALREADY_EXIST = 'already_exist';
 exports.INVALID_TOKEN = 'invalid_token';
