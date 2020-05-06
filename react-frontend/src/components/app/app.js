@@ -9,6 +9,7 @@ import HomeComponent from "../home/home";
 import GraphicsComponent from '../dashboards/graphics-dashboard'
 import UsersComponent from '../dashboards/users-dashboards'
 import CountriesComponent from '../dashboards/countries-dashboard'
+import ListItemComponent from '../lists/list-item'
 import "../../assets/sass/burger-menu.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faUser, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
@@ -40,6 +41,7 @@ const AppComponent = (props) => {
                 <Route path="/users" component={UsersComponent} />
                 <Route path="/countries" component={CountriesComponent} />
                 <Route path="/home" component={HomeComponent} />
+                <Route path="/lists/:id" component={ListItemComponent} />
             </Switch>
         </div>
 
