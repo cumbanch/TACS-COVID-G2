@@ -3,7 +3,10 @@
 
 [![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/cumbanch/TACS-COVID-G2.svg)](https://codecov.io/github/cumbanch/TACS-COVID-G2?branch=master) 
 
+`Backend`
 [![Known Vulnerabilities](https://snyk.io/test/github/cumbanch/TACS-COVID-G2/badge.svg?targetFile=backend/package.json)](https://snyk.io/test/github/cumbanch/TACS-COVID-G2?targetFile=backend/package.json)
+`Frontend`
+[![Known Vulnerabilities](https://snyk.io/test/github/cumbanch/TACS-COVID-G2/badge.svg?targetFile=react-frontend/package.json)](https://snyk.io/test/github/cumbanch/TACS-COVID-G2?targetFile=react-frontend/package.json)
 
 # TACS-COVID-G2
 
