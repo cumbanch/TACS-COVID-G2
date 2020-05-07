@@ -6,8 +6,11 @@ import {
 import MultiSelectWithItemsComponent from '../../app/multi-select-with-items'
 const ComparisonComponent = (props) => {
 
+    const [params, setOtherParams] = useState({ isCountryListDisabled: true })
+    const enableCountryList = () => {
 
-
+        setOtherParams({ isCountryListDisabled: false })
+    }
     const rowsTest = [
         { date: "2020-04-20", deaths: 42 },
         { date: "2020-04-21", deaths: 121 },
@@ -25,9 +28,13 @@ const ComparisonComponent = (props) => {
     const countriesList = [{ id: 'Lista1', list: ['Brazil', 'Colombia', 'Suecia'] }, { id: 'Lista2', list: ['Botswana', 'Peru', 'Nigeria'] }]
     return (
         <div className="container layout-dashboard">
-            <div style={{ display: "flex", flexFlow: "row" }}>
-                <MultiSelectWithItemsComponent id='ListSelect' countries={countriesList.map((unaLista) => (unaLista.id))} selectTitle={'Lista'} />
-                <MultiSelectWithItemsComponent id='CountriesSelect' countries={countriesList.map((unaLista) => (unaLista.list))} selectTitle={'Paises'} />
+            <div style={{ display: "flex", flexFlow: "row" }}  >
+                <div onClick={enableCountryList}>
+                    <MultiSelectWithItemsComponent id='ListSelect' countries={countriesList.map((unaLista) => (unaLista.id))} selectTitle={'Lista'} />
+                </div>
+                {params.isCountryListDisabled ? null : <div>
+                    <MultiSelectWithItemsComponent id='CountriesSelect' countries={countriesList.map((unaLista) => (unaLista.list))} selectTitle={'Paises'} />
+                </div>}
             </div>
 
 

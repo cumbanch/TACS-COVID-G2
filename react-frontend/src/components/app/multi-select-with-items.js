@@ -57,25 +57,16 @@ const MultiSelectWithItemsComponent = (props) => {
     const classes = useStyles();
     const theme = useTheme();
 
-    const [params, setParams] = React.useState({ selectedCountries: [], items: props.countries, selectTitle: props.selectTitle, isDisabled: props.isDisabled && true });
-    console.log(params)
+    const [params, setParams] = useState({ selectedCountries: [], items: props.countries, selectTitle: props.selectTitle });
+
     const handleChange = (event) => {
-
-        setParams({ selectedCountries: event.target.value, items: params.countries });
+        setParams({ selectedCountries: event.target.value, items: params.items, selectTitle: params.selectTitle });
     };
 
-    const handleChangeMultiple = (event) => {
-        const { options } = event.target;
-        const value = [];
-        for (let i = 0, l = options.length; i < l; i += 1) {
-            if (options[i].selected) {
-                value.push(options[i].value);
-            }
-        }
-        setParams(value);
-    };
+
     return (
-        <FormControl className={classes.formControl} style={params.isDisabled ? { pointerEvents: "none", opacity: "0.4" } : { maxWidth: '200px', minWidth: 75, marginInlineEnd: 50 }}>
+
+        <FormControl className={classes.formControl} style={{ maxWidth: '200px', minWidth: 75, marginInlineEnd: 50 }}>
             <InputLabel id="demo-simple-select-label">{params.selectTitle}</InputLabel>
             <Select
                 labelId="demo-mutiple-chip-label"
@@ -94,6 +85,8 @@ const MultiSelectWithItemsComponent = (props) => {
                 ))}
             </Select>
         </FormControl>
+
+
     )
 }
 export default MultiSelectWithItemsComponent;
