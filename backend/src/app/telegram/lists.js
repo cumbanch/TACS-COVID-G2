@@ -17,7 +17,7 @@ exports.getTelegramLatestByList = (chatId, listId) =>
 exports.addCountryToList = (chatId, listId, countryName) =>
   getCountryBy({ name: countryName }).then(countries => {
     if (countries.count === 0) {
-      //eslint-disable-next-line prefer-promise-reject-errors
+      // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject('The provided country is invalid');
     }
     return getTelegramBy({ chatId }).then(telegram =>
