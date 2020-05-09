@@ -60,10 +60,8 @@ node_modules
 /build
 
 # misc
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env*
+!*.env.example
 
 yarn-debug.log*
 yarn-error.log*

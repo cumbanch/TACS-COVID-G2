@@ -18,12 +18,14 @@ describe('GET /lists/:id/latest', () => {
     await truncateDatabase();
     const { id: userId } = await createUser();
     const { id: listId } = await createList({ userId });
-    const [{ iso2: firstIso2 }, { iso2: secondIso2 }] = await createManyCountries({
+    const [
+      { iso2: firstIso2, id: firstCountryId },
+      { iso2: secondIso2, id: secondCountryId }
+    ] = await createManyCountries({
       quantity: totalCountries
     });
-    await createCountryByList({ listId, countryId: 1 });
-    await createCountryByList({ listId, countryId: 2 });
-    await createCountryByList({ listId, countryId: 3 });
+    await createCountryByList({ listId, countryId: firstCountryId });
+    await createCountryByList({ listId, countryId: secondCountryId });
     mockSuccessGetLatest([firstIso2, secondIso2]);
     successResponse = await getResponse({
       endpoint: `/lists/${listId}/latest`,

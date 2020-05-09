@@ -1,4 +1,4 @@
-const { invalidToken, notFound } = require('../errors/builders');
+const { invalidToken, notFound, unauthorized } = require('../errors/builders');
 const { getTokenBlacklistBy } = require('../services/tokens_black_list');
 const { getUserByPk } = require('../services/users');
 const { verifyAccessToken } = require('../services/sessions');
@@ -19,3 +19,5 @@ exports.checkTokenAndSetUser = (req, _, next) =>
       })
       .catch(err => next(invalidToken(err.message)));
   });
+
+exports.checkPermissions = ({ user }, _, next) => (user.admin ? next() : next(unauthorized()));

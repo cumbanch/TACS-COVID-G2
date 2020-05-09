@@ -1,0 +1,52 @@
+version: "3.4"
+
+services:
+
+  db:
+    image: postgres:12-alpine
+    container_name: db
+    env_file:
+      - .env.db
+    networks:
+      - backend
+
+  app:
+    build:
+      context: ./backend
+      args:
+        - NODE_ENV=development
+    container_name: app
+    env_file:
+      - .env.db
+      - .env.app
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./backend/src:/usr/local/src:ro
+    command: sh -c "/wait && npm run start:dev"
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - db
+
+  web:
+    build:
+      context: ./react-frontend
+    container_name: web
+    env_file:
+      - .env.web
+    ports:
+      - "3001:3000"
+    stdin_open: true
+    volumes:
+      - ./react-frontend/src:/usr/local/src:ro
+      - ./react-frontend/public:/usr/local/public:ro
+    networks:
+      - frontend
+
+networks:
+
+  frontend:
+
+  backend:
