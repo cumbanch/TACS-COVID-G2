@@ -32,7 +32,7 @@ const callbackButtons = {
   },
   addCountry: {
     action: '/lists/id/country/countryName',
-    pagination: '/addcountryname/countryName/page'
+    pagination: '/addCountry countryName/page'
   }
 };
 
@@ -91,7 +91,7 @@ exports.telegram = () => {
       )
       .catch(err => bot.sendMessage(msg.from.id, err.message))
   );
-  bot.on(/^\/addcountry (.+)\/?(\d)?$/, (msg, props) =>
+  bot.on(/^\/addCountry (.+)\/?(\d)?$/, (msg, props) =>
     getListButtons(msg, props.match[2] ? parseInt(props.match[2]) : 1, bot, {
       action: callbackButtons.addCountry.action.replace('countryName', props.match[1]),
       pagination: callbackButtons.addCountry.pagination.replace('countryName', props.match[1])
