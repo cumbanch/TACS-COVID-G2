@@ -72,7 +72,7 @@ const getListButtons = (msg, page, bot, callbackButton) =>
 exports.telegram = () => {
   const bot = new TeleBot({
     token: apiKey,
-    usePlugins: ['commandButton', 'askUser']
+    usePlugins: ['commandButton']
   });
   bot.on(['/start', '/help'], msg => msg.reply.text(help));
   bot.on(/^\/login (.+) (.+)$/, (msg, props) =>
@@ -100,11 +100,11 @@ exports.telegram = () => {
   bot.on(/^\/lists\/(\d)\/country\/(.+)$/, (msg, props) => {
     const listId = parseInt(props.match[1]);
     const countryName = props.match[2];
-    bot.sendMessage(msg.from.id, 'Adding the Country...').then(re => {
+    bot.sendMessage(msg.from.id, 'Adding the Country...').then(response => {
       addCountryToList(msg.from.id, listId, countryName)
         .then(() =>
           bot.editMessageText(
-            { chatId: msg.from.id, messageId: re.message_id },
+            { chatId: msg.from.id, messageId: response.message_id },
             `The country ${countryName} was added to the list.`
           )
         )

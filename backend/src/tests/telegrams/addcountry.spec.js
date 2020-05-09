@@ -14,7 +14,7 @@ const telegramErrorsMessages = {
   countryNotfound: 'The provided country is invalid'
 };
 
-describe('TELEGRAM BOT /latest', () => {
+describe('TELEGRAM BOT /addCountry', () => {
   const password = '987654321';
   const chatIdRandom = Math.floor(Math.random() * limit);
   let listCreated = {};
