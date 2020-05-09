@@ -32,7 +32,7 @@ const callbackButtons = {
   },
   addCountry: {
     action: '/lists/id/country/countryName',
-    pagination: '/addCountry countryName/page'
+    pagination: '/addCountry/countryName/page'
   }
 };
 
@@ -78,10 +78,10 @@ exports.telegram = () => {
   bot.on(/^\/login (.+) (.+)$/, (msg, props) =>
     getTelegramLogin(props.match[1], props.match[2], msg.from.id).then(response => msg.reply.text(response))
   );
-  bot.on(/^\/latest\/?(\d)?$/, (msg, props) =>
+  bot.on(/^\/latest\/?(\d+)?$/, (msg, props) =>
     getListButtons(msg, props.match[1] ? parseInt(props.match[1]) : 1, bot, callbackButtons.latest)
   );
-  bot.on(/^\/lists\/(\d)\/latest$/, (msg, props) =>
+  bot.on(/^\/lists\/(\d+)\/latest$/, (msg, props) =>
     getTelegramLatestByList(msg.from.id, parseInt(props.match[1]))
       .then(latest =>
         bot.sendMessage(
@@ -91,13 +91,13 @@ exports.telegram = () => {
       )
       .catch(err => bot.sendMessage(msg.from.id, err.message))
   );
-  bot.on(/^\/addCountry (.+)\/?(\d)?$/, (msg, props) =>
-    getListButtons(msg, props.match[2] ? parseInt(props.match[2]) : 1, bot, {
-      action: callbackButtons.addCountry.action.replace('countryName', props.match[1]),
-      pagination: callbackButtons.addCountry.pagination.replace('countryName', props.match[1])
+  bot.on(/^\/addCountry(\/|\s)([A-Za-z ]+)\/?(\d+)?$/, (msg, props) =>
+    getListButtons(msg, props.match[3] ? parseInt(props.match[3]) : 1, bot, {
+      action: callbackButtons.addCountry.action.replace('countryName', props.match[2]),
+      pagination: callbackButtons.addCountry.pagination.replace('countryName', props.match[2])
     })
   );
-  bot.on(/^\/lists\/(\d)\/country\/(.+)$/, (msg, props) => {
+  bot.on(/^\/lists\/(\d+)\/country\/(.+)$/, (msg, props) => {
     const listId = parseInt(props.match[1]);
     const countryName = props.match[2];
     bot.sendMessage(msg.from.id, 'Adding the Country...').then(response => {
@@ -108,7 +108,9 @@ exports.telegram = () => {
             `The country ${countryName} was added to the list.`
           )
         )
-        .catch(message => bot.sendMessage(msg.from.id, message));
+        .catch(message =>
+          bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, message)
+        );
     });
   });
   bot.start();
