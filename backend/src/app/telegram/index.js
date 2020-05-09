@@ -108,7 +108,7 @@ exports.telegram = () => {
             `The country ${countryName} was added to the list.`
           )
         )
-        .catch(err => bot.sendMessage(msg.from.id, err.message));
+        .catch(message => bot.sendMessage(msg.from.id, message));
     });
   });
   bot.start();
