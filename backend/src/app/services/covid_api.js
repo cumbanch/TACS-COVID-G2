@@ -3,7 +3,7 @@ const { inspect } = require('util');
 
 const logger = require('../logger');
 const { baseUrl, timeseriesEndpoint, latestEndpoint } = require('../../config').covidApi;
-const { externalService } = require('../errors/builders');
+const { externalService, emptyList, notFound } = require('../errors/builders');
 
 const getLatestByIso2 = (iso2, transformResponse) => {
   const options = {
@@ -27,6 +27,12 @@ const getTimeseries = (country, transformResponse) =>
   getTimeseriesByIso2(country.dataValues.iso2, transformResponse);
 
 exports.getLatestByList = list => {
+  if (!list) {
+    throw notFound('The list was not found');
+  }
+  if (list.countries.length === 0) {
+    throw emptyList(`The list ${list.dataValues.name} is empty`);
+  }
   const promises = list.countries.map(country =>
     getLatest(country, data => {
       const parsedData = JSON.parse(data)[0];
@@ -46,7 +52,7 @@ exports.getLatestByList = list => {
   return axios
     .all(promises)
     .then(responses => {
-      const latestResults = responses.filter(({ data }) => data.latest).map(({ data }) => data.latest);
+      const latestResults = responses.map(({ data }) => data.latest);
       const sumOfLatest = latestResults.reduce((previous, current) => ({
         confirmed: previous.confirmed + current.confirmed,
         deaths: previous.deaths + current.deaths,
