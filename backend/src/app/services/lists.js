@@ -56,13 +56,12 @@ exports.getList = (filters, options = {}) => {
   });
 };
 
-exports.getListWithCountries = (filters, countryFilters = {}) =>
+exports.getListWithCountries = filters =>
   this.getList(filters, {
     include: [
       {
         model: Country,
-        as: 'countries',
-        where: countryFilters
+        as: 'countries'
       }
     ]
   });
