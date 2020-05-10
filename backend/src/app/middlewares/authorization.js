@@ -2,6 +2,9 @@ const { invalidToken, notFound, unauthorized } = require('../errors/builders');
 const { getTokenBlacklistBy } = require('../services/tokens_black_list');
 const { getUserByPk } = require('../services/users');
 const { verifyAccessToken } = require('../services/sessions');
+const {
+  USER_ROLES: { ADMIN }
+} = require('../utils/constants');
 
 exports.checkTokenAndSetUser = (req, _, next) =>
   getTokenBlacklistBy({ accessToken: req.headers.authorization }).then(tokenInvalidated => {
@@ -20,4 +23,4 @@ exports.checkTokenAndSetUser = (req, _, next) =>
       .catch(err => next(invalidToken(err.message)));
   });
 
-exports.checkPermissions = ({ user }, _, next) => (user.admin ? next() : next(unauthorized()));
+exports.checkPermissions = ({ user }, _, next) => (user.type === ADMIN ? next() : next(unauthorized()));
