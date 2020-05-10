@@ -15,6 +15,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faUser, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
 import { elastic as Menu } from 'react-burger-menu';
 import MenuItemComponent from '../dashboards/menuItem'
+import ListsComponent from '../dashboards/lists-dashboards'
+
 const AppComponent = (props) => {
     const chartIcon = <FontAwesomeIcon icon={faChartBar} />
     const userIcon = <FontAwesomeIcon icon={faUser} />
@@ -40,8 +42,9 @@ const AppComponent = (props) => {
                 <Route path="/graphics" component={GraphicsComponent} />
                 <Route path="/users" component={UsersComponent} />
                 <Route path="/countries" component={CountriesComponent} />
+                <Route path="/lists" component={ListsComponent} />
                 <Route path="/home" component={HomeComponent} />
-                <Route path="/lists/:id" component={ListItemComponent} />
+                <Route path="/list/:id" component={ListItemComponent} />
             </Switch>
         </div>
 
