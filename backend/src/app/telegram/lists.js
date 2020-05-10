@@ -28,3 +28,8 @@ exports.addCountryToList = (chatId, listId, countryName) =>
       })
     );
   });
+
+  exports.getTelegramListWithCountries = (chatId, listId) =>
+  getTelegramBy({ chatId }).then(telegram =>
+    getListWithCountries({ id: listId, userId: telegram.userId })    
+  );

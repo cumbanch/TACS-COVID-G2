@@ -3,7 +3,7 @@ const { chunk } = require('lodash');
 
 const { apiKey } = require('../../config').telegram;
 const { getTelegramLogin } = require('../telegram/sessions');
-const { getTelegramLists, getTelegramLatestByList, addCountryToList } = require('../telegram/lists');
+const { getTelegramLists, getTelegramLatestByList, addCountryToList, getTelegramListWithCountries } = require('../telegram/lists');
 const { getTelegramLatestByCountry } = require('../telegram/countries');
 
 const help = `Welcome to the COVID-19 Bot!
@@ -34,6 +34,10 @@ const callbackButtons = {
   addCountry: {
     action: '/lists/id/country/countryName',
     pagination: '/addCountry/countryName/page'
+  },
+  countries: {
+    action: '/lists/id/countries',
+    pagination: '/countries/page'
   }
 };
 
@@ -74,11 +78,11 @@ const getListButtons = (msg, page, bot, callbackButton) =>
         listButtons.push([prevButton]);
       }
       const replyMarkup = bot.inlineKeyboard(listButtons);
-      bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, messageTitle);
-      return bot.editMessageReplyMarkup(
+      bot.editMessageReplyMarkup(
         { chatId: msg.from.id, messageId: response.message_id },
         { replyMarkup }
       );
+      return bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, messageTitle);
     })
   );
 
@@ -96,7 +100,7 @@ exports.telegram = () => {
   );
   bot.on(/^\/lists\/(\d+)\/latest$/, (msg, props) =>
     bot
-      .sendMessage(msg.from.id, 'Getting the latest values for the selected List...', { parseMode: 'html' })
+      .sendMessage(msg.from.id, 'Getting <b>the latest values</b> for the selected List...', { parseMode: 'html' })
       .then(response =>
         getTelegramLatestByList(msg.from.id, parseInt(props.match[1]))
           .then(latest =>
@@ -120,7 +124,9 @@ exports.telegram = () => {
   bot.on(/^\/lists\/(\d+)\/country\/(.+)$/, (msg, props) => {
     const listId = parseInt(props.match[1]);
     const countryName = props.match[2];
-    bot.sendMessage(msg.from.id, 'Adding the Country...').then(response => {
+    bot.sendMessage(msg.from.id, `Adding <b>${countryName}</b> to the selected list...`, {
+      parseMode: 'html'
+    }).then(response => {
       addCountryToList(msg.from.id, listId, countryName)
         .then(() =>
           bot.editMessageText(
@@ -134,8 +140,7 @@ exports.telegram = () => {
     });
   });
   bot.on(/^\/latestByCountry ([A-Za-z ]+)$/, (msg, props) =>
-    bot
-      .sendMessage(msg.from.id, `Getting the latest values for <b>${props.match[1]}</b>...`, {
+    bot.sendMessage(msg.from.id, `Getting <b>the latest values for ${props.match[1]}</b>...`, {
         parseMode: 'html'
       })
       .then(response =>
@@ -144,6 +149,26 @@ exports.telegram = () => {
             bot.editMessageText(
               { chatId: msg.from.id, messageId: response.message_id },
               parseCovidResults(latest),
+              { parseMode: 'html' }
+            )
+          )
+          .catch(err =>
+            bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, err.message)
+          )
+      )
+  );
+  bot.on(/^\/countries\/?(\d+)?$/, (msg, props) =>
+    getListButtons(msg, props.match[1] ? parseInt(props.match[1]) : 1, bot, callbackButtons.countries)
+  );
+  bot.on(/^\/lists\/(\d+)\/countries$/, (msg, props) =>
+    bot
+      .sendMessage(msg.from.id, 'Getting <b>the list of countries</b> for the selected List...', { parseMode: 'html' })
+      .then(response =>
+        getTelegramListWithCountries(msg.from.id, parseInt(props.match[1]))
+          .then(list =>
+            bot.editMessageText(
+              { chatId: msg.from.id, messageId: response.message_id },
+              list.countries.map(country => country.name).join('\n'),
               { parseMode: 'html' }
             )
           )
