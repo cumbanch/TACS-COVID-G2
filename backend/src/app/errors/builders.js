@@ -2,6 +2,7 @@ const {
   NOT_FOUND,
   INVALID_PARAMS,
   EMPTY_BODY,
+  EMPTY_LIST,
   DATABASE_ERROR,
   ALREADY_EXIST,
   INVALID_TOKEN,
@@ -20,6 +21,7 @@ const buildError = (message, internalCode) => ({
 exports.notFound = message => buildError(message, NOT_FOUND);
 exports.invalidParams = arrayErrors => buildError(arrayErrors, INVALID_PARAMS);
 exports.nonEmptyBody = buildError("The body mustn't be empty", EMPTY_BODY);
+exports.emptyList = message => buildError(message, EMPTY_LIST);
 exports.databaseError = message => buildError(message, DATABASE_ERROR);
 exports.alreadyExist = message => buildError(message, ALREADY_EXIST);
 exports.invalidToken = message => buildError(message, INVALID_TOKEN);

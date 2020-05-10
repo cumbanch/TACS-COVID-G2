@@ -7,7 +7,7 @@ const config = {
     database: process.env.POSTGRES_DB,
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
-    logging: process.env.POSTGRES_LOGGING || false,
+    logging: process.env.POSTGRES_LOGGING || 'false',
     dialect: 'postgres'
   },
   migrations: {
@@ -38,7 +38,8 @@ const config = {
     latestEndpoint: process.env.COVID_API_LATEST_ENDPOINT || '/jhu-edu/latest?onlyCountries=true&iso2='
   },
   telegram: {
-    apiKey: process.env.TELEGRAM_API_KEY
+    apiKey: process.env.TELEGRAM_API_KEY,
+    listPagination: process.env.TELEGRAM_LIST_PAGINATION || 15
   }
 };
 
