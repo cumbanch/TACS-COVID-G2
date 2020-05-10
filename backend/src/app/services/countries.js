@@ -3,7 +3,8 @@ const { inspect } = require('util');
 const logger = require('../logger');
 const {
   Country,
-  sequelizePackage: { Op }
+  sequelizePackage: { Op },
+  List
 } = require('../models');
 const { deleteUndefined } = require('../utils/objects');
 const { databaseError } = require('../errors/builders');
@@ -51,5 +52,24 @@ exports.getCountryBy = params => {
     /* istanbul ignore next */
     logger.error(inspect(err));
     throw databaseError(`Error getting country, reason: ${err.message}`);
+  });
+};
+
+exports.getCountryWithList = filters => {
+  logger.info(`Attempting to get country with filters: ${inspect(filters)}`);
+  return Country.findOne({
+    where: { id: filters.id },
+    include: [
+      {
+        model: List,
+        as: 'lists',
+        where: { userId: filters.userId }
+      }
+    ]
+  }).catch(error => {
+    /* istanbul ignore next */
+    logger.error(inspect(error));
+    /* istanbul ignore next */
+    throw databaseError(`There was an error getting country: ${error.message}`);
   });
 };

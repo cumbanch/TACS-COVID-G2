@@ -11,19 +11,11 @@ exports.getTelegramBy = filters => {
       chatId: `${filters.chatId}`
     }
   }).catch(err => {
+    /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`There was an error getting the telegram: ${err.message}`);
   });
-};
-
-exports.deleteTelegram = filters => {
-  logger.info(`Attempting to delete telegram with filters: ${inspect(filters)}`);
-  return this.getTelegramBy(filters)
-    .then(telegram => telegram.destroy())
-    .catch(err => {
-      logger.error(inspect(err));
-      throw databaseError(`There was an error deleting the telegram: ${err.message}`);
-    });
 };
 
 exports.createTelegram = attributes => {
