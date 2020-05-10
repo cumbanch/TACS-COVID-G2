@@ -6,24 +6,21 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import FolderIcon from '@material-ui/icons/Folder';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   content: {
-    paddingTop: '100px',
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '25px',
   },
-  paper: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    padding: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      padding: theme.spacing(3),
-    },
+  title: {
+    alignSelf: 'flex-start',
   },
-  listItem: {
-    fontSize: 'x-large'
-  },
+  editButton: {
+    alignSelf: 'flex-start',
+    marginBottom: '20px',
+  }
 }));
 
 function createData(name, calories, fat, carbs, protein) {
@@ -41,10 +38,11 @@ const ListItemComponent = (props) => {
   
   return (
     <div className="container layout-dashboard">
-      <div className="content">
-      <h1 className="float-left">
+      <div className={classes.content}>
+      <h1 className={classes.title}>
         Norteamérica    
       </h1>
+        <Button className={classes.editButton} variant="contained">Editar</Button>
 
         <Paper>
           <List>
