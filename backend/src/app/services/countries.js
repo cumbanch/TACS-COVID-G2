@@ -45,7 +45,7 @@ exports.getCountryBy = params => {
     name: params.name && { [Op.iLike]: `%${params.name}%` }
   };
   const sequelizeOptions = {
-    where: deleteUndefined(filters)
+    where: filters
   };
   return Country.findAndCountAll(sequelizeOptions).catch(err => {
     /* istanbul ignore next */

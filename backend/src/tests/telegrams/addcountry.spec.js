@@ -45,12 +45,14 @@ describe('TELEGRAM BOT /addCountry', () => {
       listCreated.dataValues.id,
       thirdCountryName
     );
-    failNotFoundCountry = await addCountryToList(chatIdRandom, listEmptyCreated.dataValues.id, 'PaisInexistente').catch(
-      message => message
-    );
-    failListDontExists = await addCountryToList(chatIdRandom, 785667, thirdCountryName).catch( 
+    failNotFoundCountry = await addCountryToList(
+      chatIdRandom,
+      listEmptyCreated.dataValues.id,
+      'PaisInexistente'
+    ).catch(message => message);
+    failListDontExists = await addCountryToList(chatIdRandom, 785667, thirdCountryName).catch(
       err => err.message
-    );    
+    );
   });
   describe('Successful add country to list by Telegram', () => {
     it('Should return a country by list with the country id added', () => {
