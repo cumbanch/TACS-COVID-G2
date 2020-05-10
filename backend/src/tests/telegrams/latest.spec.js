@@ -19,9 +19,7 @@ describe('TELEGRAM BOT /latest', () => {
   const password = '987654321';
   const chatIdRandom = Math.floor(Math.random() * limit);
   let listCreated = {};
-  let listEmptyCreated = {};
   let successfulLatestResponse = {};
-  let failListEmpty = {};
   let failListDontExists = {};
   beforeAll(async () => {
     const totalCountries = 2;
@@ -29,7 +27,6 @@ describe('TELEGRAM BOT /latest', () => {
     const userCreated = await createUser({ password: hashPassword(password) });
     await getTelegramLogin(userCreated.email, password, chatIdRandom);
     listCreated = await createList({ userId: userCreated.id });
-    listEmptyCreated = await createList({ userId: userCreated.id });
     const [
       { iso2: firstIso2, id: firstCountryId },
       { iso2: secondIso2, id: secondCountryId }
@@ -40,19 +37,11 @@ describe('TELEGRAM BOT /latest', () => {
     await createCountryByList({ listId: listCreated.dataValues.id, countryId: firstCountryId });
     await createCountryByList({ listId: listCreated.dataValues.id, countryId: secondCountryId });
     successfulLatestResponse = await getTelegramLatestByList(chatIdRandom, listCreated.dataValues.id);
-    await getTelegramLatestByList(chatIdRandom, listEmptyCreated.dataValues.id).catch(
-      err => (failListEmpty = err.message)
-    );
     await getTelegramLatestByList(chatIdRandom, 855468).catch(err => (failListDontExists = err.message));
   });
   describe('Successful get latest by Telegram', () => {
     it('Should return the correct keys in response', () => {
       expect(Object.keys(successfulLatestResponse)).toStrictEqual(expect.arrayContaining(expectedLatestKeys));
-    });
-  });
-  describe('Fail empty list', () => {
-    it('Should throw list exmpty exception', () => {
-      expect(failListEmpty).toBe(`The list ${listEmptyCreated.name} is empty`);
     });
   });
   describe('Fail list was not found', () => {
