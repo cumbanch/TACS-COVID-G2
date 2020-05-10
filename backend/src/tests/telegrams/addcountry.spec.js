@@ -46,7 +46,7 @@ describe('TELEGRAM BOT /addCountry', () => {
       thirdCountryName
     );
     await addCountryToList(chatIdRandom, listEmptyCreated.dataValues.id, 'PaisInexistente').catch(
-      err => (failNotFoundCountry = err.message)
+      message => (failNotFoundCountry = message)
     );
     await addCountryToList(chatIdRandom, 785667, thirdCountryName).catch(
       err => (failListDontExists = err.message)
@@ -60,8 +60,8 @@ describe('TELEGRAM BOT /addCountry', () => {
       expect(successfulAddCountryResponse.dataValues.listId).toBe(listCreated.dataValues.id);
     });
   });
-  describe('Fail empty list', () => {
-    it('Should throw list exmpty exception', () => {
+  describe('Fail country not found', () => {
+    it('Should receive country not found message', () => {
       expect(failNotFoundCountry).toBe(telegramErrorsMessages.countryNotfound);
     });
   });
