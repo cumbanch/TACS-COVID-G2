@@ -140,10 +140,12 @@ exports.telegram = () => {
       })
       .then(response =>
         getTelegramLatestByCountry(props.match[1])
-          .then(latest => bot.editMessageText(
+          .then(latest =>
+            bot.editMessageText(
               { chatId: msg.from.id, messageId: response.message_id },
               parseCovidResults(latest),
-              { parseMode: 'html' })
+              { parseMode: 'html' }
+            )
           )
           .catch(err =>
             bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, err.message)
