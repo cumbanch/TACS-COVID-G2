@@ -39,7 +39,7 @@ const config = {
   },
   telegram: {
     apiKey: process.env.TELEGRAM_API_KEY,
-    listPagination: process.env.TELEGRAM_LIST_PAGINATION || 15
+    listPagination: parseInt(process.env.TELEGRAM_LIST_PAGINATION) || 15
   }
 };
 
