@@ -3,14 +3,11 @@ const { inspect } = require('util');
 
 const logger = require('../logger');
 const { baseUrl, timeseriesEndpoint, latestEndpoint } = require('../../config').covidApi;
-const { externalService, emptyList, notFound } = require('../errors/builders');
+const { externalService, notFound } = require('../errors/builders');
 
-const getLatestByIso2 = (iso2, transformResponse) => {
-  const options = {
-    transformResponse: [transformResponse]
-  };
+exports.getLatestByIso2 = iso2 => {
   const url = `${baseUrl}${latestEndpoint}${iso2}`;
-  return axios.get(url, options);
+  return axios.get(url);
 };
 
 const getTimeseriesByIso2 = (iso2, transformResponse) => {
@@ -21,8 +18,6 @@ const getTimeseriesByIso2 = (iso2, transformResponse) => {
   return axios.get(url, options);
 };
 
-const getLatest = (country, transformResponse) => getLatestByIso2(country.dataValues.iso2, transformResponse);
-
 const getTimeseries = (country, transformResponse) =>
   getTimeseriesByIso2(country.dataValues.iso2, transformResponse);
 
@@ -30,29 +25,13 @@ exports.getLatestByList = list => {
   if (!list) {
     throw notFound('The list was not found');
   }
-  if (list.countries.length === 0) {
-    throw emptyList(`The list ${list.dataValues.name} is empty`);
-  }
-  const promises = list.countries.map(country =>
-    getLatest(country, data => {
-      const parsedData = JSON.parse(data)[0];
-      let countryFounded = {};
-      if (parsedData) {
-        countryFounded = list.countries.find(({ iso2 }) => iso2 === parsedData.countrycode.iso2);
-        delete countryFounded.dataValues.CountryByList;
-      }
-      const latest = parsedData && {
-        confirmed: parsedData.confirmed,
-        deaths: parsedData.deaths,
-        recovered: parsedData.recovered
-      };
-      return { ...countryFounded.dataValues, latest };
-    })
-  );
+  const promises = list.countries.map(country => exports.getLatestByIso2(country.dataValues.iso2));
   return axios
     .all(promises)
     .then(responses => {
-      const latestResults = responses.map(({ data }) => data.latest);
+      const latestResults = responses.map(({ data }) =>
+        data.length ? data[0] : { confirmed: 0, deaths: 0, recovered: 0 }
+      );
       const sumOfLatest = latestResults.reduce((previous, current) => ({
         confirmed: previous.confirmed + current.confirmed,
         deaths: previous.deaths + current.deaths,
@@ -76,19 +55,6 @@ exports.getTimeseriesByList = list => {
         delete countryFounded.dataValues.CountryByList;
       }
       return parsedData ? { ...countryFounded.dataValues, timeseries: parsedData.timeseries } : undefined;
-      /*
-        Esto queda comentado hasta que definamos que control usar para graficar en el frontend
-
-        var history = [];
-        json[0].timeseries.forEach(date_serie => {
-          history.push({
-            timestamp: date_serie,
-            confirmed: json[0].timeseries[date_serie].confirmed,
-            deaths: json[0].timeseries[date_serie].deaths,
-            recovered: json[0].timeseries[date_serie].recovered
-          });
-        }
-        */
     })
   );
   return axios.all(promises).catch(err => {
