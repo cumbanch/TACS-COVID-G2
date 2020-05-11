@@ -19,15 +19,14 @@ exports.getTelegramLatestByList = (chatId, listId) =>
 
 exports.getTelegramHistoryByList = (chatId, listId, days) =>
   getTelegramBy({ chatId }).then(telegram =>
-    getListWithCountries({ id: listId, userId: telegram.userId })
-      .then(list => {
-        if (!list) throw notFound('List not found');
-        return getTimeseriesByList(list).then(historyResult =>
-          getHistorySerializer(historyResult).then(historySerilized =>
-            historySerilized.find(h => isInXDaysBeforeRange(h[0], days))
-          )
-        );
-      })
+    getListWithCountries({ id: listId, userId: telegram.userId }).then(list => {
+      if (!list) throw notFound('List not found');
+      return getTimeseriesByList(list).then(historyResult =>
+        getHistorySerializer(historyResult).then(historySerilized =>
+          historySerilized.find(h => isInXDaysBeforeRange(h[0], days))
+        )
+      );
+    })
   );
 
 exports.addCountryToList = (chatId, listId, countryName) =>
