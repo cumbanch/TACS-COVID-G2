@@ -4,29 +4,13 @@ const { getCountryBy } = require('../services/countries');
 const { getTelegramBy } = require('../services/telegram');
 const { getLatestByList, getTimeseriesByList } = require('../services/covid_api');
 const { getHistorySerializer } = require('../serializers/lists');
-const { isInXDaysBeforeRange } = require('../utils/moment');
-const { notFound } = require('../errors/builders');
+const { getDatesOfDaysBeforeNow } = require('../utils/moment');
+
+const logger = require('../logger');
 
 exports.getTelegramLists = (chatId, page) =>
   getTelegramBy({ chatId }).then(telegram =>
     getAllList({ userId: telegram.userId, page, limit: listPagination })
-  );
-
-exports.getTelegramLatestByList = (chatId, listId) =>
-  getTelegramBy({ chatId }).then(telegram =>
-    getListWithCountries({ id: listId, userId: telegram.userId }).then(list => getLatestByList(list))
-  );
-
-exports.getTelegramHistoryByList = (chatId, listId, days) =>
-  getTelegramBy({ chatId }).then(telegram =>
-    getListWithCountries({ id: listId, userId: telegram.userId }).then(list => {
-      if (!list) throw notFound('List not found');
-      return getTimeseriesByList(list).then(historyResult =>
-        getHistorySerializer(historyResult).then(historySerilized =>
-          historySerilized.find(h => isInXDaysBeforeRange(h[0], days))
-        )
-      );
-    })
   );
 
 exports.addCountryToList = (chatId, listId, countryName) =>
@@ -46,3 +30,30 @@ exports.addCountryToList = (chatId, listId, countryName) =>
 
 exports.getTelegramListWithCountries = (chatId, listId) =>
   getTelegramBy({ chatId }).then(telegram => getListWithCountries({ id: listId, userId: telegram.userId }));
+
+exports.getTelegramLatestByList = (chatId, listId) =>
+  getTelegramBy({ chatId }).then(telegram =>
+    getListWithCountries({ id: listId, userId: telegram.userId }).then(list =>
+      getLatestByList(list).then(
+        latest =>
+          `Confirmed: <b>${latest.confirmed}</b>\nDeaths: <b>${latest.deaths}</b>\nRecovered: <b>${latest.recovered}</b>`
+      )
+    )
+  );
+
+exports.getTelegramHistoryByList = (chatId, listId, days) =>
+  getTelegramBy({ chatId }).then(telegram =>
+    getListWithCountries({ id: listId, userId: telegram.userId }).then(list =>
+      getTimeseriesByList(list).then(historyResult => {
+        const dates = getDatesOfDaysBeforeNow(days);
+        logger.debug(dates);
+        /*
+        historyResult.forEach(country => {
+          country.timeseries.forEach(ts => {});
+        });
+        */
+        logger.debug(historyResult);
+        return getHistorySerializer(historyResult);
+      })
+    )
+  );

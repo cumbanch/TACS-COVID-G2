@@ -51,9 +51,6 @@ const callbackButtons = {
   }
 };
 
-const parseCovidResults = latest =>
-  `Confirmed: <b>${latest.confirmed}</b>\nDeaths: <b>${latest.deaths}</b>\nRecovered: <b>${latest.recovered}</b>`;
-
 const getListButtons = (msg, page, bot, callbackButton) =>
   getTelegramLists(msg.from.id, page).then(lists => {
     if (lists.count === 0) {
@@ -107,11 +104,9 @@ exports.telegram = () => {
       .then(response =>
         getTelegramLatestByList(msg.from.id, parseInt(props.match[1]))
           .then(latest =>
-            bot.editMessageText(
-              { chatId: msg.from.id, messageId: response.message_id },
-              parseCovidResults(latest),
-              { parseMode: 'html' }
-            )
+            bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, latest, {
+              parseMode: 'html'
+            })
           )
           .catch(err =>
             bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, err.message)
@@ -152,11 +147,9 @@ exports.telegram = () => {
       .then(response =>
         getTelegramLatestByCountry(props.match[1])
           .then(latest =>
-            bot.editMessageText(
-              { chatId: msg.from.id, messageId: response.message_id },
-              parseCovidResults(latest),
-              { parseMode: 'html' }
-            )
+            bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, latest, {
+              parseMode: 'html'
+            })
           )
           .catch(err =>
             bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, err.message)
