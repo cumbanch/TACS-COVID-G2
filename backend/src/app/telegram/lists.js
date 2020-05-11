@@ -2,7 +2,10 @@ const { listPagination } = require('../../config').telegram;
 const { getAllList, getListWithCountries, createCountriesByList } = require('../services/lists');
 const { getCountryBy } = require('../services/countries');
 const { getTelegramBy } = require('../services/telegram');
-const { getLatestByList } = require('../services/covid_api');
+const { getLatestByList, getTimeseriesByList } = require('../services/covid_api');
+const { getHistorySerializer } = require('../serializers/lists');
+const { isInXDaysBeforeRange } = require('../utils/moment');
+const { notFound } = require('../errors/builders');
 
 exports.getTelegramLists = (chatId, page) =>
   getTelegramBy({ chatId }).then(telegram =>
@@ -12,6 +15,19 @@ exports.getTelegramLists = (chatId, page) =>
 exports.getTelegramLatestByList = (chatId, listId) =>
   getTelegramBy({ chatId }).then(telegram =>
     getListWithCountries({ id: listId, userId: telegram.userId }).then(list => getLatestByList(list))
+  );
+
+exports.getTelegramHistoryByList = (chatId, listId, days) =>
+  getTelegramBy({ chatId }).then(telegram =>
+    getListWithCountries({ id: listId, userId: telegram.userId })
+      .then(list => {
+        if (!list) throw notFound('List not found');
+        return getTimeseriesByList(list).then(historyResult =>
+          getHistorySerializer(historyResult).then(historySerilized =>
+            historySerilized.find(h => isInXDaysBeforeRange(h[0], days))
+          )
+        );
+      })
   );
 
 exports.addCountryToList = (chatId, listId, countryName) =>
@@ -29,7 +45,5 @@ exports.addCountryToList = (chatId, listId, countryName) =>
     );
   });
 
-  exports.getTelegramListWithCountries = (chatId, listId) =>
-  getTelegramBy({ chatId }).then(telegram =>
-    getListWithCountries({ id: listId, userId: telegram.userId })    
-  );
+exports.getTelegramListWithCountries = (chatId, listId) =>
+  getTelegramBy({ chatId }).then(telegram => getListWithCountries({ id: listId, userId: telegram.userId }));
