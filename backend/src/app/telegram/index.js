@@ -23,8 +23,8 @@ You can control me by sending these commands:
 
 /login {email} {password} - username and password
 
-/latestByList - get the latest covid status for the all countries in the list
-/latestByCountry {countryName} - get the lastets covid status for a country
+/latestbylist - get the latest covid status for the all countries in the list
+/latestbycountry {countryName} - get the lastets covid status for a country
 
 /history - get a comparative table of the all countries in a list
 /addcountry {countryName} - add a new country to a list
@@ -35,11 +35,11 @@ Please, start to login`;
 const callbackButtons = {
   latest: {
     action: '/lists/id/latest',
-    pagination: '/latestByList/page'
+    pagination: '/latestbylist/page'
   },
   addCountry: {
     action: '/lists/id/country/countryName',
-    pagination: '/addCountry/countryName/page'
+    pagination: '/addcountry/countryName/page'
   },
   countries: {
     action: '/lists/id/countries',
@@ -93,7 +93,7 @@ exports.telegram = () => {
   bot.on(/^\/login (.+) (.+)$/, (msg, props) =>
     getTelegramLogin(props.match[1], props.match[2], msg.from.id).then(response => msg.reply.text(response))
   );
-  bot.on(/^\/latestByList\/?(\d+)?$/, (msg, props) =>
+  bot.on(/^\/latestbylist\/?(\d+)?$/, (msg, props) =>
     getListButtons(msg, props.match[1] ? parseInt(props.match[1]) : 1, bot, callbackButtons.latest)
   );
   bot.on(/^\/lists\/(\d+)\/latest$/, (msg, props) =>
@@ -113,7 +113,7 @@ exports.telegram = () => {
           )
       )
   );
-  bot.on(/^\/addCountry(\/|\s)([A-Za-z ]+)\/?(\d+)?$/, (msg, props) =>
+  bot.on(/^\/addcountry(\/|\s)([A-Za-z ]+)\/?(\d+)?$/, (msg, props) =>
     getListButtons(msg, props.match[3] ? parseInt(props.match[3]) : 1, bot, {
       action: callbackButtons.addCountry.action.replace('countryName', props.match[2]),
       pagination: callbackButtons.addCountry.pagination.replace('countryName', props.match[2])
@@ -139,7 +139,7 @@ exports.telegram = () => {
           );
       });
   });
-  bot.on(/^\/latestByCountry ([A-Za-z ]+)$/, (msg, props) =>
+  bot.on(/^\/latestbycountry ([A-Za-z ]+)$/, (msg, props) =>
     bot
       .sendMessage(msg.from.id, `Getting <b>the latest values for ${props.match[1]}</b>...`, {
         parseMode: 'html'
