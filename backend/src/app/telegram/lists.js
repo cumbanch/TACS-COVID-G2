@@ -81,7 +81,6 @@ exports.getTelegramHistoryByList = (chatId, listId, days) =>
                   0
                 )}</b>`
             )
-            .join('\n')
             .join('\n')}\n\tDeaths:\n${historyParsed[date].deaths
             .map(
               countryDeaths =>
