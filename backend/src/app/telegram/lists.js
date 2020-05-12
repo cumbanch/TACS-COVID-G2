@@ -4,9 +4,8 @@ const { getCountryBy } = require('../services/countries');
 const { getTelegramBy } = require('../services/telegram');
 const { getLatestByList, getTimeseriesByList } = require('../services/covid_api');
 const { getHistorySerializer } = require('../serializers/lists');
-const { getDatesOfDaysBeforeNow } = require('../utils/moment');
-
-const logger = require('../logger');
+const { moment } = require('../utils/moment');
+const { getPropertyName, getPropertyValue } = require('../utils/objects');
 
 exports.getTelegramLists = (chatId, page) =>
   getTelegramBy({ chatId }).then(telegram =>
@@ -45,15 +44,61 @@ exports.getTelegramHistoryByList = (chatId, listId, days) =>
   getTelegramBy({ chatId }).then(telegram =>
     getListWithCountries({ id: listId, userId: telegram.userId }).then(list =>
       getTimeseriesByList(list).then(historyResult => {
-        const dates = getDatesOfDaysBeforeNow(days);
-        logger.debug(dates);
-        /*
-        historyResult.forEach(country => {
-          country.timeseries.forEach(ts => {});
+        const historySerialized = getHistorySerializer(historyResult);
+        const historyParsed = {};
+
+        historySerialized.forEach(country => {
+          let date = moment().subtract(days, 'days');
+          while (date.format('M/D/YY') !== moment().format('M/D/YY')) {
+            const tsFounded = country.timeseries[date.format('M/D/YY')];
+            if (tsFounded) {
+              if (!historyParsed[date.format('M/D/YY')]) {
+                historyParsed[date.format('M/D/YY')] = { confirmed: [], deaths: [], recovered: [] };
+              }
+              historyParsed[date.format('M/D/YY')].confirmed.push({
+                [country.name]: tsFounded.confirmed ? tsFounded.confirmed : 0
+              });
+              historyParsed[date.format('M/D/YY')].deaths.push({
+                [country.name]: tsFounded.deaths ? tsFounded.deaths : 0
+              });
+              historyParsed[date.format('M/D/YY')].recovered.push({
+                [country.name]: tsFounded.recovered ? tsFounded.recovered : 0
+              });
+            }
+            date = date.add(1, 'days');
+          }
         });
-        */
-        logger.debug(historyResult);
-        return getHistorySerializer(historyResult);
+
+        let historyTexted = '';
+
+        // eslint-disable-next-line guard-for-in
+        for (const date in historyParsed) {
+          historyTexted += `<b>${date}</b>:\n\tConfirmed:\n${historyParsed[date].confirmed
+            .map(
+              countryConfirmed =>
+                `\t\t\t\t${getPropertyName(countryConfirmed, 0)}: <b>${getPropertyValue(
+                  countryConfirmed,
+                  0
+                )}</b>`
+            )
+            .join('\n')
+            .join('\n')}\n\tDeaths:\n${historyParsed[date].deaths
+            .map(
+              countryDeaths =>
+                `\t\t\t\t${getPropertyName(countryDeaths, 0)}: <b>${getPropertyValue(countryDeaths, 0)}</b>`
+            )
+            .join('\n')}\n\tRecovered:\n${historyParsed[date].recovered
+            .map(
+              countryRecovered =>
+                `\t\t\t\t${getPropertyName(countryRecovered, 0)}: <b>${getPropertyValue(
+                  countryRecovered,
+                  0
+                )}</b>`
+            )
+            .join('\n')}\n`;
+        }
+
+        return historyTexted;
       })
     )
   );

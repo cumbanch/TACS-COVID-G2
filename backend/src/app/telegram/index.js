@@ -187,19 +187,21 @@ exports.telegram = () => {
   bot.on(/^\/lists\/(\d+)\/history\/(\d+)$/, (msg, props) => {
     const listId = parseInt(props.match[1]);
     const days = parseInt(props.match[2]);
-    bot
+    return bot
       .sendMessage(msg.from.id, 'Getting <b>history data</b> for the selected list...', {
         parseMode: 'html'
       })
-      .then(response => {
-        getTelegramHistoryByList(msg.from.id, listId, days)
-          .then(history =>
-            bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, history.join('\n'))
-          )
-          .catch(message =>
-            bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, message)
-          );
-      });
+      .then(response =>
+        getTelegramHistoryByList(msg.from.id, listId, days).then(history =>
+          bot
+            .editMessageText({ chatId: msg.from.id, messageId: response.message_id }, history, {
+              parseMode: 'html'
+            })
+            .catch(message =>
+              bot.editMessageText({ chatId: msg.from.id, messageId: response.message_id }, message)
+            )
+        )
+      );
   });
   bot.start();
 };

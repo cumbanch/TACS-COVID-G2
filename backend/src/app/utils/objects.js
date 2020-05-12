@@ -20,3 +20,7 @@ exports.deleteUndefined = attrs => {
   Object.keys(newAttrs).forEach(key => newAttrs[key] === undefined && delete newAttrs[key]);
   return newAttrs;
 };
+
+exports.getPropertyName = (object, index) => Object.keys(object)[index];
+
+exports.getPropertyValue = (object, index) => Object.values(object)[index];
