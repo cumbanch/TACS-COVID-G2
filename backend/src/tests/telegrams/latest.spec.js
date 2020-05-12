@@ -7,7 +7,6 @@ const { createCountryByList } = require('../factories/country_by_list');
 const { getTelegramLogin } = require('../../app/telegram/sessions');
 const { hashPassword } = require('../../app/services/sessions');
 const { getTelegramLatestByList } = require('../../app/telegram/lists');
-const { getLatestByIso2 } = require('../../app/services/covid_api');
 
 const limit = 9999999999;
 
@@ -16,13 +15,11 @@ const telegramErrorsMessages = {
 };
 
 describe('TELEGRAM BOT /latest', () => {
-  const expectedLatestKeys = ['confirmed', 'deaths', 'recovered'];
   const password = '987654321';
   const chatIdRandom = Math.floor(Math.random() * limit);
   let listCreated = {};
   let successfulLatestResponse = {};
   let failListDontExists = {};
-  let latest = {};
   beforeAll(async () => {
     const totalCountries = 2;
     await truncateDatabase();
@@ -43,9 +40,9 @@ describe('TELEGRAM BOT /latest', () => {
   });
   describe('Successful get latest by Telegram', () => {
     it('Should return the correct text response', () => {
-      expect(successfulLatestResponse).toMatch("Confirmed");
-      expect(successfulLatestResponse).toMatch("Recovered");
-      expect(successfulLatestResponse).toMatch("Deaths");
+      expect(successfulLatestResponse).toMatch('Confirmed');
+      expect(successfulLatestResponse).toMatch('Recovered');
+      expect(successfulLatestResponse).toMatch('Deaths');
     });
   });
   describe('Fail list was not found', () => {
