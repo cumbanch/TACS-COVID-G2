@@ -33,7 +33,7 @@ const ComparisonComponent = (props) => {
                     <MultiSelectWithItemsComponent id='ListSelect' countries={countriesList.map((unaLista) => (unaLista.id))} selectTitle={'Lista'} />
                 </div>
                 {params.isCountryListDisabled ? null : <div>
-                    <MultiSelectWithItemsComponent id='CountriesSelect' countries={countriesList.map((unaLista) => (unaLista.list))} selectTitle={'Paises'} />
+                    <MultiSelectWithItemsComponent id='CountriesSelect' countries={countriesList.flatMap((unaLista) => (unaLista.list))} selectTitle={'Paises'} />
                 </div>}
             </div>
 
