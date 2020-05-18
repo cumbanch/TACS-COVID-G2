@@ -47,11 +47,7 @@ const MenuProps = {
     },
 };
 
-// <div className={classes.chips}>
-//     {selected.map((value) => (
-//         <Chip key={value} label={value} className={classes.chip} />
-//     ))}
-// </div>
+
 
 const MultiSelectWithItemsComponent = (props) => {
     const classes = useStyles();
