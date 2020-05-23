@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getStyles(name, params, theme) {
+    console.log(params)
     return {
         fontWeight:
             params.indexOf(name) === -1
@@ -37,21 +38,27 @@ const MenuProps = {
 const DualRelatedSelectComponent = (props) => {
     const classes = useStyles();
     const theme = useTheme();
-    const realDataArray = async () => await props.dataArray();
+    const realDataArray = props.dataArray;
     const [params, setParams] = useState({
         firstTitle: props.firstTitle,
         secondTitle: props.secondTitle,
         dataArray: [],
         dependantArrayProperty: props.dependantArrayProperty,
         isSecondSelectEnabled: false,
-        dataArraySecond: []
+        dataArraySecond: [],
+        selectedItemsFirst: [],
+        selectedItemsSecond: []
     });
     console.log("construi el componente")
     useEffect(() => {
-        console.log("estoy en useefect")
-        const result = realDataArray();
-        console.log(result);
-        setParams(Object.assign({}, params, { dataArray: result }));
+        async function FetchData() {
+            const result = await realDataArray();
+            console.log("voy a logear el result")
+            console.log(result);
+
+            setParams(Object.assign({}, params, { dataArray: result }));
+        }
+        FetchData();
     }, []);
     console.log("despues de use efect")
     console.log(params.dataArray)
