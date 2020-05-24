@@ -74,21 +74,41 @@ exports.mockSuccessGetHistory5LastDays = isocodes => {
     {
       timeseries: {
         [moment().format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(1, 'days').format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(2, 'days').format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(3, 'days').format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(4, 'days').format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(5, 'days').format('M/D/YY')]: getRandomLatest()
+        [moment()
+          .subtract(1, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(2, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(3, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(4, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(5, 'days')
+          .format('M/D/YY')]: getRandomLatest()
       }
     },
     {
       timeseries: {
         [moment().format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(1, 'days').format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(2, 'days').format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(3, 'days').format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(4, 'days').format('M/D/YY')]: getRandomLatest(),
-        [moment().subtract(5, 'days').format('M/D/YY')]: getRandomLatest()
+        [moment()
+          .subtract(1, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(2, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(3, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(4, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(5, 'days')
+          .format('M/D/YY')]: getRandomLatest()
       }
     }
   ]);
