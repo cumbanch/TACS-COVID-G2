@@ -8,3 +8,6 @@ exports.getHistorySerializer = timeseriesResults =>
 
     timeseries: (data && data.timeseries) || undefined
   }));
+
+exports.compareListsSerializer = countries =>
+  countries.map(({ dataValues }) => objectToSnakeCase(dataValues));

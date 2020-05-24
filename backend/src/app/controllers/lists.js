@@ -8,7 +8,8 @@ const {
   getCountriesByList,
   createCountriesByList,
   deleteCountriesByList,
-  getListWithCountries
+  getListWithCountries,
+  countAndCheckLists
 } = require('../services/lists');
 const { paginateResponse } = require('../serializers/paginations');
 const {
@@ -24,7 +25,8 @@ const {
   getLatestMapper
 } = require('../mappers/lists');
 const { notFound } = require('../errors/builders');
-const { getListSerializer, getHistorySerializer } = require('../serializers/lists');
+const { getListSerializer, getHistorySerializer, compareListsSerializer } = require('../serializers/lists');
+const { getCountriesInList } = require('../services/countries');
 
 exports.getAllLists = (req, res, next) => {
   const filters = getListsMapper(req);
@@ -112,3 +114,12 @@ exports.getHistory = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.compareLists = ({ body: { lists: listIds } }, res, next) =>
+  countAndCheckLists({ listIds })
+    .then(() =>
+      getCountriesInList({ listIds }).then(countries =>
+        res.status(200).send(compareListsSerializer(countries))
+      )
+    )
+    .catch(next);
