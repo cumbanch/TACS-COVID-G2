@@ -4,7 +4,8 @@ const logger = require('../logger');
 const {
   Country,
   sequelizePackage: { Op, literal },
-  CountryByList
+  CountryByList,
+  List
 } = require('../models');
 const { deleteUndefined } = require('../utils/objects');
 const { databaseError } = require('../errors/builders');
@@ -37,6 +38,40 @@ exports.getCountry = filters => {
     logger.error(inspect(error));
     /* istanbul ignore next */
     throw databaseError(`There was an error getting country: ${error.message}`);
+  });
+};
+
+exports.getCountryWithList = filters => {
+  logger.info(`Attempting to get country with filters: ${inspect(filters)}`);
+  return Country.findOne({
+    where: { id: filters.id },
+    include: [
+      {
+        model: List,
+        as: 'lists',
+        where: { userId: filters.userId }
+      }
+    ]
+  }).catch(error => {
+    /* istanbul ignore next */
+    logger.error(inspect(error));
+    /* istanbul ignore next */
+    throw databaseError(`There was an error getting country: ${error.message}`);
+  });
+};
+
+exports.getCountryBy = params => {
+  logger.info(`Attempting to get country with params: ${inspect(params)}`);
+  const filters = {
+    name: params.name && { [Op.iLike]: `%${params.name}%` }
+  };
+  const sequelizeOptions = {
+    where: filters
+  };
+  return Country.findAndCountAll(sequelizeOptions).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    throw databaseError(`Error getting country, reason: ${err.message}`);
   });
 };
 

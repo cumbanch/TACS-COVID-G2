@@ -30,3 +30,4 @@ exports.listArray = `${arrayMessage('lists')}, contain at least 2 elements ${con
 exports.listIdArray = `${integerMessage(
   'every list_id in lists array'
 )}, be greater than zero ${containedMessage('body')}`;
+exports.countryIdParam = `${integerMessage('country id')} ${containedMessage('path')}`;

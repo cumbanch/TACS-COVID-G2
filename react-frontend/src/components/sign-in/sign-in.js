@@ -10,6 +10,8 @@ const SignInComponent = () => {
     const signIn = () => {
         return SignIn(inputs)
             .then((res) => {
+                console.log(res);
+                localStorage.setItem('userInfo', JSON.stringify(res.data));
                 setRedirect('/home');
             })
             .catch(alert);
