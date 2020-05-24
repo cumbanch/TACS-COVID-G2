@@ -15,7 +15,7 @@ describe('TELEGRAM BOT /latestbycountry', () => {
     const countryCreated = await createCountry();
     mockSuccessLatestCountry();
     successfulLatestResponse = await getTelegramLatestByCountry(countryCreated.dataValues.name);
-    failCountryDontExists = await getTelegramLatestByCountry("PaisInexistente");
+    failCountryDontExists = await getTelegramLatestByCountry('PaisInexistente');
   });
   describe('Successful get latest by Country by Telegram', () => {
     it('Should return the correct text response', () => {
