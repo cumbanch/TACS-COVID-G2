@@ -88,6 +88,9 @@ exports.mockSuccessGetHistory5LastDays = isocodes => {
           .format('M/D/YY')]: getRandomLatest(),
         [moment()
           .subtract(5, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(6, 'days')
           .format('M/D/YY')]: getRandomLatest()
       }
     },
@@ -108,6 +111,9 @@ exports.mockSuccessGetHistory5LastDays = isocodes => {
           .format('M/D/YY')]: getRandomLatest(),
         [moment()
           .subtract(5, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(6, 'days')
           .format('M/D/YY')]: getRandomLatest()
       }
     }

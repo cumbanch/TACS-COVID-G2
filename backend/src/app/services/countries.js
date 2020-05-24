@@ -51,6 +51,7 @@ exports.getCountryBy = params => {
   return Country.findAndCountAll(sequelizeOptions).catch(err => {
     /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`Error getting country, reason: ${err.message}`);
   });
 };
