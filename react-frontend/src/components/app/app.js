@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faUser, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
 import { elastic as Menu } from 'react-burger-menu';
 import MenuItemComponent from '../dashboards/menu-item'
+import PageNotFound from '../dashboards/page-not-found'
 
 const AppComponent = (props) => {
     const chartIcon = <FontAwesomeIcon icon={faChartBar} />
@@ -42,6 +43,7 @@ const AppComponent = (props) => {
                 <Route path="/users" component={UsersComponent} />
                 <Route path="/countries" component={CountriesComponent} />
                 <Route path="/home" component={HomeComponent} />
+                <Route component={PageNotFound} />
             </Switch>
         </div>
 
