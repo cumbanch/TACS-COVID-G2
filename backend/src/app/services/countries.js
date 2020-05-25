@@ -5,10 +5,11 @@ const {
   Country,
   sequelizePackage: { Op, literal },
   CountryByList,
-  List
+  List,
+  User
 } = require('../models');
 const { deleteUndefined } = require('../utils/objects');
-const { databaseError } = require('../errors/builders');
+const { databaseError, notFound } = require('../errors/builders');
 
 exports.getAllCountries = params => {
   logger.info(`Attempting to get countries with params: ${inspect(params)}`);
@@ -96,4 +97,41 @@ exports.getCountriesInList = filters => {
     /* istanbul ignore next */
     throw databaseError(`There was an error getting countries: ${error.message}`);
   });
+};
+
+exports.getInterestedByCountry = id => {
+  logger.info(`Attempting to check if exist the country with id: ${id}`);
+  return Country.count({ where: { id } })
+    .catch(error => {
+      /* istanbul ignore next */
+      logger.error(inspect(error));
+      /* istanbul ignore next */
+      throw databaseError(`There was an error checking if exist the country, reason: ${error.message}`);
+    })
+    .then(count => {
+      if (!count) throw notFound('The provided country was not found');
+      return CountryByList.count({
+        where: { countryId: id },
+        include: [
+          {
+            model: List,
+            as: 'list',
+            include: [
+              {
+                model: User,
+                as: 'user'
+              }
+            ]
+          }
+        ],
+        group: ['User.id'],
+        subQuery: false
+      });
+    })
+    .catch(error => {
+      /* istanbul ignore next */
+      logger.error(inspect(error));
+      /* istanbul ignore next */
+      throw databaseError(`There was an error getting interested: ${error.message}`);
+    });
 };
