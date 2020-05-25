@@ -1,5 +1,11 @@
 const { pagination, idParam } = require('./common');
 
+exports.getCloserCountriesMapper = req => ({
+  ...pagination(req),
+  latitude: req.query.latitude,
+  longitude: req.query.longitude
+});
+
 exports.getCountriesMapper = req => ({
   ...pagination(req),
   name: req.query.name,

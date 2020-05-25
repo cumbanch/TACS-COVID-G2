@@ -1,6 +1,13 @@
 const pagination = require('./pagination');
 const authorization = require('./authorizations');
-const { isocode2, isocode3, countryName, countryIdParam } = require('../errors/schema_messages');
+const {
+  latitude,
+  longitude,
+  isocode2,
+  isocode3,
+  countryName,
+  countryIdParam
+} = require('../errors/schema_messages');
 const { Country } = require('../models');
 
 exports.getCountriesSchema = {
@@ -15,6 +22,13 @@ exports.getCountriesSchema = {
   },
   isocode2: { in: ['query'], isString: true, trim: true, errorMessage: isocode2, optional: true },
   isocode3: { in: ['query'], isString: true, trim: true, errorMessage: isocode3, optional: true }
+};
+
+exports.getCloserCountriesSchema = {
+  ...authorization,
+  ...pagination(Country),
+  latitude: { in: ['query'], isString: true, trim: true, errorMessage: latitude, optional: true },
+  longitude: { in: ['query'], isString: true, trim: true, errorMessage: longitude, optional: true }
 };
 
 exports.getLatestCountrySchema = {
