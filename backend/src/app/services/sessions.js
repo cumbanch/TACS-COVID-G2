@@ -26,7 +26,7 @@ exports.generateAccessToken = (user, req) =>
   signAsync(
     {
       token_use: 'access',
-      admin: user.admin,
+      user_type: user.type,
       nbf: moment().unix(),
       exp: moment()
         .clone()
@@ -68,7 +68,7 @@ exports.generateTokens = ({ req, user }) => {
       email: user.email,
       first_name: user.name,
       last_name: user.lastName,
-      admin: user.admin,
+      user_type: user.type,
       nbf: moment().unix(),
       exp: moment()
         .clone()
@@ -101,7 +101,7 @@ exports.verifyAndCreateToken = ({ req }) => {
       return signAsync(
         {
           token_use: 'access',
-          admin: req.user.admin,
+          user_type: req.user.type,
           nbf: moment().unix(),
           exp: moment()
             .clone()

@@ -546,8 +546,11 @@
         "password": {
           "type": "string"
         },
-        "country_id": {
-          "type": "integer"
+        "name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
         }
       }
     },

@@ -1,5 +1,6 @@
 jest.mock('axios');
 const axios = require('axios');
+const { moment } = require('../../app/utils/moment');
 
 const limit = 1001;
 
@@ -18,7 +19,15 @@ const mockSuccessGetAll = () =>
 
 const failSuccessGetAll = () => axios.all.mockImplementationOnce(requests => Promise.all(requests));
 
-const mockSuccess = ([firstIso2, secondIso2], [firstValueMock, secondValueMock]) => {
+const mockSuccessLatest = ([firstValueMock, secondValueMock]) => {
+  mockSuccessGetAll();
+  axios.get
+    .mockResolvedValueOnce({ data: [firstValueMock] })
+    .mockResolvedValueOnce({ data: [secondValueMock] })
+    .mockResolvedValueOnce({ data: [] });
+};
+
+const mockSuccessHistory = ([firstIso2, secondIso2], [firstValueMock, secondValueMock]) => {
   mockSuccessGetAll();
   axios.get
     .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
@@ -33,7 +42,7 @@ const mockSuccess = ([firstIso2, secondIso2], [firstValueMock, secondValueMock])
 };
 
 exports.mockSuccessGetLatest = isocodes => {
-  mockSuccess(isocodes, [getRandomLatest(), getRandomLatest()]);
+  mockSuccessLatest(isocodes, [getRandomLatest(), getRandomLatest()]);
 };
 
 exports.mockFailCovid = () => {
@@ -42,7 +51,7 @@ exports.mockFailCovid = () => {
 };
 
 exports.mockSuccessGetHistory = isocodes => {
-  mockSuccess(isocodes, [
+  mockSuccessHistory(isocodes, [
     {
       timeseries: {
         '4/23/20': getRandomLatest(),
@@ -59,3 +68,58 @@ exports.mockSuccessGetHistory = isocodes => {
     }
   ]);
 };
+
+exports.mockSuccessGetHistory5LastDays = isocodes => {
+  mockSuccessHistory(isocodes, [
+    {
+      timeseries: {
+        [moment().format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(1, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(2, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(3, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(4, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(5, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(6, 'days')
+          .format('M/D/YY')]: getRandomLatest()
+      }
+    },
+    {
+      timeseries: {
+        [moment().format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(1, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(2, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(3, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(4, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(5, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(6, 'days')
+          .format('M/D/YY')]: getRandomLatest()
+      }
+    }
+  ]);
+};
+
+exports.mockSuccessLatestCountry = () => axios.get.mockResolvedValueOnce({ data: [getRandomLatest()] });
+
+exports.mockSuccessEmptyLatestCountry = () => axios.get.mockResolvedValueOnce({ data: [] });

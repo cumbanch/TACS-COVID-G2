@@ -11,7 +11,7 @@
     "lint": "eslint \"**/*.js\" --ignore-pattern ./src/.eslintrc.js",
     "lint-diff": "git diff --diff-filter=ACM --name-only --cached --relative | grep \\\\.js$ | xargs eslint --ignore-pattern ./src/.eslintrc.js",
     "lint-fix": "npm run lint -- --fix",
-    "create-migration": "npx sequelize migration:create --options-path=src/.sequelizerc --name",
+    "create-migration": "npx sequelize migration:create --options-path=src/.sequelizerc",
     "migrations": "npx sequelize --options-path=src/.sequelizerc db:migrate",
     "migrations-undo": "npx sequelize --opti-path=src/.sequelizerc db:migrate:undo",
     "migrations-undo-all": "npx sequelize --options-path=src/.sequelizerc db:migrate:undo:all",
@@ -66,11 +66,15 @@
     "snyk": "^1.316.1"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.32.0",
     "eslint": "^6.8.0",
     "eslint-config-wolox": "^4.0.0",
     "eslint-config-wolox-node": "^3.0.0",
     "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.19.0",
     "husky": "^4.2.3",
     "jest": "^25.3.0",
     "nodemon": "^2.0.2",
@@ -86,7 +90,8 @@
   "jest": {
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
-      "/node_modules/"
+      "/node_modules/",
+      "/src/app/telegram/index.js"
     ],
     "coverageThreshold": {
       "global": {

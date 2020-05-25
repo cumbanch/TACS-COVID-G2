@@ -1,24 +1,29 @@
 import React, { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './app.css'
-import NavBarComponent from '../dashboards/navBarCov'
+import NavBarComponent from '../dashboards/navbar-Cov'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import SignInComponent from '../sign-in/sign-in';
 import SignUpComponent from '../sign-up/sign-up';
 import HomeComponent from "../home/home";
-import GraphicsComponent from '../dashboards/graphics-dashboard'
+import ComparisonComponent from '../dashboards/comparison-dashboard/comparison-dashboard'
 import UsersComponent from '../dashboards/users-dashboards'
 import CountriesComponent from '../dashboards/countries-dashboard'
 import "../../assets/sass/burger-menu.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faUser, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
 import { elastic as Menu } from 'react-burger-menu';
-import MenuItemComponent from '../dashboards/menuItem'
+import MenuItemComponent from '../dashboards/menu-item'
+import PageNotFound from '../dashboards/page-not-found'
+import { isUserLogin } from "../session-managment/utils"
+import PrivateRoute from "../session-managment/private-route"
+
 const AppComponent = (props) => {
     const chartIcon = <FontAwesomeIcon icon={faChartBar} />
     const userIcon = <FontAwesomeIcon icon={faUser} />
     const countryIcon = <FontAwesomeIcon icon={faGlobeAmericas} />
-    const [params, setparams] = useState({ isUserLogged: props.isUserLogged });
+    const isUserLogged = isUserLogin();
+    const [params, setparams] = useState({ isUserLogged });
     return (
         <div className="App" id="root">
 
@@ -29,17 +34,19 @@ const AppComponent = (props) => {
             </Menu>
 
 
-            <NavBarComponent id="navCovid" />
+            <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
 
 
             <Switch>
                 <Route exact path='/' component={SignInComponent} />
                 <Route path="/sign-in" component={SignInComponent} />
                 <Route path="/sign-up" component={SignUpComponent} />
-                <Route path="/graphics" component={GraphicsComponent} />
-                <Route path="/users" component={UsersComponent} />
-                <Route path="/countries" component={CountriesComponent} />
+                <Route path="/log-out" component={SignUpComponent} />
+                <PrivateRoute path="/graphics" component={ComparisonComponent} />
+                <PrivateRoute path="/users" component={UsersComponent} />
+                <PrivateRoute path="/countries" component={CountriesComponent} />
                 <Route path="/home" component={HomeComponent} />
+                <Route component={PageNotFound} />
             </Switch>
         </div>
 

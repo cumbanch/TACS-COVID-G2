@@ -16,7 +16,8 @@ const config = {
   server: {
     port: process.env.PORT || 8080,
     defaultPagination: process.env.DEFAULT_PAGINATION || 20,
-    momentTimezone: process.env.MOMENT_TIMEZONE || 'America/Buenos_Aires'
+    momentTimezone: process.env.MOMENT_TIMEZONE || 'America/Buenos_Aires',
+    initialPasswordAdmin: process.env.PASSWORD_ADMIN
   },
   logger: {
     minLevel: process.env.LOGGER_MIN_LEVEL || 'debug'
@@ -38,7 +39,8 @@ const config = {
     latestEndpoint: process.env.COVID_API_LATEST_ENDPOINT || '/jhu-edu/latest?onlyCountries=true&iso2='
   },
   telegram: {
-    apiKey: process.env.TELEGRAM_API_KEY
+    apiKey: process.env.TELEGRAM_API_KEY,
+    listPagination: parseInt(process.env.TELEGRAM_LIST_PAGINATION) || 15
   }
 };
 
