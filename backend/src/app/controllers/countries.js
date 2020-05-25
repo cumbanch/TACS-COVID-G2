@@ -1,5 +1,5 @@
-const { getCountriesMapper, getLatestCountryMapper } = require('../mappers/countries');
-const { getAllCountries, getCountryWithList } = require('../services/countries');
+const { getCountriesMapper, getLatestCountryMapper, getInterestedMapper } = require('../mappers/countries');
+const { getAllCountries, getCountryWithList, getInterestedByCountry } = require('../services/countries');
 const { paginateResponse } = require('../serializers/paginations');
 const { notFound, externalService } = require('../errors/builders');
 const { getLatestByIso2 } = require('../services/covid_api');
@@ -28,5 +28,12 @@ exports.getLatestCountry = (req, res, next) => {
           throw externalService(`There was an error getting the latest results, reason: ${err.message}`);
         });
     })
+    .catch(next);
+};
+
+exports.getInterested = (req, res, next) => {
+  const { id } = getInterestedMapper(req);
+  return getInterestedByCountry(id)
+    .then(amount => res.status(200).send({ amount }))
     .catch(next);
 };
