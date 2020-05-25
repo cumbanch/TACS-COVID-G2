@@ -70,6 +70,8 @@ The `secret` value used for JWT generation and verification.
 Amount of salts used for hashing the users' password.
 ##### `COVID_API_BASE` (required)
 Base route of the COVID API which is used to get the numbers of confirmed, deaths and recovered cases.
+##### `PASSWORD_ADMIN` (required)
+The password for the first user admin created.
 ##### `COVID_API_TIMESERIES_ENDPOINT` (optional | default = `/jhu-edu/timeseries?onlyCountries=true&iso2=`)
 Relative route of the COVID API's endpoint used for getting the day by day number of cases in a country.
 ##### `COVID_API_LATEST_ENDPOINT` (optional | default = `/jhu-edu/latest?onlyCountries=true&iso2=`)

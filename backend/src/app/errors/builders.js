@@ -31,3 +31,4 @@ exports.internalServerError = message =>
   buildError(`There was an unexpected error, reason: ${message}`, INTERNAL_SERVER_ERROR);
 exports.unauthorized = () =>
   buildError('The provided user is not authorized to access the resource', UNAUTHORIZED);
+exports.invalidListIds = () => buildError('The provided list ids are invalid', INVALID_PARAMS);

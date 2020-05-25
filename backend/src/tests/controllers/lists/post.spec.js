@@ -1,6 +1,7 @@
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createManyCountries, createCountry } = require('../../factories/countries');
-const { createUser } = require('../../factories/users');
+const { createUser, createManyUsers } = require('../../factories/users');
+const { createCountryByList } = require('../../factories/country_by_list');
 const { List, CountryByList } = require('../../../app/models');
 const { generateToken } = require('../../factories/tokens');
 const { createList } = require('../../factories/lists');
@@ -160,6 +161,84 @@ describe('POST /lists/:id/countries', () => {
     it('Should return an error indicating the provided country_id is invalid', () => {
       expect(invalidParamsResponse.body.message).toContain(
         'country_id must be an integer and be contained in body'
+      );
+    });
+    it('Should return an error indicating the provided authorization header is not valid', () => {
+      expect(invalidParamsResponse.body.message).toContain(
+        'Authorization must be a jwt token and must be contained in headers'
+      );
+    });
+  });
+});
+
+describe('POST /lists/compare', () => {
+  let successfulResponse = {};
+  let listBySameUserResponse = {};
+  let invalidParamsResponse = {};
+  const userQuantity = 2;
+  beforeAll(async () => {
+    const token = await generateToken();
+    await truncateDatabase();
+    await createUser({ type: 'admin' });
+    const [{ id: firstRegularId }, { id: secondRegularId }] = await createManyUsers({
+      user: { type: 'regular' },
+      quantity: userQuantity
+    });
+    const { id: firstListId } = await createList({ userId: firstRegularId });
+    const { id: secondListId } = await createList({ userId: secondRegularId });
+    const { id: thirdListId } = await createList({ userId: firstRegularId });
+    await createManyCountries({ quantity: 4 });
+    await createCountryByList({ listId: firstListId, countryId: 1 });
+    await createCountryByList({ listId: firstListId, countryId: 2 });
+    await createCountryByList({ listId: secondListId, countryId: 1 });
+    await createCountryByList({ listId: secondListId, countryId: 3 });
+    await createCountryByList({ listId: thirdListId, countryId: 1 });
+    successfulResponse = await getResponse({
+      endpoint: '/lists/compare',
+      method: 'post',
+      body: { lists: [firstListId, secondListId] },
+      headers: { Authorization: token }
+    });
+    listBySameUserResponse = await getResponse({
+      endpoint: '/lists/compare',
+      method: 'post',
+      body: { lists: [firstListId, thirdListId] },
+      headers: { Authorization: token }
+    });
+    invalidParamsResponse = await getResponse({
+      endpoint: '/lists/compare',
+      method: 'post'
+    });
+  });
+  describe('Successful response', () => {
+    it('Should return status code 200', () => {
+      expect(successfulResponse.statusCode).toEqual(200);
+    });
+    it('Should return one country', () => {
+      expect(successfulResponse.body.length).toBe(1);
+    });
+  });
+  describe('Fail because both lists are for the same user', () => {
+    it('Should return status code 400', () => {
+      expect(listBySameUserResponse.statusCode).toEqual(400);
+    });
+    it('Should return internal_code not_found', () => {
+      expect(listBySameUserResponse.body.internal_code).toBe('invalid_params');
+    });
+    it('Should return message indicating the provided list was not found', () => {
+      expect(listBySameUserResponse.body.message).toBe('The provided list ids are invalid');
+    });
+  });
+  describe('Fail for invalid request', () => {
+    it('Should return status code 400', () => {
+      expect(invalidParamsResponse.statusCode).toEqual(400);
+    });
+    it('Should return internal_code invalid_params', () => {
+      expect(invalidParamsResponse.body.internal_code).toBe('invalid_params');
+    });
+    it('Should return an error indicating the provided list ids are invalid', () => {
+      expect(invalidParamsResponse.body.message).toContain(
+        'lists must be an array, contain at least 2 elements and be contained in body'
       );
     });
     it('Should return an error indicating the provided authorization header is not valid', () => {
