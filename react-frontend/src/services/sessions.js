@@ -3,7 +3,7 @@ const axios = require('axios').default;
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
   timeout: 1000,
-  headers: {'Content-Type': 'application/json'}
+  headers: { 'Content-Type': 'application/json' }
 });
 
 const salt = 10;
