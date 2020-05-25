@@ -18,7 +18,7 @@ exports.init = app => {
     getLatestCountry
   );
   countryRouter.get(
-    '/:id/users',
+    '/:id/interested_users',
     validateSchemaAndFail(getInterestedSchema),
     checkTokenAndSetUser,
     checkPermissions,

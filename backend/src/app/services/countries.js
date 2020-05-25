@@ -140,14 +140,15 @@ exports.getInterestedByCountry = id => {
             ]
           }
         ],
-        group: ['User.id'],
+        group: ['"list->user"."id"'],
         subQuery: false
-      });
-    })
-    .catch(error => {
-      /* istanbul ignore next */
-      logger.error(inspect(error));
-      /* istanbul ignore next */
-      throw databaseError(`There was an error getting interested: ${error.message}`);
+      })
+        .catch(error => {
+          /* istanbul ignore next */
+          logger.error(inspect(error));
+          /* istanbul ignore next */
+          throw databaseError(`There was an error getting interested: ${error.message}`);
+        })
+        .then(amount => amount.length);
     });
 };
