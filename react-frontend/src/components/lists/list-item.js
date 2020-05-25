@@ -7,6 +7,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import FolderIcon from '@material-ui/icons/Folder';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import { ValidatorForm } from "react-form-validator-core";
+import ValidatableField from "../validation/validatable-field";
+
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -23,31 +27,56 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(name) {
+  return { name };
 }
 
-const rows = [
-  createData('Canada', 159, 6.0, 24, 4.0),
-  createData('Estados Unidos', 237, 9.0, 37, 4.3),
-  createData('Mexico', 262, 16.0, 24, 6.0),
+let rows = [
+  createData('Canada'),
+  createData('Estados Unidos'),
+  createData('Mexico'),
 ];
 
 const ListItemComponent = (props) => {
   const classes = useStyles();
-  
+  const [params, setParams] = useState({
+    editMode: false,
+    listName: props.listName,
+    listId: props.listId,
+    listItems: rows,
+  });
+
+  const changeMode = () => {
+    setParams(Object.assign({}, params, { editMode: !params.editMode }));
+  }
+
+  const handleInputChange = (event) => {
+    console.log(params.listItems);
+    setParams(Object.assign({}, params, { newCountry: event.target.value }));
+  }
+
+  const handleSubmit = () => {
+    let countryList = params.listItems;
+    countryList.push(createData(params.newCountry))
+    setParams(Object.assign({}, params, { listItems: countryList }));
+    console.log(params.listItems);
+  }
+
   return (
     <div className="container layout-dashboard">
       <div className={classes.content}>
-      <h1 className={classes.title}>
-        Norteamérica    
-      </h1>
-        <Button className={classes.editButton} variant="contained">Editar</Button>
+        <h1 className={classes.title}>
+          Norteamérica
+        </h1>
+        <Button onClick={() => changeMode()}
+          className={classes.editButton} variant="contained">
+          Editar
+        </Button>
 
         <Paper>
           <List>
 
-            {rows.map((row) =>(
+            {params.listItems.map((row) =>(
               <ListItem>
                 <ListItemIcon>
                   <FolderIcon />
@@ -60,11 +89,32 @@ const ListItemComponent = (props) => {
 
           </List>
         </Paper>
-
-
-          </div>
+        { params.editMode ? 
+          <Paper>
+            <ValidatorForm
+              instantValidate={false}
+              onSubmit={handleSubmit}
+            >
+              <h3 >Agregar país</h3>
+              <div className="form-group">
+                <label>País</label>
+                <ValidatableField
+                  label='Pais'
+                  placeholder='País'
+                  name="pais"
+                  type="text"
+                  className="form-control"
+                  onChange={handleInputChange}
+                />
+              </div>
+              <button type="submit" className="btn btn-primary btn-block">Agregar</button>
+            </ValidatorForm>
+          </Paper>
+          : null
+        }
       </div>
-            );
+    </div>
+  );
 }
 
 export default ListItemComponent;

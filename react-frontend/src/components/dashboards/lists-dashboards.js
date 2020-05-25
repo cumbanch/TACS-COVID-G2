@@ -7,7 +7,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import DeleteIcon from '@material-ui/icons/Delete';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -56,7 +56,7 @@ const ListsComponent = (props) => {
                 primary={row.name}
               />
               <ListItemIcon>
-                <DeleteIcon />
+                <ChevronRightIcon />
               </ListItemIcon>
             </ListItem>
           ))}
