@@ -12,7 +12,7 @@ import CountriesComponent from '../dashboards/countries-dashboard'
 import ListItemComponent from '../lists/list-item'
 import "../../assets/sass/burger-menu.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartBar, faUser, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
+import { faChartBar, faUser, faGlobeAmericas, faList } from '@fortawesome/free-solid-svg-icons'
 import { elastic as Menu } from 'react-burger-menu';
 import MenuItemComponent from '../dashboards/menu-item'
 import ListsComponent from '../dashboards/lists-dashboards'
@@ -21,6 +21,7 @@ const AppComponent = (props) => {
     const chartIcon = <FontAwesomeIcon icon={faChartBar} />
     const userIcon = <FontAwesomeIcon icon={faUser} />
     const countryIcon = <FontAwesomeIcon icon={faGlobeAmericas} />
+    const listIcon = <FontAwesomeIcon icon={faList} />
     const [params, setparams] = useState({ isUserLogged: props.isUserLogged });
     return (
 
@@ -30,6 +31,7 @@ const AppComponent = (props) => {
                 <MenuItemComponent anId="Users" anIcon={userIcon} urlRef="/users" aTitle="USUARIOS" />
                 <MenuItemComponent anId="Graphics" anIcon={chartIcon} urlRef="/graphics" aTitle="GRAFICOS" />
                 <MenuItemComponent anId="Paises" anIcon={countryIcon} urlRef="/countries" aTitle="PAISES" />
+                <MenuItemComponent anId="Listas" anIcon={listIcon} urlRef="/lists" aTitle="LISTAS" />
             </Menu>
 
 
