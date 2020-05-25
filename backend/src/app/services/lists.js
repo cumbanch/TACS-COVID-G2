@@ -2,8 +2,9 @@ const { inspect } = require('util');
 
 const logger = require('../logger');
 const { List, CountryByList, sequelizeInstance, Country } = require('../models');
-const { databaseError, notFound, invalidCountries } = require('../errors/builders');
+const { databaseError, notFound, invalidCountries, invalidListIds } = require('../errors/builders');
 const { getCountry } = require('./countries');
+const { deleteUndefined } = require('../utils/objects');
 
 const getCountriesToDeleteAndCreate = (list, attributes) => {
   const countriesByListToDelete = list.countryByList.filter(
@@ -42,11 +43,12 @@ exports.getAllList = filters => {
 
 exports.getList = (filters, options = {}) => {
   logger.info(`Attempting to get list with filters: ${inspect(filters)}`);
+  const whereParams = {
+    id: filters.id,
+    userId: filters.userId
+  };
   return List.findOne({
-    where: {
-      id: filters.id,
-      userId: filters.userId
-    },
+    where: deleteUndefined(whereParams),
     ...options
   }).catch(err => {
     /* istanbul ignore next */
@@ -234,3 +236,23 @@ exports.deleteCountriesByList = attributes => {
     });
   });
 };
+
+exports.countLists = (filters, options = {}) => {
+  logger.info('Attempting to count lists with filters', filters);
+  return List.count({ where: { id: filters.listIds }, ...options }).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
+    throw databaseError(`Error counting lists, reason: ${err.message}`);
+  });
+};
+
+exports.countAndCheckLists = filters =>
+  exports
+    .countLists(filters, {
+      group: ['userId']
+    })
+    .then(count => {
+      if (filters.listIds.length !== count.length) throw invalidListIds();
+      return count;
+    });

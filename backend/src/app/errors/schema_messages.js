@@ -26,6 +26,10 @@ exports.offset = `${integerMessage('offset')} ${containedMessage('query')}`;
 exports.countryName = `${stringMessage('country_name')} ${containedMessage('query')}`;
 exports.countryId = `${integerMessage('country_id')} ${containedMessage('body')}`;
 exports.lastName = `${stringMessage('last_name')} ${containedMessage('body')}`;
+exports.listArray = `${arrayMessage('lists')}, contain at least 2 elements ${containedMessage('body')}`;
+exports.listIdArray = `${integerMessage(
+  'every list_id in lists array'
+)}, be greater than zero ${containedMessage('body')}`;
 exports.countryIdParam = `${integerMessage('country id')} ${containedMessage('path')}`;
 exports.latitude = `${stringMessage('latitude')} ${containedMessage('body')}`;
 exports.longitude = `${stringMessage('longitude')} ${containedMessage('body')}`;
