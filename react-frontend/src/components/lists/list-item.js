@@ -7,9 +7,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import FolderIcon from '@material-ui/icons/Folder';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
 import { ValidatorForm } from "react-form-validator-core";
 import ValidatableField from "../validation/validatable-field";
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -27,14 +27,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(name) {
-  return { name };
+function createData(id, name) {
+  return { id, name };
 }
 
 let rows = [
-  createData('Canada'),
-  createData('Estados Unidos'),
-  createData('Mexico'),
+  createData(1, 'Canada'),
+  createData(2, 'Estados Unidos'),
+  createData(3, 'Mexico'),
 ];
 
 const ListItemComponent = (props) => {
@@ -51,13 +51,18 @@ const ListItemComponent = (props) => {
   }
 
   const handleInputChange = (event) => {
-    console.log(params.listItems);
     setParams(Object.assign({}, params, { newCountry: event.target.value }));
   }
 
   const handleSubmit = () => {
     let countryList = params.listItems;
-    countryList.push(createData(params.newCountry))
+    countryList.push(createData(countryList.length + 1, params.newCountry))
+    setParams(Object.assign({}, params, { listItems: countryList }));
+  }
+  
+  const removeItem = (id) => {
+    let countryList = params.listItems;
+    countryList.splice( countryList.findIndex(c => c.id === id) , 1);
     setParams(Object.assign({}, params, { listItems: countryList }));
     console.log(params.listItems);
   }
@@ -68,11 +73,21 @@ const ListItemComponent = (props) => {
         <h1 className={classes.title}>
           Norteamérica
         </h1>
-        <Button onClick={() => changeMode()}
-          className={classes.editButton} variant="contained">
-          Editar
-        </Button>
-
+        <div style={{textAlign: "left"}}>
+          {!params.editMode? (
+            <div>
+              <Button onClick={() => changeMode()}
+                className={classes.editButton} variant="contained">
+                Editar
+              </Button>
+            </div>
+          ): (
+              <Button onClick={() => changeMode()}
+                className={classes.editButton} variant="contained">
+                Guardar
+              </Button>
+          )}
+        </div>
         <Paper>
           <List>
 
@@ -84,6 +99,9 @@ const ListItemComponent = (props) => {
                 <ListItemText
                   primary={row.name}
                 />
+                { params.editMode ? 
+                  <HighlightOffIcon onClick={() => removeItem(row.id)} /> : null
+                }
               </ListItem>
             ))}
 
