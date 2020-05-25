@@ -29,6 +29,7 @@ exports.getUsers = params => {
   return User.findAndCountAll(sequelizeOptions).catch(err => {
     /* istanbul ignore next */
     logger.error(inspect(err));
+    /* istanbul ignore next */
     throw databaseError(`Error getting users, reason: ${err.message}`);
   });
 };
