@@ -16,15 +16,18 @@ import { faChartBar, faUser, faGlobeAmericas, faList } from '@fortawesome/free-s
 import { elastic as Menu } from 'react-burger-menu';
 import MenuItemComponent from '../dashboards/menu-item'
 import ListsComponent from '../dashboards/lists-dashboards'
+import PageNotFound from '../dashboards/page-not-found'
+import { isUserLogin } from "../session-managment/utils"
+import PrivateRoute from "../session-managment/private-route"
 
 const AppComponent = (props) => {
     const chartIcon = <FontAwesomeIcon icon={faChartBar} />
     const userIcon = <FontAwesomeIcon icon={faUser} />
     const countryIcon = <FontAwesomeIcon icon={faGlobeAmericas} />
     const listIcon = <FontAwesomeIcon icon={faList} />
-    const [params, setparams] = useState({ isUserLogged: props.isUserLogged });
+    const isUserLogged = isUserLogin();
+    const [params, setparams] = useState({ isUserLogged });
     return (
-
         <div className="App" id="root">
 
             <Menu outerContainerId={"root"} pageWrapId={"navCovid"}  >
@@ -35,19 +38,21 @@ const AppComponent = (props) => {
             </Menu>
 
 
-            <NavBarComponent id="navCovid" />
+            <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
 
 
             <Switch>
                 <Route exact path='/' component={SignInComponent} />
                 <Route path="/sign-in" component={SignInComponent} />
                 <Route path="/sign-up" component={SignUpComponent} />
-                <Route path="/graphics" component={ComparisonComponent} />
-                <Route path="/users" component={UsersComponent} />
-                <Route path="/countries" component={CountriesComponent} />
+                <Route path="/log-out" component={SignUpComponent} />
+                <PrivateRoute path="/graphics" component={ComparisonComponent} />
+                <PrivateRoute path="/users" component={UsersComponent} />
+                <PrivateRoute path="/countries" component={CountriesComponent} />
                 <Route path="/lists" component={ListsComponent} />
-                <Route path="/home" component={HomeComponent} />
                 <Route path="/list/:id" component={ListItemComponent} />
+                <Route path="/home" component={HomeComponent} />
+                <Route component={PageNotFound} />
             </Switch>
         </div>
 
