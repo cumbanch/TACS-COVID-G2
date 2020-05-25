@@ -1,6 +1,15 @@
 const pagination = require('./pagination');
 const authorization = require('./authorizations');
-const { listName, countries, listId, offset, countryName, countryId } = require('../errors/schema_messages');
+const {
+  listName,
+  countries,
+  listId,
+  offset,
+  countryName,
+  countryId,
+  listIdArray,
+  listArray
+} = require('../errors/schema_messages');
 const { isArray, isInteger } = require('../utils/lodash');
 const { Country, List } = require('../models');
 
@@ -125,4 +134,26 @@ exports.deleteCountryInListSchema = {
   ...authorization,
   id: commonAttributes.id,
   country_id: commonAttributes.country_id
+};
+
+exports.compareListsSchema = {
+  ...authorization,
+  lists: {
+    in: ['body'],
+    isArray: {
+      options: {
+        min: 2
+      }
+    },
+    errorMessage: listArray
+  },
+  'lists[*]': {
+    in: ['body'],
+    isInt: {
+      options: { min: 1 }
+    },
+    toInt: true,
+    trim: true,
+    errorMessage: listIdArray
+  }
 };

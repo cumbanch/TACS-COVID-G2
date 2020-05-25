@@ -10,7 +10,8 @@ const {
   createCountriesByList,
   deleteCountriesByList,
   getLatest,
-  getHistory
+  getHistory,
+  compareLists
 } = require('../controllers/lists');
 const {
   getListsSchema,
@@ -22,10 +23,11 @@ const {
   getHistoryResultListSchema,
   getCountriesByListSchema,
   addCountryInListSchema,
-  deleteCountryInListSchema
+  deleteCountryInListSchema,
+  compareListsSchema
 } = require('../schemas/lists');
 const { validateSchemaAndFail, bodyNotEmpty } = require('../middlewares/params_validator');
-const { checkTokenAndSetUser } = require('../middlewares/authorization');
+const { checkTokenAndSetUser, checkPermissions } = require('../middlewares/authorization');
 
 const listRouter = createRouter();
 
@@ -34,7 +36,13 @@ exports.init = app => {
 
   listRouter.get('/', validateSchemaAndFail(getListsSchema), checkTokenAndSetUser, getAllLists);
   listRouter.post('/', validateSchemaAndFail(createListSchema), checkTokenAndSetUser, createList);
-
+  listRouter.post(
+    '/compare',
+    validateSchemaAndFail(compareListsSchema),
+    checkTokenAndSetUser,
+    checkPermissions,
+    compareLists
+  );
   listRouter.put(
     '/:id',
     validateSchemaAndFail(updateListSchema),
