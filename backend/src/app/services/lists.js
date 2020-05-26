@@ -32,7 +32,7 @@ exports.getAllList = params => {
   logger.debug(params);
   logger.info(`Attempting to get lists with filters: ${inspect(params)}`);
   const filters = {
-    // eslint-disable-next-line 
+    // eslint-disable-next-line
     createdAt: (params.createAt ? (params.userType === ADMIN ? { [Op.gte]: params.createAt } : undefined) : undefined),
     userId: params.userType === REGULAR ? params.userId : undefined
   };
