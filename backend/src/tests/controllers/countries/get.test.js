@@ -1,15 +1,19 @@
+/* eslint-disable max-lines */
 const {
   mockSuccessLatestCountry,
   mockFailCovid,
   mockSuccessEmptyLatestCountry
 } = require('../../mocks/covid');
 const { getResponse, truncateDatabase } = require('../../utils/app');
-const { createManyCountries } = require('../../factories/countries');
+const { createManyCountries, createCountry } = require('../../factories/countries');
 const { createUser } = require('../../factories/users');
 const { generateToken } = require('../../factories/tokens');
 const { getPaginationData, expectedPaginationKeys } = require('../../utils/paginations');
 const { createList } = require('../../factories/lists');
 const { createCountryByList } = require('../../factories/country_by_list');
+const {
+  USER_ROLES: { ADMIN }
+} = require('../.././../app/utils/constants');
 
 const expectedCountriesKeys = [
   'id',
@@ -257,6 +261,80 @@ describe('GET /countries/:id/latest', () => {
     });
     it('Should return message "List not found"', () => {
       expect(countryNotFoundResponse.body.message).toBe('Country not found');
+    });
+  });
+});
+
+describe('GET /countries/:id/interested_users', () => {
+  const expectedInterestedUsersKeys = ['amount'];
+  let successResponse = {};
+  let countryNotFoundResponse = {};
+  let invalidParamsResponse = {};
+  beforeAll(async () => {
+    const token = await generateToken();
+    await truncateDatabase();
+    await createUser({ type: ADMIN });
+    const { id: userId } = await createUser();
+    const { id: listId } = await createList({ userId });
+    const { id: countryId } = await createCountry();
+    await createCountryByList({ listId, countryId });
+    successResponse = await getResponse({
+      endpoint: `/countries/${countryId}/interested_users`,
+      method: 'get',
+      headers: { Authorization: token }
+    });
+    countryNotFoundResponse = await getResponse({
+      endpoint: '/countries/78943/interested_users',
+      method: 'get',
+      headers: { Authorization: token }
+    });
+    invalidParamsResponse = await getResponse({
+      endpoint: '/countries/wrong_id/interested_users',
+      method: 'get'
+    });
+  });
+  describe('Successful response', () => {
+    it('Should return status code 200', () => {
+      expect(successResponse.statusCode).toEqual(200);
+    });
+    it('Should return the correct keys in body', () => {
+      expect(Object.keys(successResponse.body)).toStrictEqual(
+        expect.arrayContaining(expectedInterestedUsersKeys)
+      );
+    });
+    it('Should return the correct amount', () => {
+      expect(successResponse.body.amount).toBe(1);
+    });
+  });
+  describe('Fail for country not found', () => {
+    it('Should return status code 404', () => {
+      expect(countryNotFoundResponse.statusCode).toEqual(404);
+    });
+    it('Should return internal_code not_found', () => {
+      expect(countryNotFoundResponse.body.internal_code).toBe('not_found');
+    });
+    it('Should return message "Country not found"', () => {
+      expect(countryNotFoundResponse.body.message).toBe('The provided country was not found');
+    });
+  });
+  describe('Fail for invalid request', () => {
+    it('Should return status code 400', () => {
+      expect(invalidParamsResponse.statusCode).toEqual(400);
+    });
+    it('Should return internal_code invalid_params', () => {
+      expect(invalidParamsResponse.body.internal_code).toBe('invalid_params');
+    });
+    it('Should return an error indicating the provided country id is not valid', () => {
+      expect(
+        invalidParamsResponse.body.message.includes('country id must be an integer and be contained in path')
+      ).toBe(true);
+    });
+    it('Should return an error indicating the provider authorization header is not valid', () => {
+      expect(
+        invalidParamsResponse.body.message.includes(
+          'Authorization must be a jwt token and must be contained in headers'
+        )
+      ).toBe(true);
     });
   });
 });

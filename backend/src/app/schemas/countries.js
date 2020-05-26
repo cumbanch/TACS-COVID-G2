@@ -27,3 +27,5 @@ exports.getLatestCountrySchema = {
     errorMessage: countryIdParam
   }
 };
+
+exports.getInterestedSchema = exports.getLatestCountrySchema;

@@ -14,8 +14,7 @@ const telegramErrorsMessages = {
   listDontFound: 'The list was not found'
 };
 
-describe('TELEGRAM BOT /latest', () => {
-  const expectedLatestKeys = ['confirmed', 'deaths', 'recovered'];
+describe('TELEGRAM BOT /latestbylist', () => {
   const password = '987654321';
   const chatIdRandom = Math.floor(Math.random() * limit);
   let listCreated = {};
@@ -39,9 +38,11 @@ describe('TELEGRAM BOT /latest', () => {
     successfulLatestResponse = await getTelegramLatestByList(chatIdRandom, listCreated.dataValues.id);
     await getTelegramLatestByList(chatIdRandom, 855468).catch(err => (failListDontExists = err.message));
   });
-  describe('Successful get latest by Telegram', () => {
-    it('Should return the correct keys in response', () => {
-      expect(Object.keys(successfulLatestResponse)).toStrictEqual(expect.arrayContaining(expectedLatestKeys));
+  describe('Successful get latest by List by Telegram', () => {
+    it('Should return the correct text response', () => {
+      expect(successfulLatestResponse).toMatch('Confirmed');
+      expect(successfulLatestResponse).toMatch('Recovered');
+      expect(successfulLatestResponse).toMatch('Deaths');
     });
   });
   describe('Fail list was not found', () => {

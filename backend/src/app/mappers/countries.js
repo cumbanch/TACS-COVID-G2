@@ -11,3 +11,8 @@ exports.getLatestCountryMapper = req => ({
   userId: req.user.id,
   ...idParam(req)
 });
+
+exports.getInterestedMapper = req => ({
+  userId: req.user,
+  ...idParam(req)
+});
