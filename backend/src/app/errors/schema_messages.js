@@ -22,6 +22,7 @@ exports.isocode3 = `${stringMessage('isocode3')} ${containedMessage('query')}`;
 exports.countryName = `${stringMessage('name')} ${containedMessage('query')}`;
 exports.countries = `${arrayMessage('countries')} of integers`;
 exports.listId = `${integerMessage('list id')} ${containedMessage('path')}`;
+exports.lastDays = `${integerMessage('createdAtFromXLastDays')} ${containedMessage('query')}`;
 exports.offset = `${integerMessage('offset')} ${containedMessage('query')}`;
 exports.countryName = `${stringMessage('country_name')} ${containedMessage('query')}`;
 exports.countryId = `${integerMessage('country_id')} ${containedMessage('body')}`;
