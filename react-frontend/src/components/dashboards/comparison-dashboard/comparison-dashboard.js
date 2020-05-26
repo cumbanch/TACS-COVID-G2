@@ -20,7 +20,6 @@ const ComparisonComponent = (props) => {
                     'Authorization': tokens.access_token
                 }
             });
-        console.log("test")
         const mock = [{
             "dataValues": {
                 "id": 0,
@@ -90,9 +89,6 @@ const ComparisonComponent = (props) => {
         }
         ];
         const result = await response.json();
-        console.log(result)
-        console.log(result.data)
-        console.log("asdfasdf")
         const list = result.data.length == 0 ? mock : response.data
         return list.map(someList =>
             ({ id: someList.dataValues.id, name: someList.dataValues.name, countries: someList.dataValues.countries }))
