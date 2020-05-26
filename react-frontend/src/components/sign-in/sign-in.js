@@ -17,14 +17,14 @@ const SignInComponent = () => {
                     console.log(res);
                     localStorage.setItem('userInfo', JSON.stringify(res.data));
                     localStorage.setItem('userEmail', inputs.email);
-                    setRedirect('/home');
+                    setRedirect('/graphics');
                 }
                 // Falta resolver el caso de login/password incorrecto
             })
             .catch((error) => {
-                // alert(error)
+                alert(error)
                 setPasswordIncorrect(true);
-                setRedirect('/sign-in');
+                // setRedirect('/sign-in');
             });
     }
 
@@ -74,7 +74,7 @@ const SignInComponent = () => {
                 <button type="submit" className="btn btn-primary btn-block">Sign in</button>
 
             </ValidatorForm>
-            <AlertPasswordIncorrectComponent loginResult={passwordIncorrect} />
+            {/* <AlertPasswordIncorrectComponent loginResult={passwordIncorrect} /> */}
         </div>
 
     return (

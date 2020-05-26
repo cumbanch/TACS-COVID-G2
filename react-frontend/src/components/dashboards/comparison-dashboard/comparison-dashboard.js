@@ -20,11 +20,10 @@ const ComparisonComponent = (props) => {
                     'Authorization': tokens.access_token
                 }
             });
-        console.log("test")
         const mock = [{
             "dataValues": {
                 "id": 0,
-                "name": "string",
+                "name": "ListaConPaisesMasCercanos",
                 "registerAt": "Unknown Type: datetime",
                 "iso3": "string",
                 "latitude": "string",
@@ -32,8 +31,32 @@ const ComparisonComponent = (props) => {
                 "countries": [
                     {
                         "dataValues": {
-                            "id": 0,
-                            "name": "string",
+                            "id": 1,
+                            "name": "Mexico",
+                            "iso2": "string",
+                            "iso3": "string",
+                            "latitude": "string",
+                            "longitude": "string",
+                            "results": [
+                                null
+                            ]
+                        },
+                        "latest": {
+                            "lastUpdate": "Unknown Type: datetime",
+                            "confirmed": 0,
+                            "deaths": 0,
+                            "recovered": 0
+                        },
+                        "timeseries": {
+                            "lastUpdate": "Unknown Type: datetime",
+                            "confirmed": 0,
+                            "deaths": 0,
+                            "recovered": 0
+                        }
+                    }, {
+                        "dataValues": {
+                            "id": 2,
+                            "name": "Argentina",
                             "iso2": "string",
                             "iso3": "string",
                             "latitude": "string",
@@ -66,9 +89,6 @@ const ComparisonComponent = (props) => {
         }
         ];
         const result = await response.json();
-        console.log(result)
-        console.log(result.data)
-        console.log("asdfasdf")
         const list = result.data.length == 0 ? mock : response.data
         return list.map(someList =>
             ({ id: someList.dataValues.id, name: someList.dataValues.name, countries: someList.dataValues.countries }))
