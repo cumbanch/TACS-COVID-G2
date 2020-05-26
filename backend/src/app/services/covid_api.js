@@ -133,13 +133,15 @@ exports.getTimeseriesByList = (list, offsets) => {
         country.data.timeseries = country.data.timeseries.filter(
           timeserie => timeserie.date >= firstDateOfList
         );
-        const offsetsForCountry = offsets.filter(
-          offsetCountry => offsetCountry.country_id === country.data.id
-        );
-        const offsetForCountry = offsetsForCountry[0];
-        country.data.offset = offsetForCountry ? offsetForCountry.offset : 0;
+        if (offsets) {
+          const offsetsForCountry = offsets.filter(
+            offsetCountry => offsetCountry.country_id === country.data.id
+          );
+          const offsetForCountry = offsetsForCountry[0];
+          country.data.offset = offsetForCountry ? offsetForCountry.offset : 0;
+        }
       });
-      processOffsets(countries);
+      if (offsets) processOffsets(countries);
       return countries;
     })
     .catch(err => {
