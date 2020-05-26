@@ -8,7 +8,8 @@ const {
   countryName,
   countryId,
   listIdArray,
-  listArray
+  listArray,
+  lastDays
 } = require('../errors/schema_messages');
 const { isArray, isInteger } = require('../utils/lodash');
 const { Country, List } = require('../models');
@@ -49,6 +50,14 @@ exports.getListsSchema = {
   name: {
     ...commonAttributes.name,
     optional: true
+  },
+  createdAtFromXLastDays: {
+    in: ['query'],
+    isInt: true,
+    toInt: true,
+    trim: true,
+    optional: true,
+    errorMessage: lastDays
   }
 };
 
