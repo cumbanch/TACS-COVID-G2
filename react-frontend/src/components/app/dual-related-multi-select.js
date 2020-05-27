@@ -69,7 +69,12 @@ const DualRelatedSelectComponent = (props) => {
     const handleChangeSecond = (event) => {
         setParams(Object.assign({}, params, { selectedItemsSecond: event.target.value }));
     }
-    const getDependantDataArrayByProperty = (someArray, someProperty) => someArray.flatMap((someData) => (someData[someProperty]))
+    const getDependantDataArrayByProperty = (someArray, someProperty) => {
+        console.log("asd");
+        console.log(someArray);
+        return someArray.flatMap((someData) => (someData["countries"])).map((x) => (x.dataValues));
+    }
+
     {
         return (
             <div style={{ display: "flex", flexFlow: "row" }}  >

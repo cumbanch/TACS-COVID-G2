@@ -9,6 +9,13 @@
     "http",
     "https"
   ],
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey", 
+      "in": "header",
+      "name": "Authorization"
+    }
+  },
   "host": "localhost:8080",
   "paths": {
     "/health": {
@@ -48,6 +55,7 @@
       }
     },
     "/logout": {
+      "security": { "JWT": [] },
       "post": {
         "tags": [
           "users"
@@ -87,6 +95,7 @@
         }
       },
       "put": {
+        "security": { "JWT": [] },
         "tags": [
           "users"
         ],
@@ -112,6 +121,7 @@
     },
     "/users/{id}": {
       "get": {
+        "security": { "JWT": [] },
         "tags": [
           "users"
         ],
@@ -140,6 +150,7 @@
     },
     "/countries": {
       "get": {
+        "security": { "JWT": [] },
         "tags": [
           "countries"
         ],
@@ -180,6 +191,7 @@
     },
     "/countries/{id}": {
       "get": {
+        "security": { "JWT": [] },
         "tags": [
           "countries"
         ],
@@ -208,6 +220,7 @@
     },
     "/lists": {
       "get": {
+        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
@@ -215,7 +228,7 @@
         "description": "Returns a list containing all lists",
         "parameters": [
           {
-            "$ref": "#/parameters/from"
+            "$ref": "#/parameters/createdAtFromXLastDays"
           },
           {
             "$ref": "#/parameters/pageSize"
@@ -252,6 +265,7 @@
         }
       },
       "post": {
+        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
@@ -275,6 +289,7 @@
         }
       },
       "put": {
+        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
@@ -300,6 +315,7 @@
     },
     "/lists/{id}": {
       "get": {
+        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
@@ -326,6 +342,7 @@
         }
       },
       "delete": {
+        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
@@ -351,6 +368,7 @@
     },
     "/lists/{id}/latest": {
       "get": {
+        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
@@ -379,6 +397,7 @@
     },
     "/lists/{id}/history": {
       "get": {
+        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
@@ -439,7 +458,7 @@
     "TimeSeries": {
       "properties": {
         "M/d/yyyy": {
-          "$ref": "#/definitions/Result"
+          "$ref": "#/definitions/Latest"
         }
       }
     },
@@ -462,12 +481,6 @@
         },
         "longitude": {
           "type": "string"
-        },
-        "results": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Result"
-          }
         }
       }
     },
@@ -480,7 +493,7 @@
           "$ref": "#/definitions/Latest"
         },
         "timeseries": {
-          "$ref": "#/definitions/Latest"
+          "$ref": "#/definitions/TimeSeries"
         }
       }
     },
@@ -498,7 +511,7 @@
         "name": {
           "type": "string"
         },
-        "registerAt": {
+        "createdAt": {
           "type": "datetime"
         },
         "iso3": {
@@ -647,6 +660,13 @@
       "in": "path",
       "required": true,
       "description": "The identifier of the resourse to found",
+      "type": "integer"
+    },
+    "createdAtFromXLastDays": {
+      "name": "createdAtFromXLastDays",
+      "in": "query",
+      "description": "The identifier of the resourse to found",
+      "required": false,
       "type": "integer"
     }
   }
