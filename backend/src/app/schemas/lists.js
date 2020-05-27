@@ -4,7 +4,7 @@ const {
   listName,
   countries,
   listId,
-  offset,
+  offsets,
   countryName,
   countryId,
   listIdArray,
@@ -108,15 +108,11 @@ exports.getLatestResultListSchema = {
 exports.getHistoryResultListSchema = {
   ...authorization,
   id: commonAttributes.id,
-  offset: {
+  offsets: {
     in: ['query'],
-    isInt: {
-      options: { min: 1 }
-    },
-    toInt: true,
+    isJSON: true,
     optional: true,
-    trim: true,
-    errorMessage: offset
+    errorMessage: offsets
   }
 };
 

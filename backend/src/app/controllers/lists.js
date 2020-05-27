@@ -108,7 +108,7 @@ exports.getHistory = (req, res, next) => {
   return getListWithCountries(params)
     .then(list => {
       if (!list) throw notFound('List not found');
-      return getTimeseriesByList(list).then(historyResult => {
+      return getTimeseriesByList(list, params.offsets).then(historyResult => {
         res.status(200).send(getHistorySerializer(historyResult));
       });
     })

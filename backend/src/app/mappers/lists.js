@@ -43,4 +43,8 @@ exports.deleteCountriesByListMapper = countryByListAttributes;
 
 exports.getLatestMapper = req => ({ ...idParam(req), userId: req.user.id });
 
-exports.getHistoryMapper = req => ({ ...idParam(req), userId: req.user.id });
+exports.getHistoryMapper = req => ({
+  ...idParam(req),
+  userId: req.user.id,
+  offsets: req.query.offsets ? JSON.parse(req.query.offsets) : undefined
+});

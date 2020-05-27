@@ -6,8 +6,8 @@ const limit = 1001;
 
 const getRandomNumber = (maxRange = limit) => Math.floor(Math.random() * maxRange);
 
-const getRandomLatest = () => ({
-  confirmed: getRandomNumber(),
+const getRandomLatest = confirmed => ({
+  confirmed: confirmed || getRandomNumber(),
   deaths: getRandomNumber(),
   recovered: getRandomNumber()
 });
@@ -54,16 +54,16 @@ exports.mockSuccessGetHistory = isocodes => {
   mockSuccessHistory(isocodes, [
     {
       timeseries: {
-        '4/23/20': getRandomLatest(),
-        '4/22/20': getRandomLatest(),
-        '4/21/20': getRandomLatest()
+        '4/21/20': getRandomLatest(1),
+        '4/22/20': getRandomLatest(1),
+        '4/23/20': getRandomLatest(1)
       }
     },
     {
       timeseries: {
-        '3/23/20': getRandomLatest(),
-        '4/22/20': getRandomLatest(),
-        '4/21/20': getRandomLatest()
+        '4/21/20': getRandomLatest(1),
+        '4/22/20': getRandomLatest(1),
+        '4/23/20': getRandomLatest(1)
       }
     }
   ]);
