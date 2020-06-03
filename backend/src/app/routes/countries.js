@@ -1,10 +1,7 @@
 const { Router: createRouter } = require('express');
 
 const { getAllCountries, getLatestCountry } = require('../controllers/countries');
-const {
-  getCountriesSchema,
-  getLatestCountrySchema
-} = require('../schemas/countries');
+const { getCountriesSchema, getLatestCountrySchema } = require('../schemas/countries');
 const { validateSchemaAndFail } = require('../middlewares/params_validator');
 const { checkTokenAndSetUser } = require('../middlewares/authorization');
 
