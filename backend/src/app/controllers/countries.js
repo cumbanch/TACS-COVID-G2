@@ -1,20 +1,9 @@
-const {
-  getCloserCountriesMapper,
-  getCountriesMapper,
-  getLatestCountryMapper
-} = require('../mappers/countries');
-const { getAllCountries, getCountryWithList, getCloserCountry } = require('../services/countries');
+const { getCountriesMapper, getLatestCountryMapper } = require('../mappers/countries');
+const { getAllCountries, getCountryWithList } = require('../services/countries');
 const { paginateResponse } = require('../serializers/paginations');
 const { notFound, externalService } = require('../errors/builders');
 const { getLatestByIso2 } = require('../services/covid_api');
 const { getLatestCountrySerializer } = require('../serializers/countries');
-
-exports.getCloserCountries = (req, res, next) => {
-  const filters = getCloserCountriesMapper(req);
-  return getCloserCountry(filters)
-    .then(({ count, rows: data }) => res.status(200).send(paginateResponse({ ...filters, count, data })))
-    .catch(next);
-};
 
 exports.getAllCountries = (req, res, next) => {
   const filters = getCountriesMapper(req);

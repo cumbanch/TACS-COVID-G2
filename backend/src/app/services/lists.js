@@ -1,10 +1,39 @@
 const { inspect } = require('util');
 
+const db = require('../models');
 const logger = require('../logger');
 const { List, CountryByList, sequelizeInstance, Country } = require('../models');
 const { databaseError, notFound, invalidCountries, invalidListIds } = require('../errors/builders');
 const { getCountry } = require('./countries');
 const { deleteUndefined } = require('../utils/objects');
+const { defaultCloserCountries } = require('../../config').server;
+
+exports.getListOfCloserCountry = params => {
+  logger.info(`Attempting to get list of closer countries with params: ${inspect(params)}`);
+  const sequelizeOptions = {
+    limit: defaultCloserCountries,
+    order: db.sequelizeInstance.literal(
+      `distance(latitude, longitude, '${params.latitude}', '${params.latitude}')`
+    )
+  };
+  const countries = Country.findAndCountAll(sequelizeOptions).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
+    throw databaseError(`Error getting closer countries, reason: ${err.message}`);
+  });
+  return {
+    data: [
+      {
+        dataValues: {
+          id: -1,
+          name: 'Closer Countries',
+          countries
+        }
+      }
+    ]
+  };
+};
 
 const getCountriesToDeleteAndCreate = (list, attributes) => {
   const countriesByListToDelete = list.countryByList.filter(

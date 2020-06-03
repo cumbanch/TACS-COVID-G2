@@ -9,7 +9,8 @@ const {
   createCountriesByList,
   deleteCountriesByList,
   getListWithCountries,
-  countAndCheckLists
+  countAndCheckLists,
+  getListOfCloserCountry
 } = require('../services/lists');
 const { paginateResponse } = require('../serializers/paginations');
 const {
@@ -22,11 +23,19 @@ const {
   createCountriesByListMapper,
   deleteCountriesByListMapper,
   getHistoryMapper,
-  getLatestMapper
+  getLatestMapper,
+  getListOfCloserCountriesMapper
 } = require('../mappers/lists');
 const { notFound } = require('../errors/builders');
 const { getListSerializer, getHistorySerializer, compareListsSerializer } = require('../serializers/lists');
 const { getCountriesInList } = require('../services/countries');
+
+exports.getListOfCloserCountries = (req, res, next) => {
+  const filters = getListOfCloserCountriesMapper(req);
+  return getListOfCloserCountry(filters)
+    .then(({ count, rows: data }) => res.status(200).send(paginateResponse({ ...filters, count, data })))
+    .catch(next);
+};
 
 exports.getAllLists = (req, res, next) => {
   const filters = getListsMapper(req);

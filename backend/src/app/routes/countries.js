@@ -1,8 +1,7 @@
 const { Router: createRouter } = require('express');
 
-const { getCloserCountries, getAllCountries, getLatestCountry } = require('../controllers/countries');
+const { getAllCountries, getLatestCountry } = require('../controllers/countries');
 const {
-  getCloserCountriesSchema,
   getCountriesSchema,
   getLatestCountrySchema
 } = require('../schemas/countries');
@@ -19,11 +18,5 @@ exports.init = app => {
     validateSchemaAndFail(getLatestCountrySchema),
     checkTokenAndSetUser,
     getLatestCountry
-  );
-  countryRouter.get(
-    '/closer',
-    validateSchemaAndFail(getCloserCountriesSchema),
-    checkTokenAndSetUser,
-    getCloserCountries
   );
 };

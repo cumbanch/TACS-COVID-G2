@@ -36,3 +36,9 @@ exports.deleteCountriesByListMapper = countryByListAttributes;
 exports.getLatestMapper = req => ({ ...idParam(req), userId: req.user.id });
 
 exports.getHistoryMapper = req => ({ ...idParam(req), userId: req.user.id });
+
+exports.getListOfCloserCountriesMapper = req => ({
+  ...pagination(req),
+  latitude: req.query.latitude,
+  longitude: req.query.longitude
+});

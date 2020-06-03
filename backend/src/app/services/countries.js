@@ -1,7 +1,5 @@
 const { inspect } = require('util');
-const { defaultCloserCountries } = require('../../config').server;
 
-const db = require('../models');
 const logger = require('../logger');
 const {
   Country,
@@ -11,22 +9,6 @@ const {
 } = require('../models');
 const { deleteUndefined } = require('../utils/objects');
 const { databaseError } = require('../errors/builders');
-
-exports.getCloserCountry = params => {
-  logger.info(`Attempting to get countries with params: ${inspect(params)}`);
-  const sequelizeOptions = {
-    limit: defaultCloserCountries,
-    order: db.sequelizeInstance.literal(
-      `distance(latitude, longitude, '${params.latitude}', '${params.latitude}')`
-    )
-  };
-  return Country.findAndCountAll(sequelizeOptions).catch(err => {
-    /* istanbul ignore next */
-    logger.error(inspect(err));
-    /* istanbul ignore next */
-    throw databaseError(`Error getting closer countries, reason: ${err.message}`);
-  });
-};
 
 exports.getAllCountries = params => {
   logger.info(`Attempting to get countries with params: ${inspect(params)}`);
