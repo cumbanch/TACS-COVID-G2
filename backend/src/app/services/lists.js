@@ -1,4 +1,5 @@
 const { inspect } = require('util');
+const { Op } = require('sequelize');
 
 const db = require('../models');
 const logger = require('../logger');
@@ -7,6 +8,10 @@ const { databaseError, notFound, invalidCountries, invalidListIds } = require('.
 const { getCountry } = require('./countries');
 const { deleteUndefined } = require('../utils/objects');
 const { defaultCloserCountries } = require('../../config').server;
+
+const {
+  USER_ROLES: { REGULAR, ADMIN }
+} = require('../utils/constants');
 
 exports.getListOfCloserCountry = params => {
   logger.info(`Attempting to get list of closer countries with params: ${inspect(params)}`);
@@ -53,15 +58,20 @@ const getCountriesToDeleteAndCreate = (list, attributes) => {
   return { countriesByListToDelete, countriesByListToCreate };
 };
 
-exports.getAllList = filters => {
-  logger.info(`Attempting to get lists with filters: ${inspect(filters)}`);
+exports.getAllList = params => {
+  logger.debug(params);
+  logger.info(`Attempting to get lists with filters: ${inspect(params)}`);
+  const filters = {
+    // eslint-disable-next-line
+    createdAt: (params.createAt ? (params.userType === ADMIN ? { [Op.gte]: params.createAt } : undefined) : undefined),
+    userId: params.userType === REGULAR ? params.userId : undefined
+  };
+  logger.debug(filters);
   return List.findAndCountAll({
-    where: {
-      userId: filters.userId
-    },
-    offset: (filters.page - 1) * filters.limit,
-    limit: filters.limit,
-    order: filters.orderColumn ? [[filters.orderColumn, filters.orderType || 'ASC']] : undefined
+    where: deleteUndefined(filters),
+    offset: (params.page - 1) * params.limit,
+    limit: params.limit,
+    order: params.orderColumn ? [[params.orderColumn, params.orderType || 'ASC']] : undefined
   }).catch(err => {
     /* istanbul ignore next */
     logger.error(inspect(err));

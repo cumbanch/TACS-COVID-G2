@@ -106,6 +106,7 @@ describe('GET /lists/:id/history', () => {
   const expectedHistoryKeys = ['id', 'created_at', 'updated_at', 'deleted_at', 'name', 'timeseries'];
   const totalCountries = 2;
   let successResponse = {};
+  let successResponseOffset = {};
   let invalidParamsResponse = {};
   let covidFailResponse = {};
   let listNotFoundResponse = {};
@@ -140,6 +141,18 @@ describe('GET /lists/:id/history', () => {
       endpoint: '/lists/asda/history',
       method: 'get'
     });
+    mockSuccessGetHistory([firstIso2, secondIso2]);
+    successResponseOffset = await getResponse({
+      endpoint: `/lists/${listId}/history`,
+      method: 'get',
+      headers: { Authorization: token },
+      query: {
+        offsets: JSON.stringify([
+          { country_id: 1, offset: -1 },
+          { country_id: 2, offset: 1 }
+        ])
+      }
+    });
   });
   describe('Successful response', () => {
     it('Should return status code 200', () => {
@@ -149,6 +162,22 @@ describe('GET /lists/:id/history', () => {
       successResponse.body.forEach(country => {
         expect(Object.keys(country)).toStrictEqual(expect.arrayContaining(expectedHistoryKeys));
       });
+    });
+  });
+  describe('Successful response with offset', () => {
+    it('Should return status code 200', () => {
+      expect(successResponseOffset.statusCode).toEqual(200);
+    });
+    it('Should return the correct keys in body', () => {
+      successResponseOffset.body.forEach(country => {
+        expect(Object.keys(country)).toStrictEqual(expect.arrayContaining(expectedHistoryKeys));
+      });
+    });
+    it('Should has first country with three timeseries', () => {
+      expect(successResponseOffset.body[0].timeseries.length).toStrictEqual(5);
+    });
+    it('Should has second country with three timeseries', () => {
+      expect(successResponseOffset.body[1].timeseries.length).toStrictEqual(3);
     });
   });
   describe('Fail for covid error', () => {

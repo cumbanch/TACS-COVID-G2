@@ -50,7 +50,10 @@ exports.getTelegramHistoryByList = (chatId, listId, days) =>
         historySerialized.forEach(country => {
           let date = moment().subtract(days, 'days');
           while (date.format('M/D/YY') !== moment().format('M/D/YY')) {
-            const tsFounded = country.timeseries[date.format('M/D/YY')];
+            const tsFounded = country.timeseries.filter(
+              // eslint-disable-next-line no-loop-func
+              timeserie => moment(timeserie.date).format('M/D/YY') === date.format('M/D/YY')
+            )[0];
             if (tsFounded) {
               if (!historyParsed[date.format('M/D/YY')]) {
                 historyParsed[date.format('M/D/YY')] = { confirmed: [], deaths: [], recovered: [] };

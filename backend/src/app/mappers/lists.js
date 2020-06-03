@@ -1,4 +1,5 @@
 const { pagination, idParam } = require('./common');
+const { moment } = require('../utils/moment');
 
 const listAttributesMapper = req => ({
   name: req.body.name,
@@ -12,7 +13,14 @@ const countryByListAttributes = req => ({
   userId: req.user.id
 });
 
-exports.getListsMapper = req => ({ ...pagination(req), name: req.query.name, userId: req.user.id });
+exports.getListsMapper = req => ({
+  ...pagination(req),
+  name: req.query.name,
+  userId: req.user.id,
+  userType: req.user.type,
+  // eslint-disable-next-line
+  createAt: req.query.createdAtFromXLastDays? moment().subtract(req.query.createdAtFromXLastDays, 'days').format('YYYY-MM-DD') : undefined
+});
 
 exports.getListMapper = req => ({ userId: req.user.id, ...idParam(req) });
 
@@ -33,12 +41,14 @@ exports.createCountriesByListMapper = countryByListAttributes;
 
 exports.deleteCountriesByListMapper = countryByListAttributes;
 
-exports.getLatestMapper = req => ({ ...idParam(req), userId: req.user.id });
-
-exports.getHistoryMapper = req => ({ ...idParam(req), userId: req.user.id });
-
 exports.getListOfCloserCountriesMapper = req => ({
   ...pagination(req),
   latitude: req.query.latitude,
   longitude: req.query.longitude
+});
+
+exports.getHistoryMapper = req => ({
+  ...idParam(req),
+  userId: req.user.id,
+  offsets: req.query.offsets ? JSON.parse(req.query.offsets) : undefined
 });

@@ -3,6 +3,7 @@ const stringMessage = field => `${field} must be a string`;
 const tokenMessage = field => `${field} must be a jwt token`;
 const dateMessage = field => `${field} must be a date`;
 const arrayMessage = field => `${field} must be an array`;
+const jsonMessage = field => `${field} must be a json`;
 const containedMessage = location => `and be contained in ${location}`;
 
 exports.authorization = 'Authorization must be a jwt token and must be contained in headers';
@@ -22,7 +23,8 @@ exports.isocode3 = `${stringMessage('isocode3')} ${containedMessage('query')}`;
 exports.countryName = `${stringMessage('name')} ${containedMessage('query')}`;
 exports.countries = `${arrayMessage('countries')} of integers`;
 exports.listId = `${integerMessage('list id')} ${containedMessage('path')}`;
-exports.offset = `${integerMessage('offset')} ${containedMessage('query')}`;
+exports.lastDays = `${integerMessage('createdAtFromXLastDays')} ${containedMessage('query')}`;
+exports.offsets = `${jsonMessage('offsets')} ${containedMessage('query')}`;
 exports.countryName = `${stringMessage('country_name')} ${containedMessage('query')}`;
 exports.countryId = `${integerMessage('country_id')} ${containedMessage('body')}`;
 exports.lastName = `${stringMessage('last_name')} ${containedMessage('body')}`;

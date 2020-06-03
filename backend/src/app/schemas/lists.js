@@ -6,11 +6,12 @@ const {
   listName,
   countries,
   listId,
-  offset,
+  offsets,
   countryName,
   countryId,
   listIdArray,
-  listArray
+  listArray,
+  lastDays
 } = require('../errors/schema_messages');
 const { isArray, isInteger } = require('../utils/lodash');
 const { Country, List } = require('../models');
@@ -51,6 +52,14 @@ exports.getListsSchema = {
   name: {
     ...commonAttributes.name,
     optional: true
+  },
+  createdAtFromXLastDays: {
+    in: ['query'],
+    isInt: true,
+    toInt: true,
+    trim: true,
+    optional: true,
+    errorMessage: lastDays
   }
 };
 
@@ -101,15 +110,11 @@ exports.getLatestResultListSchema = {
 exports.getHistoryResultListSchema = {
   ...authorization,
   id: commonAttributes.id,
-  offset: {
+  offsets: {
     in: ['query'],
-    isInt: {
-      options: { min: 1 }
-    },
-    toInt: true,
+    isJSON: true,
     optional: true,
-    trim: true,
-    errorMessage: offset
+    errorMessage: offsets
   }
 };
 

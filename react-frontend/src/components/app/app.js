@@ -7,41 +7,46 @@ import SignInComponent from '../sign-in/sign-in';
 import SignUpComponent from '../sign-up/sign-up';
 import HomeComponent from "../home/home";
 import ComparisonComponent from '../dashboards/comparison-dashboard/comparison-dashboard'
-import UsersComponent from '../dashboards/users-dashboards'
+// import UsersComponent from '../dashboards/users-dashboards'
 import CountriesComponent from '../dashboards/countries-dashboard'
+import ListItemComponent from '../lists/list-item'
 import "../../assets/sass/burger-menu.css"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartBar, faUser, faGlobeAmericas } from '@fortawesome/free-solid-svg-icons'
-import { elastic as Menu } from 'react-burger-menu';
-import MenuItemComponent from '../dashboards/menu-item'
+import ListsComponent from '../dashboards/lists-dashboards'
+import PageNotFound from '../dashboards/page-not-found'
+import { isUserLogin } from "../session-managment/utils"
+import PrivateRoute from "../session-managment/private-route"
+import SideMenuComponent from "../side-menu/side-menu"
+import UsersInfoComponent from "../admin/users-info"
+import ListInfoComponent from "../admin/list-info/list-info"
 
 const AppComponent = (props) => {
-    const chartIcon = <FontAwesomeIcon icon={faChartBar} />
-    const userIcon = <FontAwesomeIcon icon={faUser} />
-    const countryIcon = <FontAwesomeIcon icon={faGlobeAmericas} />
-    const [params, setparams] = useState({ isUserLogged: props.isUserLogged });
-    return (
 
+    const isUserLogged = isUserLogin();
+    const [params, setparams] = useState({ isUserLogged });
+
+    return (
         <div className="App" id="root">
 
-            <Menu outerContainerId={"root"} pageWrapId={"navCovid"}  >
-                <MenuItemComponent anId="Users" anIcon={userIcon} urlRef="/users" aTitle="USUARIOS" />
-                <MenuItemComponent anId="Graphics" anIcon={chartIcon} urlRef="/graphics" aTitle="GRAFICOS" />
-                <MenuItemComponent anId="Paises" anIcon={countryIcon} urlRef="/countries" aTitle="PAISES" />
-            </Menu>
+            <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
 
-
-            <NavBarComponent id="navCovid" />
-
+            <SideMenuComponent isAnUser={true} />
 
             <Switch>
                 <Route exact path='/' component={SignInComponent} />
                 <Route path="/sign-in" component={SignInComponent} />
                 <Route path="/sign-up" component={SignUpComponent} />
-                <Route path="/graphics" component={ComparisonComponent} />
-                <Route path="/users" component={UsersComponent} />
-                <Route path="/countries" component={CountriesComponent} />
+                <Route path="/log-out" component={SignUpComponent} />
+                <PrivateRoute path="/graphics" component={ComparisonComponent} />
+                {/* <PrivateRoute path="/users" component={UsersComponent} /> */}
+                <PrivateRoute path="/countries" component={CountriesComponent} />
+                <Route path="/lists" component={ListsComponent} />
+                <Route path="/list/:id" component={ListItemComponent} />
                 <Route path="/home" component={HomeComponent} />
+                {/* Admin Routes */}
+                <Route path="/admin/usuarios" component={UsersInfoComponent} />
+                <Route path="/admin/paises" component={PageNotFound} />
+                <Route path="/admin/listas" component={ListInfoComponent} />
+                <Route component={PageNotFound} />
             </Switch>
         </div>
 
