@@ -30,11 +30,11 @@ const getBlankTimeserie = date => ({
 });
 
 const processNegativeOffset = country => {
-  const firstDate = moment(country.timeseries[0].date, 'YYYY/MM/DD');
+  const firstDate = moment(country.timeseries[0].date, 'YYYY-MM-DD');
   const offset = Math.abs(country.offset);
   for (let i = 0; i < offset; i++) {
     firstDate.subtract(1, 'days');
-    country.timeseries.unshift(getBlankTimeserie(firstDate.format('YYYY/MM/DD')));
+    country.timeseries.unshift(getBlankTimeserie(firstDate.format('YYYY-MM-DD')));
   }
   country.offset = 0;
 };
@@ -108,7 +108,7 @@ exports.getTimeseriesByList = (list, offsets) => {
       if (!parsedData) return undefined;
       const timeseries = Object.keys(parsedData.timeseries).map(date => ({
         ...parsedData.timeseries[date],
-        date: moment(date, 'M/DD/YY').format('YYYY/MM/DD')
+        date: moment(date, 'M/DD/YY').format('YYYY-MM-DD')
       }));
       return { ...countryFounded.dataValues, timeseries };
     })
