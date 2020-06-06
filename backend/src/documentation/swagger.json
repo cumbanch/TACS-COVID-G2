@@ -39,10 +39,15 @@
         }
       }
     },
-    "/login": {
+    "/sessions/login": {
       "post": {
         "tags": [
-          "users"
+          "sessions"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/login"
+          }
         ],
         "responses": {
           "200": {
@@ -54,11 +59,11 @@
         }
       }
     },
-    "/logout": {
+    "/sessions/logout": {
       "security": { "JWT": [] },
       "post": {
         "tags": [
-          "users"
+          "sessions"
         ],
         "responses": {
           "200": {
@@ -547,6 +552,16 @@
         "$ref": "#/definitions/List"
       }
     },
+    "Login": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "User": {
       "properties": {
         "id": {
@@ -638,6 +653,14 @@
       "in": "query",
       "description": "Number of items returned by page",
       "type": "integer"
+    },
+    "login": {
+      "name": "login",
+      "in": "body",
+      "description": "User credentials.",
+      "schema": {
+        "$ref": "#/definitions/Login"
+      }
     },
     "user": {
       "name": "user",
