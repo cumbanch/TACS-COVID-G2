@@ -10,7 +10,7 @@ const {
   deleteCountriesByList,
   getListWithCountries,
   countAndCheckLists,
-  getListOfCloserCountry
+  getListOfCloserCountries
 } = require('../services/lists');
 const { paginateResponse } = require('../serializers/paginations');
 const {
@@ -32,8 +32,8 @@ const { getCountriesInList } = require('../services/countries');
 
 exports.getListOfCloserCountries = (req, res, next) => {
   const filters = getListOfCloserCountriesMapper(req);
-  return getListOfCloserCountry(filters)
-    .then(({ count, rows: data }) => res.status(200).send(paginateResponse({ ...filters, count, data })))
+  return getListOfCloserCountries(filters)
+    .then(({ rows: data, count }) => res.status(200).send(paginateResponse({ ...filters, data, count })))
     .catch(next);
 };
 
