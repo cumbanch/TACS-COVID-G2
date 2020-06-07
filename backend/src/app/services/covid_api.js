@@ -97,6 +97,7 @@ exports.getLatestByList = list => {
 };
 
 exports.getTimeseriesByList = (list, offsets) => {
+  logger.debug(list.countries);
   const promises = list.countries.map(country =>
     getTimeseries(country, data => {
       const parsedData = JSON.parse(data)[0];

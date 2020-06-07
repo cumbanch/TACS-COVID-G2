@@ -13,7 +13,7 @@ const {
   USER_ROLES: { REGULAR, ADMIN }
 } = require('../utils/constants');
 
-exports.getListOfCloserCountries = params => {
+exports.getCloserCountries = params => {
   logger.info(`Attempting to get list of closer countries with params: ${inspect(params)}`);
   const sequelizeOptions = {
     limit: defaultCloserCountries,
@@ -21,6 +21,7 @@ exports.getListOfCloserCountries = params => {
       `distance(latitude, longitude, '${params.latitude}', '${params.longitude}')`
     )
   };
+  logger.debug(sequelizeOptions);
   return Country.findAndCountAll(sequelizeOptions).catch(err => {
     /* istanbul ignore next */
     logger.error(inspect(err));

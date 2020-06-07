@@ -165,8 +165,14 @@ exports.compareListsSchema = {
   }
 };
 
-exports.closerCountrySchema = {
+exports.getCloserCountriesSchema = {
   ...authorization,
   latitude: { in: ['query'], isString: true, trim: true, errorMessage: latitude, optional: true },
-  longitude: { in: ['query'], isString: true, trim: true, errorMessage: longitude, optional: true }
+  longitude: { in: ['query'], isString: true, trim: true, errorMessage: longitude, optional: true },
+  offsets: {
+    in: ['query'],
+    isJSON: true,
+    optional: true,
+    errorMessage: offsets
+  }
 };
