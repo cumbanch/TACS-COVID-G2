@@ -21,7 +21,6 @@ exports.getCloserCountries = params => {
       `distance(latitude, longitude, '${params.latitude}', '${params.longitude}')`
     )
   };
-  logger.debug(sequelizeOptions);
   return Country.findAndCountAll(sequelizeOptions).catch(err => {
     /* istanbul ignore next */
     logger.error(inspect(err));
@@ -49,14 +48,12 @@ const getCountriesToDeleteAndCreate = (list, attributes) => {
 };
 
 exports.getAllList = params => {
-  logger.debug(params);
   logger.info(`Attempting to get lists with filters: ${inspect(params)}`);
   const filters = {
     // eslint-disable-next-line
     createdAt: (params.createAt ? (params.userType === ADMIN ? { [Op.gte]: params.createAt } : undefined) : undefined),
     userId: params.userType === REGULAR ? params.userId : undefined
   };
-  logger.debug(filters);
   return List.findAndCountAll({
     where: deleteUndefined(filters),
     offset: (params.page - 1) * params.limit,
