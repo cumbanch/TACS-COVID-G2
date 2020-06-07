@@ -31,7 +31,7 @@ const config = {
     expirationValueRefreshToken: process.env.EXPIRATION_VALUE_REFRESH_TOKEN || 24,
     expirationValueIdToken: process.env.EXPIRATION_VALUE_ID_TOKEN || 10,
     hashingSalts: process.env.HASHING_SALTS,
-    externalTokenHeaderName: process.env.EXTERNAL_TOKEN_HEADER_NAME || 'x-external-token',
+    externalTokenHeaderName: process.env.EXTERNAL_TOKEN_HEADER_NAME || 'x-external-access-token',
     externalProviderNameHeaderName:
       process.env.EXTERNAL_PROVIDER_NAME_HEADER_NAME || 'x-external-provider-name'
   },

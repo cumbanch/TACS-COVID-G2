@@ -64,6 +64,36 @@
         }
       }
     },
+    "/external_login": {
+      "post": {
+        "tags": [
+          "session"
+        ],
+        "summary": "Login external user",
+        "description": "Identification process of external users",
+        "parameters": [
+          { "$ref": "#/parameters/externalAccessToken" },
+          { "$ref": "#/parameters/externalProviderName" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tokens",
+            "schema": {
+              "$ref": "#/definitions/IdentificationTokens"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "401": {
+            "$ref": "#/responses/Standard401Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
     "/logout": {
       "post": {
         "tags": [
@@ -210,7 +240,7 @@
             "$ref": "#/parameters/numericId"
           },
           {
-            "$ref": "#/parameters/authorization"
+            "$ref": "#/parameters/"
           }
         ],
         "responses": {
@@ -1075,6 +1105,11 @@
           "type": "string"
         }
       }
+    },
+    "InvalidToken": {
+      "properties": {
+
+      }
     }
   },
   "responses": {
@@ -1215,6 +1250,19 @@
           "type": "integer"
         }
       }
+    },
+    "externalAccessToken": {
+      "name": "x-external-access-token",
+      "in": "header",
+      "type": "apiKey",
+      "required": true
+    },
+    "externalProviderName": {
+      "name": "x-external-provider-name",
+      "in": "header",
+      "type": "string",
+      "required": true,
+      "example": "facebook"
     }
   }
 }
