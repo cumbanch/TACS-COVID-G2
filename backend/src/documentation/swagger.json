@@ -240,7 +240,7 @@
             "$ref": "#/parameters/numericId"
           },
           {
-            "$ref": "#/parameters/"
+            "$ref": "#/parameters/authorization"
           }
         ],
         "responses": {
@@ -1104,11 +1104,6 @@
         "Authorization": {
           "type": "string"
         }
-      }
-    },
-    "InvalidToken": {
-      "properties": {
-
       }
     }
   },
