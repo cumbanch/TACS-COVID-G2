@@ -53,7 +53,7 @@ exports.getListsSchema = {
     ...commonAttributes.name,
     optional: true
   },
-  createdAtFromXLastDays: {
+  last_days_to_check: {
     in: ['query'],
     isInt: true,
     toInt: true,

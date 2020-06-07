@@ -51,7 +51,7 @@ exports.getAllList = params => {
   logger.info(`Attempting to get lists with filters: ${inspect(params)}`);
   const filters = {
     // eslint-disable-next-line
-    createdAt: (params.createAt ? (params.userType === ADMIN ? { [Op.gte]: params.createAt } : undefined) : undefined),
+    createdAt: (params.createdAt ? (params.userType === ADMIN ? { [Op.gte]: params.createdAt } : undefined) : undefined),
     userId: params.userType === REGULAR ? params.userId : undefined
   };
   return List.findAndCountAll({
