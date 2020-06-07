@@ -30,7 +30,13 @@ const config = {
     expirationValueAccessToken: process.env.EXPIRATION_VALUE_ACCESS_TOKEN || 15,
     expirationValueRefreshToken: process.env.EXPIRATION_VALUE_REFRESH_TOKEN || 24,
     expirationValueIdToken: process.env.EXPIRATION_VALUE_ID_TOKEN || 10,
-    hashingSalts: process.env.HASHING_SALTS
+    hashingSalts: process.env.HASHING_SALTS,
+    externalTokenHeaderName: process.env.EXTERNAL_TOKEN_HEADER_NAME || 'x-external-token',
+    externalProviderNameHeaderName:
+      process.env.EXTERNAL_PROVIDER_NAME_HEADER_NAME || 'x-external-provider-name'
+  },
+  externalProviders: {
+    facebookUrl: process.env.CHECK_FACEBOOK_TOKEN_URL || 'https://graph.facebook.com/me'
   },
   covidApi: {
     baseUrl: process.env.COVID_API_BASE,

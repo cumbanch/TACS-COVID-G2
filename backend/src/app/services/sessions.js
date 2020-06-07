@@ -3,6 +3,8 @@ const { promisifyAll } = require('bluebird');
 const { signAsync, verifyAsync } = promisifyAll(require('jsonwebtoken'));
 const { inspect } = require('util');
 const { hash, compare, genSalt } = require('bcryptjs');
+const axios = require('axios');
+const { invalidToken } = require('../errors/builders');
 
 const { moment } = require('../utils/moment');
 const {
@@ -15,8 +17,13 @@ const {
   secret,
   hashingSalts
 } = require('../../config').session;
+const { facebookUrl } = require('../../config').externalProviders;
 const logger = require('../logger');
 const { databaseError, internalServerError } = require('../errors/builders');
+const {
+  EXTERNAL_PROVIDERS: { FACEBOOK },
+  DEFAULT_FIELDS_FACEBOOK
+} = require('../utils/constants');
 
 const getIss = req => `${req.protocol}://${req.get('host')}`;
 
@@ -141,3 +148,25 @@ exports.comparePassword = (password, hashedPassword) =>
     /* istanbul ignore next */
     throw internalServerError(err.message);
   });
+
+const getUrlByProviderName = providerName => ({ [FACEBOOK]: facebookUrl }[providerName]);
+
+const buildQueryParamsByProviderName = providerName =>
+  ({ [FACEBOOK]: accessToken => ({ fields: DEFAULT_FIELDS_FACEBOOK.join(','), access_token: accessToken }) }[
+    providerName
+  ]);
+
+exports.checkExternalToken = ({ accessToken, providerName }) =>
+  axios
+    .get(getUrlByProviderName(providerName), {
+      params: buildQueryParamsByProviderName(providerName)(accessToken)
+    })
+    .then(({ data: userData }) => ({
+      email: userData.email,
+      name: userData.first_name,
+      lastName: userData.last_name
+    }))
+    .catch(error => {
+      logger.error(error);
+      throw invalidToken('The provided access_token is invalid');
+    });
