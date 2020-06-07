@@ -260,5 +260,5 @@ const countries= [{name:'Afghanistan',iso2:'AF',iso3:'AFG',latitude:'33',longitu
 
 module.exports = {
   up: queryInterface => queryInterface.bulkInsert('countries', countries),
-  down: queryInterface => queryInterface.bulkDelete('countries')
+  down: () => Promise.resolve()
 };
