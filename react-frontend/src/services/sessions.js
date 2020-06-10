@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
 
 const salt = 10;
 
-
 export const SignUp = (attributes) => {
   return axiosInstance.post('/users',
     JSON.stringify(

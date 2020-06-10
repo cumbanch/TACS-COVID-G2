@@ -18,6 +18,7 @@ import PrivateRoute from "../session-managment/private-route"
 import SideMenuComponent from "../side-menu/side-menu"
 import UsersInfoComponent from "../admin/users-info"
 import ListInfoComponent from "../admin/list-info/list-info"
+import { getUserTypeFromLocalStorage } from './../session-managment/utils';
 
 const AppComponent = (props) => {
 
@@ -29,14 +30,14 @@ const AppComponent = (props) => {
 
             <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
 
-            <SideMenuComponent isAnUser={true} />
+            <SideMenuComponent userType={"regular"} />
 
             <Switch>
                 <Route exact path='/' component={SignInComponent} />
                 <Route path="/sign-in" component={SignInComponent} />
                 <Route path="/sign-up" component={SignUpComponent} />
                 <Route path="/log-out" component={SignUpComponent} />
-                <PrivateRoute path="/graphics" component={ComparisonComponent} />
+                <Route path="/graphics" component={ComparisonComponent} />
                 {/* <PrivateRoute path="/users" component={UsersComponent} /> */}
                 <PrivateRoute path="/countries" component={CountriesComponent} />
                 <Route path="/lists" component={ListsComponent} />
@@ -48,6 +49,7 @@ const AppComponent = (props) => {
                 <Route path="/admin/listas" component={ListInfoComponent} />
                 <Route component={PageNotFound} />
             </Switch>
+
         </div>
 
     );

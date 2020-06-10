@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from 'react-router-dom'
 import { isUserLogin, logOut } from '../session-managment/utils'
 import NavBarUserComponent from '../dashboards/nav-bar-user'
+import FacebookLoginButton from '../sign-in/FacebookLogin/FacebookLoginButton'
 
 const NavBarComponent = (props) => {
     const [params, setParams] = useState({ id: props.id });
@@ -30,6 +31,9 @@ const NavBarComponent = (props) => {
                 <NavLink className="navbar-brand" to={"/"} style={{ textAlign: "right", width: "600px" }}> Covid 19 - TACS - G2 </NavLink>
                 <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
                     <ul className="navbar-nav ml-auto">
+                        <li className="nav-item">
+                            <NavLink className="nav-link" to={"/home"}><FacebookLoginButton /></NavLink>
+                        </li>
                         <li className="nav-item">
                             <NavLink className="nav-link" to={"/sign-in"}>Sign in</NavLink>
                         </li>
