@@ -47,36 +47,32 @@ exports.getTelegramHistoryByList = (chatId, listId, days) =>
         const historySerialized = getHistorySerializer(historyResult);
         const historyParsed = {};
 
-        historySerialized.forEach(country => {
-          let date = moment().subtract(days, 'days');
-          while (date.format('M/D/YY') !== moment().format('M/D/YY')) {
-            const tsFounded = country.timeseries.filter(
-              // eslint-disable-next-line no-loop-func
-              timeserie => moment(timeserie.date).format('M/D/YY') === date.format('M/D/YY')
-            )[0];
-            if (tsFounded) {
-              if (!historyParsed[date.format('M/D/YY')]) {
-                historyParsed[date.format('M/D/YY')] = { confirmed: [], deaths: [], recovered: [] };
+        historySerialized.forEach(country =>
+          country.timeseries
+            .filter(timeserie => moment(timeserie.date) >= moment().subtract(days, 'days'))
+            .forEach(timeserie => {
+              if (!historyParsed[timeserie.date]) {
+                historyParsed[timeserie.date] = { confirmed: [], deaths: [], recovered: [] };
               }
-              historyParsed[date.format('M/D/YY')].confirmed.push({
-                [country.name]: tsFounded.confirmed ? tsFounded.confirmed : 0
+              historyParsed[timeserie.date].confirmed.push({
+                [country.name]: timeserie.confirmed ? timeserie.confirmed : 0
               });
-              historyParsed[date.format('M/D/YY')].deaths.push({
-                [country.name]: tsFounded.deaths ? tsFounded.deaths : 0
+              historyParsed[timeserie.date].deaths.push({
+                [country.name]: timeserie.deaths ? timeserie.deaths : 0
               });
-              historyParsed[date.format('M/D/YY')].recovered.push({
-                [country.name]: tsFounded.recovered ? tsFounded.recovered : 0
+              historyParsed[timeserie.date].recovered.push({
+                [country.name]: timeserie.recovered ? timeserie.recovered : 0
               });
-            }
-            date = date.add(1, 'days');
-          }
-        });
+            })
+        );
 
         let historyTexted = '';
 
         // eslint-disable-next-line guard-for-in
         for (const date in historyParsed) {
-          historyTexted += `<b>${date}</b>:\n\tConfirmed:\n${historyParsed[date].confirmed
+          historyTexted += `<b>${moment(date).format('M/D/YY')}</b>:\n\tConfirmed:\n${historyParsed[
+            date
+          ].confirmed
             .map(
               countryConfirmed =>
                 `\t\t\t\t${getPropertyName(countryConfirmed, 0)}: <b>${getPropertyValue(
