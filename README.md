@@ -104,6 +104,14 @@ Amount of time (based on set units) for refresh token expiration time.
 Amount of time (based on set units) for id token expiration time.
 ##### `AUTOMATICALLY_UP` (optional | default = `false`)
 If true, the application will run pending database migrations before start listening.
+##### `EXTERNAL_TOKEN_HEADER_NAME` (optional | default = `x-external-access-token`)
+Name of the header to identificate the external access token.
+##### `EXTERNAL_PROVIDER_NAME_HEADER_NAME` (optional | default = `x-external-provider-name`)
+Name of the header to identificate the external provider name.
+##### `EXTERNAL_PROVIDER_NAME_HEADER_NAME` (optional | default = `x-external-provider-name`)
+Name of the header to identificate the external provider name.
+##### `CHECK_FACEBOOK_TOKEN_URL` (optional | default = `https://graph.facebook.com/me`)
+Url provided by Facebook to get the user information.
 
 <a id="development"></a>
  #### Modes

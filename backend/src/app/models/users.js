@@ -9,12 +9,13 @@ module.exports = (sequelize, DataTypes) => {
       name: { type: DataTypes.STRING, allowNull: false },
       email: { type: DataTypes.STRING, allowNull: false, unique: true },
       lastName: { type: DataTypes.STRING, allowNull: false },
-      password: { type: DataTypes.STRING, allowNull: false },
+      password: { type: DataTypes.STRING, allowNull: true },
       lastAccess: { type: DataTypes.DATE },
       type: { type: DataTypes.STRING, allowNull: false, defaultValue: REGULAR },
       createdAt: { type: DataTypes.DATE, allowNull: false },
       updatedAt: { type: DataTypes.DATE, allowNull: false },
-      deletedAt: DataTypes.DATE
+      deletedAt: DataTypes.DATE,
+      external: { type: DataTypes.BOOLEAN }
     },
     { timestamps: true, underscored: true, paranoid: true, tableName: 'users' }
   );
