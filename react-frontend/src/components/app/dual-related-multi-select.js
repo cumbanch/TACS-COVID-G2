@@ -38,30 +38,22 @@ const MenuProps = {
 const DualRelatedSelectComponent = (props) => {
     const classes = useStyles();
     const theme = useTheme();
-    const realDataArray = props.dataArray;
     const [params, setParams] = useState({
         firstTitle: props.firstTitle,
         secondTitle: props.secondTitle,
-        dataArray: [],
+        dataArray: props.dataArray,
         dependantArrayProperty: props.dependantArrayProperty,
         isSecondSelectEnabled: false,
         dataArraySecond: [],
         selectedItemsFirst: [],
         selectedItemsSecond: []
     });
-    console.log("construi el componente")
-    useEffect(() => {
-        async function FetchData() {
-            const result = await realDataArray();
-            console.log("voy a logear el result")
-            console.log(result);
+    console.log("selectprops");
+    console.log(props);
+    console.log("selectsparams");
+    console.log(params);
 
-            setParams(Object.assign({}, params, { dataArray: result }));
-        }
-        FetchData();
-    }, []);
-    console.log("despues de use efect")
-    console.log(params.dataArray)
+
     const handleChangeFirst = (event) => {
         if (event.target.value == []) setParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isSecondSelectEnabled: false, selectedItemsSecond: [] }))
         setParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isSecondSelectEnabled: true, selectedItemsSecond: [], dataArraySecond: getDependantDataArrayByProperty(params.dataArray, params.dependantArrayProperty) }));
