@@ -16,9 +16,10 @@ import PageNotFound from '../dashboards/page-not-found'
 import { isUserLogin } from "../session-managment/utils"
 import PrivateRoute from "../session-managment/private-route"
 import SideMenuComponent from "../side-menu/side-menu"
-import UsersInfoComponent from "../admin/users-info"
+import UsersInfo from "../admin/UsersInfo"
 import ListInfoComponent from "../admin/list-info/list-info"
 import { getUserTypeFromLocalStorage } from './../session-managment/utils';
+import CountriesTable from '../admin/countries-info/CountriesTable';
 
 const AppComponent = (props) => {
 
@@ -30,7 +31,7 @@ const AppComponent = (props) => {
 
             <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
 
-            <SideMenuComponent userType={"regular"} />
+            <SideMenuComponent userType={"admin"} />
 
             <Switch>
                 <Route exact path='/' component={SignInComponent} />
@@ -44,9 +45,9 @@ const AppComponent = (props) => {
                 <Route path="/list/:id" component={ListItemComponent} />
                 <Route path="/home" component={HomeComponent} />
                 {/* Admin Routes */}
-                <Route path="/admin/usuarios" component={UsersInfoComponent} />
-                <Route path="/admin/paises" component={PageNotFound} />
-                <Route path="/admin/listas" component={ListInfoComponent} />
+                <Route path="/admin/usuarios" component={UsersInfo} />
+                <Route path="/admin/paises" component={CountriesTable} />
+                <Route path="/admin/listas" component={PageNotFound} />
                 <Route component={PageNotFound} />
             </Switch>
 

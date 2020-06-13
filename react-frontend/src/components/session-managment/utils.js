@@ -1,6 +1,9 @@
 import jwtDecode from "jwt-decode";
 import axios from 'axios';
 
+export const regularUser = "regular";
+export const adminUser = "admin";
+
 export const isUserLogin = () => {
     if (localStorage.getItem("userInfo") == null)
         return false;
@@ -8,6 +11,7 @@ export const isUserLogin = () => {
 }
 
 export const getUserTokens = () => JSON.parse(localStorage.getItem("userInfo"));
+export const getUserAccessToken = () => getUserTokens().access_token;
 
 export const logOut = () => {
     const axiosInstance = axios.create({
