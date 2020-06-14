@@ -103,13 +103,16 @@ exports.getTimeseriesByList = (list, offsets) => {
       let countryFounded = {};
       if (parsedData) {
         countryFounded = list.countries.find(({ iso2 }) => iso2 === parsedData.countrycode.iso2);
-        delete countryFounded.dataValues.CountryByList;
+        if (countryFounded) delete countryFounded.dataValues.CountryByList;
+        else countryFounded = country;
       }
-      if (!parsedData) return undefined;
-      const timeseries = Object.keys(parsedData.timeseries).map(date => ({
-        ...parsedData.timeseries[date],
-        date: moment(date, 'M/DD/YY').format('YYYY-MM-DD')
-      }));
+      let timeseries = [];
+      if (parsedData) {
+        timeseries = Object.keys(parsedData.timeseries).map(date => ({
+          ...parsedData.timeseries[date],
+          date: moment(date, 'M/DD/YY').format('YYYY-MM-DD')
+        }));
+      }
       return { ...countryFounded.dataValues, timeseries };
     })
   );

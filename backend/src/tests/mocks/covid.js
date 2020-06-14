@@ -69,103 +69,93 @@ exports.mockSuccessGetHistory = isocodes => {
   ]);
 };
 
-exports.mockSuccessGetHistory5LastDays = isocodes => {
-  mockSuccessHistory(isocodes, [
-    {
+const mockSuccessHistoryForCloser = (
+  [iso2_1, iso2_2, iso2_3, iso2_4, iso2_5],
+  [valueMock_1, valueMock_2, valueMock_3, valueMock_4, valueMock_5]
+) => {
+  mockSuccessGetAll();
+  axios.get
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_1, countrycode: { iso2: iso2_1 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_2, countrycode: { iso2: iso2_2 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_3, countrycode: { iso2: iso2_3 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_4, countrycode: { iso2: iso2_4 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_5, countrycode: { iso2: iso2_5 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([]))
+    );
+};
+
+exports.mockSuccessGetHistoryForCloser = isocodes => {
+  mockSuccessGetAll();
+  const valueMocks = [];
+  isocodes.forEach(() =>
+    valueMocks.push({
       timeseries: {
-        [moment()
-          .subtract(6, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(5, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(4, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(3, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(2, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(1, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment().format('M/D/YY')]: getRandomLatest()
+        '4/21/20': getRandomLatest(1),
+        '4/22/20': getRandomLatest(1),
+        '4/23/20': getRandomLatest(1)
       }
-    },
-    {
-      timeseries: {
-        [moment()
-          .subtract(6, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(5, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(4, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(3, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(2, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(1, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment().format('M/D/YY')]: getRandomLatest()
-      }
-    }
-  ]);
+    })
+  );
+  mockSuccessHistoryForCloser(isocodes, valueMocks);
 };
 
 exports.mockSuccessGetHistory5LastDays = isocodes => {
   mockSuccessHistory(isocodes, [
     {
       timeseries: {
-        [moment().format('M/D/YY')]: getRandomLatest(),
         [moment()
-          .subtract(1, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(2, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(3, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(4, 'days')
+          .subtract(6, 'days')
           .format('M/D/YY')]: getRandomLatest(),
         [moment()
           .subtract(5, 'days')
           .format('M/D/YY')]: getRandomLatest(),
         [moment()
-          .subtract(6, 'days')
-          .format('M/D/YY')]: getRandomLatest()
+          .subtract(4, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(3, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(2, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(1, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment().format('M/D/YY')]: getRandomLatest()
       }
     },
     {
       timeseries: {
-        [moment().format('M/D/YY')]: getRandomLatest(),
         [moment()
-          .subtract(1, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(2, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(3, 'days')
-          .format('M/D/YY')]: getRandomLatest(),
-        [moment()
-          .subtract(4, 'days')
+          .subtract(6, 'days')
           .format('M/D/YY')]: getRandomLatest(),
         [moment()
           .subtract(5, 'days')
           .format('M/D/YY')]: getRandomLatest(),
         [moment()
-          .subtract(6, 'days')
-          .format('M/D/YY')]: getRandomLatest()
+          .subtract(4, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(3, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(2, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment()
+          .subtract(1, 'days')
+          .format('M/D/YY')]: getRandomLatest(),
+        [moment().format('M/D/YY')]: getRandomLatest()
       }
     }
   ]);
