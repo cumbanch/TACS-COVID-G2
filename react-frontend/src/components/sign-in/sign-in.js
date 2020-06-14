@@ -5,25 +5,23 @@ import ValidatableField from "../validation/validatable-field";
 import useSignUpForm from "../../hooks/custom-hooks";
 import { SignIn } from "../../services/sessions";
 import AlertPasswordIncorrectComponent from "../sign-in/login-incorrect";
+import jwtDecode from "jwt-decode";
 
 const SignInComponent = () => {
 
-    const [passwordIncorrect, setPasswordIncorrect] = useState(false);
+    const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
 
     const signIn = () => {
         return SignIn(inputs)
             .then((res) => {
                 if (res.status == 200) {
-                    console.log(res);
                     localStorage.setItem('userInfo', JSON.stringify(res.data));
-                    localStorage.setItem('userEmail', inputs.email);
                     setRedirect('/graphics');
                 }
-                // Falta resolver el caso de login/password incorrecto
             })
-            .catch((error) => {
+            .catch((error) => { // Incorrect password (Error 401)
                 alert(error)
-                setPasswordIncorrect(true);
+                setIsPasswordIncorrect(true);
                 // setRedirect('/sign-in');
             });
     }
@@ -74,7 +72,7 @@ const SignInComponent = () => {
                 <button type="submit" className="btn btn-primary btn-block">Sign in</button>
 
             </ValidatorForm>
-            {/* <AlertPasswordIncorrectComponent loginResult={passwordIncorrect} /> */}
+            <AlertPasswordIncorrectComponent loginResult={isPasswordIncorrect} />
         </div>
 
     return (
