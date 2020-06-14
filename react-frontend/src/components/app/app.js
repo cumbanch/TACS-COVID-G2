@@ -45,9 +45,10 @@ const AppComponent = (props) => {
                 <Route path="/list/:id" component={ListItemComponent} />
                 <Route path="/home" component={HomeComponent} />
                 {/* Admin Routes */}
-                <Route path="/admin/usuarios" component={UsersInfo} />
-                <Route path="/admin/paises" component={CountriesTable} />
-                <Route path="/admin/listas" component={PageNotFound} />
+                <Route path="/admin/users" component={UsersInfo} />
+                <Route path="/admin/compare" component={PageNotFound} />
+                <Route path="/admin/countries" component={CountriesTable} />
+                <Route path="/admin/lists" component={ListInfoComponent} />
                 <Route component={PageNotFound} />
             </Switch>
 

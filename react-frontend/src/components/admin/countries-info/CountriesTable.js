@@ -13,6 +13,15 @@ import { getUserAccessToken } from '../../session-managment/utils';
 import AmountButton from '../countries-info/AmountButton'
 import './CountriesTable.css'
 
+const useStyles = makeStyles({
+    root: {
+        width: '100%',
+    },
+    container: {
+        maxHeight: 440,
+    },
+});
+
 const columns = [
     { id: 'idCountry', label: '#' },
     { id: 'flag', label: 'Flag' },
@@ -20,7 +29,7 @@ const columns = [
     { id: 'iso2', label: 'ISO2', align: 'center' },
     {
         id: 'buttonCheckAmount',
-        label: 'Amount of interested persons',
+        label: 'Number of interested persons',
         align: 'center',
     }
 ];
@@ -36,15 +45,6 @@ const prepareToShow = (countries) => countries.map(country => {
         country.name,
         country.iso_2,
         <AmountButton idCountry={country.id} iso2={country.iso_2} countryName={country.name} />);
-});
-
-const useStyles = makeStyles({
-    root: {
-        width: '100%',
-    },
-    container: {
-        maxHeight: 440,
-    },
 });
 
 const CountriesTable = () => {

@@ -5,6 +5,14 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import { differenceInDays, subDays } from 'date-fns';
+import { getUserAccessToken } from '../../session-managment/utils';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -13,30 +21,33 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const getAccessToken = () => {
-    const tokens = JSON.parse(localStorage.getItem('userInfo'));
-    return tokens.access_token;
-}
-
 export default function DropMenuComponent() {
     const classes = useStyles();
-    const [date, setDate] = useState('T');
+    const [selectedDate, setSelectedDate] = useState(new Date());
     const [open, setOpen] = useState(false);
+    const [amount, setAmount] = useState(99);
+    const [openWindowDialog, setOpenWindowDialog] = useState(false);
+    const originOfTime = new Date(2020, 0, 1);
 
     const handleChange = async (event) => {
-        setDate(event.target.value);
-        // Acá debería hacer el request al back para traer la info
-        const response = await axios.get(
-            "http://localhost:8080/countries/",
-            {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': 'https://localhost:8080',
-                    'Authorization': getAccessToken(),
-                }
-            })
-        console.log(response.data);
+        setSelectedDate(event.target.value);
+        const days = differenceInDays(new Date(), selectedDate);
+        const axiosInstance = axios.create({
+            baseURL: process.env.REACT_APP_API_BASE_URL,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getUserAccessToken(),
+            }
+        });
+
+        const fetchData = async () => {
+            const response = await axiosInstance.get(`/lists?last_days_to_check=${days}`);
+            const listsOfListOfCountries = response.data.data;
+            const amountOfLists = listsOfListOfCountries.length;
+            setAmount(amountOfLists);
+        }
+        fetchData();
+        setOpenWindowDialog(true);
     };
 
     const handleClose = () => {
@@ -47,8 +58,12 @@ export default function DropMenuComponent() {
         setOpen(true);
     };
 
+    const handleCloseWindowDialog = () => {
+        setOpenWindowDialog(false);
+    };
+
     return (
-        <div>
+        <div align="center">
             <FormControl className={classes.formControl}>
                 <InputLabel id="demo-controlled-open-select-label"></InputLabel>
                 <Select
@@ -57,17 +72,35 @@ export default function DropMenuComponent() {
                     open={open}
                     onClose={handleClose}
                     onOpen={handleOpen}
-                    value={date}
+                    value={selectedDate}
                     onChange={handleChange}
                 >
-                    <MenuItem value={"T"}>Hoy</MenuItem>
-                    <MenuItem value={"L3D"}>En los últimos 3 días</MenuItem>
-                    <MenuItem value={"LW"}>En la última semana</MenuItem>
-                    <MenuItem value={"LM"}>En el último mes</MenuItem>
-                    <MenuItem value={"OT"}>Desde el inicio de los tiempos</MenuItem>
+                    <MenuItem value={new Date()}>Today</MenuItem>
+                    <MenuItem value={subDays(new Date(), 3)}>In the last 3 days</MenuItem>
+                    <MenuItem value={subDays(new Date(), 7)}>In the last week</MenuItem>
+                    <MenuItem value={subDays(new Date(), 30)}>In the last month</MenuItem>
+                    <MenuItem value={originOfTime}>From the beginning</MenuItem>
                 </Select>
             </FormControl>
-            <h5>Resultado: {date}</h5>
+            <Dialog
+                open={openWindowDialog}
+                onClose={handleCloseWindowDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Registered lists"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {`From ${selectedDate.toLocaleDateString("en-US")} to today, the number of registered lists was ${amount}`}
+                        {console.log("render amount of registered lists")}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseWindowDialog} color="primary">
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }
