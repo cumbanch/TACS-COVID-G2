@@ -174,10 +174,10 @@ describe('GET /lists/:id/history', () => {
       });
     });
     it('Should has first country with three timeseries', () => {
-      expect(successResponseOffset.body[0].timeseries.length).toStrictEqual(5);
+      expect(successResponseOffset.body.find(country => country.id === 1).timeseries.length).toStrictEqual(5);
     });
     it('Should has second country with three timeseries', () => {
-      expect(successResponseOffset.body[1].timeseries.length).toStrictEqual(3);
+      expect(successResponseOffset.body.find(country => country.id === 2).timeseries.length).toStrictEqual(3);
     });
   });
   describe('Fail for covid error', () => {
