@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "TACS COVID G2",
-    "description": "The application allows following the progression of the COVID-19 pandemic using different tools. You can find out more about in the [GitHub's repository](https://github.com/loopmeagain/TACS-COVID-G2)."
+    "description": "The application allows following the progression of the COVID-19 pandemic using different tools You can find out more about in the [GitHub's repository](https://github.com/cumbanch/TACS-COVID-G2)"
   },
   "schemes": [
     "http",
@@ -11,7 +11,7 @@
   ],
   "securityDefinitions": {
     "JWT": {
-      "type": "apiKey", 
+      "type": "apiKey",
       "in": "header",
       "name": "Authorization"
     }
@@ -21,10 +21,10 @@
     "/health": {
       "get": {
         "summary": "Check API status",
-        "description": "If the API is active, it returns the seconds that it has been in that state.",
+        "description": "If the API is active, it returns the seconds that it has been in that state",
         "responses": {
           "200": {
-            "description": "The API is up.",
+            "description": "The API is up",
             "schema": {
               "properties": {
                 "uptime": {
@@ -42,11 +42,51 @@
     "/login": {
       "post": {
         "tags": [
-          "users"
+          "session"
+        ],
+        "summary": "Login user",
+        "description": "Identification process",
+        "parameters": [
+          {
+            "$ref": "#/parameters/identificationUser"
+          }
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/Standard200Response"
+            "description": "Tokens",
+            "schema": {
+              "$ref": "#/definitions/IdentificationTokens"
+            }
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/external_login": {
+      "post": {
+        "tags": [
+          "session"
+        ],
+        "summary": "Login external user",
+        "description": "Identification process of external users",
+        "parameters": [
+          { "$ref": "#/parameters/externalAccessToken" },
+          { "$ref": "#/parameters/externalProviderName" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tokens",
+            "schema": {
+              "$ref": "#/definitions/IdentificationTokens"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "401": {
+            "$ref": "#/responses/Standard401Response"
           },
           "500": {
             "$ref": "#/responses/Standard500Response"
@@ -55,14 +95,51 @@
       }
     },
     "/logout": {
-      "security": { "JWT": [] },
       "post": {
         "tags": [
-          "users"
+          "session"
+        ],
+        "summary": "Logout user",
+        "description": "Finish session",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/responses/Standard204Response"
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/refresh": {
+      "post": {
+        "tags": [
+          "session"
+        ],
+        "summary": "Refresh tokens",
+        "description": "Refresh tokens for background re login",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          }
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/Standard200Response"
+            "description": "Tokens",
+            "schema": {
+              "$ref": "#/definitions/RefreshTokens"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
           },
           "500": {
             "$ref": "#/responses/Standard500Response"
@@ -76,15 +153,18 @@
           "users"
         ],
         "summary": "Creates a user",
-        "description": "Adds a new user to the users list.",
+        "description": "Adds a new user to the users list",
         "parameters": [
           {
             "$ref": "#/parameters/user"
+          },
+          {
+            "$ref": "#/parameters/authorization"
           }
         ],
         "responses": {
-          "200": {
-            "$ref": "#/responses/Standard200Response"
+          "201": {
+            "$ref": "#/responses/Standard201Response"
           },
           "400": {
             "$ref": "#/responses/Standard400Response"
@@ -94,24 +174,53 @@
           }
         }
       },
-      "put": {
-        "security": { "JWT": [] },
+      "get": {
         "tags": [
           "users"
         ],
-        "summary": "Modifies a user",
-        "description": "Updates data of an existent user.",
+        "summary": "Gets all (ADMIN)",
+        "description": "Gets all users",
         "parameters": [
           {
-            "$ref": "#/parameters/user"
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/pageNumber"
+          },
+          {
+            "$ref": "#/parameters/pageLimit"
+          },
+          {
+            "$ref": "#/parameters/orderColumn"
+          },
+          {
+            "$ref": "#/parameters/orderType"
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/Standard200Response"
+            "description": "Users",
+            "schema": {
+              "type": "object",
+              "allOf": [
+                {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/FullUsers"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/definitions/Pagination"
+                }
+              ]
+            }
           },
           "400": {
             "$ref": "#/responses/Standard400Response"
+          },
+          "401": {
+            "$ref": "#/responses/Standard401Response"
           },
           "500": {
             "$ref": "#/responses/Standard500Response"
@@ -121,23 +230,60 @@
     },
     "/users/{id}": {
       "get": {
-        "security": { "JWT": [] },
         "tags": [
           "users"
         ],
-        "summary": "Gets a user",
+        "summary": "Gets a user (ADMIN)",
         "description": "Returns a single user for its id",
         "parameters": [
           {
             "$ref": "#/parameters/numericId"
+          },
+          {
+            "$ref": "#/parameters/authorization"
           }
         ],
         "responses": {
           "200": {
             "description": "A User",
             "schema": {
-              "$ref": "#/definitions/User"
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/FullUser"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "lists": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "allOf": [
+                          {
+                            "$ref": "#/definitions/List"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "countries_amount": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
             }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "401": {
+            "$ref": "#/responses/Standard401Response"
           },
           "404": {
             "$ref": "#/responses/Standard404Response"
@@ -150,23 +296,31 @@
     },
     "/countries": {
       "get": {
-        "security": { "JWT": [] },
         "tags": [
           "countries"
         ],
-        "summary": "Gets some countries",
+        "summary": "Gets all",
         "description": "Returns a list containing all countries",
         "parameters": [
           {
-            "$ref": "#/parameters/pageSize"
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/pageNumber"
           },
           {
             "$ref": "#/parameters/pageLimit"
+          },
+          {
+            "$ref": "#/parameters/orderColumn"
+          },
+          {
+            "$ref": "#/parameters/orderType"
           }
         ],
         "responses": {
           "200": {
-            "description": "A list of Country",
+            "description": "A list of countries",
             "schema": {
               "type": "object",
               "allOf": [
@@ -183,21 +337,26 @@
               ]
             }
           },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
           "500": {
             "$ref": "#/responses/Standard500Response"
           }
         }
       }
     },
-    "/countries/{id}": {
+    "/countries/{id}/latest": {
       "get": {
-        "security": { "JWT": [] },
         "tags": [
           "countries"
         ],
-        "summary": "Gets a country",
-        "description": "Returns a single country for its id",
+        "summary": "Gets latest for country",
+        "description": "Returns the latest values for the country which match with given id (only for countries registered in at least one user's list)",
         "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
           {
             "$ref": "#/parameters/numericId"
           }
@@ -206,8 +365,48 @@
           "200": {
             "description": "A Country",
             "schema": {
-              "$ref": "#/definitions/Country"
+              "$ref": "#/definitions/Latest"
             }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/countries/{id}/interested_users": {
+      "get": {
+        "tags": [
+          "countries"
+        ],
+        "summary": "Gets interested users in country (ADMIN)",
+        "description": "Returns the amount of users that have the country (that match with given id) in at least one of their lists",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/numericId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Amount",
+            "schema": {
+              "$ref": "#/definitions/InterestedUsersAmount"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "401": {
+            "$ref": "#/responses/Standard400Response"
           },
           "404": {
             "$ref": "#/responses/Standard404Response"
@@ -220,21 +419,29 @@
     },
     "/lists": {
       "get": {
-        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
-        "summary": "Gets some lists",
+        "summary": "Gets all lists",
         "description": "Returns a list containing all lists",
         "parameters": [
           {
-            "$ref": "#/parameters/createdAtFromXLastDays"
+            "$ref": "#/parameters/authorization"
           },
           {
-            "$ref": "#/parameters/pageSize"
+            "$ref": "#/parameters/lastDaysToCheck"
+          },
+          {
+            "$ref": "#/parameters/pageNumber"
           },
           {
             "$ref": "#/parameters/pageLimit"
+          },
+          {
+            "$ref": "#/parameters/orderColumn"
+          },
+          {
+            "$ref": "#/parameters/orderType"
           }
         ],
         "responses": {
@@ -256,8 +463,8 @@
               ]
             }
           },
-          "404": {
-            "$ref": "#/responses/Standard404Response"
+          "400": {
+            "$ref": "#/responses/Standard400Response"
           },
           "500": {
             "$ref": "#/responses/Standard500Response"
@@ -265,15 +472,17 @@
         }
       },
       "post": {
-        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
         "summary": "Creates a list",
-        "description": "Adds a new list to the lists list.",
+        "description": "Creates a new list for given data",
         "parameters": [
           {
-            "$ref": "#/parameters/list"
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/listToCreate"
           }
         ],
         "responses": {
@@ -287,41 +496,19 @@
             "$ref": "#/responses/Standard500Response"
           }
         }
-      },
-      "put": {
-        "security": { "JWT": [] },
-        "tags": [
-          "lists"
-        ],
-        "summary": "Modifies a list",
-        "description": "Updates data of an existent list.",
-        "parameters": [
-          {
-            "$ref": "#/parameters/list"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/Standard200Response"
-          },
-          "400": {
-            "$ref": "#/responses/Standard400Response"
-          },
-          "500": {
-            "$ref": "#/responses/Standard500Response"
-          }
-        }
       }
     },
     "/lists/{id}": {
       "get": {
-        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
-        "summary": "Gets a list",
-        "description": "Returns a single list for its id",
+        "summary": "Gets one list",
+        "description": "Returns a single list for the given id",
         "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
           {
             "$ref": "#/parameters/numericId"
           }
@@ -333,6 +520,38 @@
               "$ref": "#/definitions/List"
             }
           },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Modifies a list",
+        "description": "Updates countries of an existent list",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/countriesIds"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/responses/Standard204Response"
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
           "404": {
             "$ref": "#/responses/Standard404Response"
           },
@@ -342,20 +561,62 @@
         }
       },
       "delete": {
-        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
         "summary": "Delete a list",
-        "description": "Delete a single list for its id",
+        "description": "Delete the list from given id",
         "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
           {
             "$ref": "#/parameters/numericId"
           }
         ],
         "responses": {
+          "204": {
+            "$ref": "#/responses/Standard204Response"
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/lists/compare": {
+      "get": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Compares lists (ADMIN)",
+        "description": "Compares two of more lists of different users getting the countries in common",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/listsIds"
+          }
+        ],
+        "responses": {
           "200": {
-            "$ref": "#/responses/Standard200Response"
+            "description": "Countries in common",
+            "schema": {
+              "$ref": "#/definitions/Countries"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "401": {
+            "$ref": "#/responses/Standard401Response"
           },
           "404": {
             "$ref": "#/responses/Standard404Response"
@@ -368,13 +629,15 @@
     },
     "/lists/{id}/latest": {
       "get": {
-        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
-        "summary": "Gets a list with the latest result for each Country",
-        "description": "Returns a single list for its id",
+        "summary": "Gets latest values for list",
+        "description": "Returns the total of countries' latest values for the given list",
         "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
           {
             "$ref": "#/parameters/numericId"
           }
@@ -383,8 +646,11 @@
           "200": {
             "description": "A List",
             "schema": {
-              "$ref": "#/definitions/List"
+              "$ref": "#/definitions/Latest"
             }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
           },
           "404": {
             "$ref": "#/responses/Standard404Response"
@@ -397,23 +663,168 @@
     },
     "/lists/{id}/history": {
       "get": {
-        "security": { "JWT": [] },
         "tags": [
           "lists"
         ],
-        "summary": "Gets a list with the comparition of the results for each Country",
-        "description": "Returns a single list for its id",
+        "summary": "Gets history for list",
+        "description": "Returns a list with the comparision of values for each country",
         "parameters": [
           {
+            "$ref": "#/parameters/authorization"
+          },
+          {
             "$ref": "#/parameters/numericId"
+          },
+          {
+            "$ref": "#/parameters/offsets"
           }
         ],
         "responses": {
           "200": {
-            "description": "A List",
+            "description": "The historic lists' values",
             "schema": {
-              "$ref": "#/definitions/List"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/Country"
+                  },
+                  {
+                    "properties": {
+                      "timeseries": {
+                        "$ref": "#/definitions/Timeseries"
+                      }
+                    }
+                  }
+                ]
+              }
             }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/lists/{id}/countries": {
+      "get": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Gets countries in list",
+        "description": "Returns the list of countries for the given list",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/numericId"
+          },
+          {
+            "$ref": "#/parameters/pageNumber"
+          },
+          {
+            "$ref": "#/parameters/pageLimit"
+          },
+          {
+            "$ref": "#/parameters/orderColumn"
+          },
+          {
+            "$ref": "#/parameters/orderType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of countries",
+            "schema": {
+              "type": "object",
+              "allOf": [
+                {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/Countries"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/definitions/Pagination"
+                }
+              ]
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Adds country in list",
+        "description": "Adds one country in the given list",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/numericId"
+          },
+          {
+            "$ref": "#/parameters/countryId"
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/Standard201Response"
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Deletes country in list",
+        "description": "Removes one country in the given list",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/numericId"
+          },
+          {
+            "$ref": "#/parameters/countryId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/responses/Standard204Response"
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
           },
           "404": {
             "$ref": "#/responses/Standard404Response"
@@ -426,24 +837,8 @@
     }
   },
   "definitions": {
-    "Covid": {
-      "properties": {
-        "confirmed": {
-          "type": "integer"
-        },
-        "deaths": {
-          "type": "integer"
-        },
-        "recovered": {
-          "type": "integer"
-        }
-      }
-    },
     "Latest": {
       "properties": {
-        "lastUpdate": {
-          "type": "datetime"
-        },
         "confirmed": {
           "type": "integer"
         },
@@ -455,14 +850,27 @@
         }
       }
     },
-    "TimeSeries": {
-      "properties": {
-        "M/d/yyyy": {
-          "$ref": "#/definitions/Latest"
-        }
+    "Timeseries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions/Latest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        ]
       }
     },
-    "CountryDataValue": {
+    "Country": {
       "properties": {
         "id": {
           "type": "integer"
@@ -470,10 +878,10 @@
         "name": {
           "type": "string"
         },
-        "iso2": {
+        "iso_2": {
           "type": "string"
         },
-        "iso3": {
+        "iso_3": {
           "type": "string"
         },
         "latitude": {
@@ -481,19 +889,18 @@
         },
         "longitude": {
           "type": "string"
-        }
-      }
-    },
-    "Country": {
-      "properties": {
-        "dataValues": {
-          "$ref": "#/definitions/CountryDataValue"
         },
-        "latest": {
-          "$ref": "#/definitions/Latest"
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
         },
-        "timeseries": {
-          "$ref": "#/definitions/TimeSeries"
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "deleted_at": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -503,7 +910,7 @@
         "$ref": "#/definitions/Country"
       }
     },
-    "ListDataValue": {
+    "List": {
       "properties": {
         "id": {
           "type": "integer"
@@ -511,30 +918,40 @@
         "name": {
           "type": "string"
         },
-        "createdAt": {
-          "type": "datetime"
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
         },
-        "iso3": {
-          "type": "string"
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
         },
-        "latitude": {
-          "type": "string"
+        "deleted_at": {
+          "type": "string",
+          "format": "date-time"
         },
-        "longitude": {
+        "user_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "ListToCreate": {
+      "properties": {
+        "name": {
           "type": "string"
         },
         "countries": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Country"
+            "type": "integer"
           }
         }
       }
     },
-    "List": {
+    "ListWithLatest": {
       "properties": {
         "dataValues": {
-          "$ref": "#/definitions/ListDataValue"
+          "$ref": "#/definitions/List"
         },
         "latest": {
           "$ref": "#/definitions/Latest"
@@ -547,6 +964,45 @@
         "$ref": "#/definitions/List"
       }
     },
+    "IdentificationUser": {
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "IdentificationTokens": {
+      "properties": {
+        "access_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "id_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "refresh_token": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "RefreshTokens": {
+      "properties": {
+        "access_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "refresh_token": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
     "User": {
       "properties": {
         "id": {
@@ -554,7 +1010,8 @@
           "readOnly": true
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "format": "email"
         },
         "password": {
           "type": "string"
@@ -567,10 +1024,46 @@
         }
       }
     },
-    "Users": {
+    "FullUser": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "last_access": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "type": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "deleted_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "FullUsers": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/User"
+        "$ref": "#/definitions/FullUser"
       }
     },
     "Pagination": {
@@ -589,12 +1082,26 @@
         }
       }
     },
+    "InterestedUsersAmount": {
+      "properties": {
+        "amount": {
+          "type": "integer"
+        }
+      }
+    },
     "Error": {
       "properties": {
-        "code": {
+        "message": {
           "type": "string"
         },
-        "message": {
+        "internal_code": {
+          "type": "string"
+        }
+      }
+    },
+    "Authorization": {
+      "properties": {
+        "Authorization": {
           "type": "string"
         }
       }
@@ -602,32 +1109,41 @@
   },
   "responses": {
     "Standard200Response": {
-      "description": "Operation executed successfully."
+      "description": "Operation executed successfully"
     },
     "Standard201Response": {
-      "description": "The request has been fulfilled and has resulted in one or more new resources being created."
+      "description": "The request has been fulfilled and has resulted in one or more new resources being created"
+    },
+    "Standard204Response": {
+      "description": "Operation executed successfully and no content returned"
     },
     "Standard400Response": {
-      "description": "Bad request.",
+      "description": "Bad request",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
+    "Standard401Response": {
+      "description": "The user is not authorized for this action",
       "schema": {
         "$ref": "#/definitions/Error"
       }
     },
     "Standard404Response": {
-      "description": "Resource not found.",
+      "description": "Resource not found",
       "schema": {
         "$ref": "#/definitions/Error"
       }
     },
     "Standard500Response": {
-      "description": "An unexpected error occured.",
+      "description": "An unexpected error occurred",
       "schema": {
         "$ref": "#/definitions/Error"
       }
     }
   },
   "parameters": {
-    "pageSize": {
+    "pageNumber": {
       "name": "page",
       "in": "query",
       "description": "Page number",
@@ -639,35 +1155,109 @@
       "description": "Number of items returned by page",
       "type": "integer"
     },
+    "orderColumn": {
+      "name": "order_column",
+      "in": "query",
+      "description": "Column name to order",
+      "type": "string"
+    },
+    "orderType": {
+      "name": "order_type",
+      "in": "query",
+      "description": "Order sense (one of ASC or DESC)",
+      "type": "string"
+    },
     "user": {
       "name": "user",
       "in": "body",
-      "description": "User object.",
+      "description": "User object",
       "schema": {
         "$ref": "#/definitions/User"
       }
     },
-    "list": {
+    "identificationUser": {
+      "name": "user",
+      "in": "body",
+      "description": "user's data for identification",
+      "schema": {
+        "$ref": "#/definitions/IdentificationUser"
+      }
+    },
+    "authorization": {
+      "name": "Authorization",
+      "in": "header",
+      "description": "access token obtained after identification",
+      "schema": {
+        "$ref": "#/definitions/Authorization"
+      }
+    },
+    "listToCreate": {
       "name": "list",
       "in": "body",
-      "description": "List object.",
+      "description": "List to create",
       "schema": {
-        "$ref": "#/definitions/List"
+        "$ref": "#/definitions/ListToCreate"
       }
     },
     "numericId": {
       "name": "id",
       "in": "path",
-      "required": true,
-      "description": "The identifier of the resourse to found",
+      "description": "The identifier of the resource to find",
       "type": "integer"
     },
-    "createdAtFromXLastDays": {
-      "name": "createdAtFromXLastDays",
+    "lastDaysToCheck": {
+      "name": "last_days_to_check",
       "in": "query",
-      "description": "The identifier of the resourse to found",
-      "required": false,
+      "description": "The amount of days to have into account from now",
       "type": "integer"
+    },
+    "countriesIds": {
+      "name": "countries",
+      "in": "body",
+      "description": "The countries' ids",
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "listsIds": {
+      "name": "lists",
+      "in": "body",
+      "description": "The lists' ids",
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "offsets": {
+      "name": "offsets",
+      "in": "query",
+      "description": "The offset for each country in a JSON format. For example: [{\"country_id\": 4,\"offset\": 2},{\"country_id\": 6,\"offset\": 1}]",
+      "type": "string"
+    },
+    "countryId": {
+      "name": "country_id",
+      "in": "body",
+      "description": "The country's id to add",
+      "type": "object",
+      "properties": {
+        "country_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "externalAccessToken": {
+      "name": "x-external-access-token",
+      "in": "header",
+      "type": "apiKey",
+      "required": true
+    },
+    "externalProviderName": {
+      "name": "x-external-provider-name",
+      "in": "header",
+      "type": "string",
+      "required": true,
+      "example": "facebook"
     }
   }
 }

@@ -10,8 +10,9 @@ const AlertPasswordIncorrectComponent = (props) => {
                 </div>
             </div>
             :
-            <div></div>
-
+            null
+        // Return null to avoid component rendering
+        // https://reactjs.org/docs/conditional-rendering.html#preventing-component-from-rendering
     )
 }
 

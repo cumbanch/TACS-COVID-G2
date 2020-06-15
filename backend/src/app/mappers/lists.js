@@ -19,7 +19,7 @@ exports.getListsMapper = req => ({
   userId: req.user.id,
   userType: req.user.type,
   // eslint-disable-next-line
-  createAt: req.query.createdAtFromXLastDays? moment().subtract(req.query.createdAtFromXLastDays, 'days').format('YYYY-MM-DD') : undefined
+  createdAt: req.query.last_days_to_check? moment().subtract(req.query.last_days_to_check, 'days').format('YYYY-MM-DD') : undefined
 });
 
 exports.getListMapper = req => ({ userId: req.user.id, ...idParam(req) });

@@ -1,10 +1,15 @@
 /* eslint-disable max-lines */
+const { mockCorrectGetMethod, mockFailGetMethod } = require('../../mocks/axios');
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createUser, buildUser } = require('../../factories/users');
 const { generateToken } = require('../../factories/tokens');
 const { TokenBlacklist, User } = require('../../../app/models');
 const { hashPassword } = require('../../../app/services/sessions');
 const { moment } = require('../../../app/utils/moment');
+const { externalProviderNameHeaderName, externalTokenHeaderName } = require('../../../config').session;
+const {
+  EXTERNAL_PROVIDERS: { FACEBOOK }
+} = require('../../../app/utils/constants');
 
 const expectedKeys = ['access_token', 'id_token', 'refresh_token'];
 
@@ -305,6 +310,81 @@ describe('POST /sessions/refresh', () => {
     });
     it('Should return an error indicating the provided token is not an access token', () => {
       expect(invalidTokenResponse.body.message).toEqual('The provided token is not an access token');
+    });
+  });
+});
+
+describe('POST /sessions/external_login', () => {
+  let successfulResponse = {};
+  let invalidParamsResponse = {};
+  let invalidAccessTokenResponse = {};
+  let userCreated = {};
+  beforeAll(async () => {
+    await truncateDatabase();
+    const { email, name, lastName } = await buildUser();
+    mockCorrectGetMethod({ data: { email, first_name: name, last_name: lastName } });
+    successfulResponse = await getResponse({
+      endpoint: '/sessions/external_login',
+      method: 'post',
+      headers: { [externalProviderNameHeaderName]: FACEBOOK, [externalTokenHeaderName]: "I'm a token" }
+    });
+    userCreated = await User.findOne({ where: { email } });
+    mockFailGetMethod();
+    invalidAccessTokenResponse = await getResponse({
+      endpoint: '/sessions/external_login',
+      method: 'post',
+      headers: { [externalProviderNameHeaderName]: FACEBOOK, [externalTokenHeaderName]: "I'm a token" }
+    });
+    invalidParamsResponse = await getResponse({
+      endpoint: '/sessions/external_login',
+      method: 'post'
+    });
+  });
+  describe('Successful response', () => {
+    it('Should return status code 200', () => {
+      expect(successfulResponse.statusCode).toEqual(200);
+    });
+    it('Should return the expected keys in body', () => {
+      expect(Object.keys(successfulResponse.body)).toStrictEqual(expect.arrayContaining(expectedKeys));
+    });
+    it('Should return jwt tokens in body', () => {
+      Object.values(successfulResponse.body).forEach(token => {
+        expect(token).toMatch(new RegExp(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/));
+      });
+    });
+    it('Should update the last access field for the user', () => {
+      expect(moment(userCreated.lastAccess).format('YYYY-MM-DD HH:mm')).toBe(
+        moment().format('YYYY-MM-DD HH:mm')
+      );
+    });
+  });
+  describe('Fail for invalid request', () => {
+    it('Should return status code 400', () => {
+      expect(invalidParamsResponse.statusCode).toEqual(400);
+    });
+    it('Should return internal_code invalid_params', () => {
+      expect(invalidParamsResponse.body.internal_code).toBe('invalid_params');
+    });
+    it('Should return an error indicating the provided external access token is not valid', () => {
+      expect(invalidParamsResponse.body.message).toContain(
+        `${externalTokenHeaderName} must be a string and be contained in headers`
+      );
+    });
+    it('Should return an error indicating the provided external provider name is not valid', () => {
+      expect(invalidParamsResponse.body.message).toContain(
+        `${externalProviderNameHeaderName} must be a string, one of ${FACEBOOK} and be contained in headers`
+      );
+    });
+  });
+  describe('Fail for invalid access token', () => {
+    it('Should return status code 400', () => {
+      expect(invalidAccessTokenResponse.statusCode).toEqual(400);
+    });
+    it('Should return internal_code invalid_token', () => {
+      expect(invalidAccessTokenResponse.body.internal_code).toBe('invalid_token');
+    });
+    it('Should return an error indicating the provided access token is not valid', () => {
+      expect(invalidAccessTokenResponse.body.message).toEqual('The provided access_token is invalid');
     });
   });
 });
