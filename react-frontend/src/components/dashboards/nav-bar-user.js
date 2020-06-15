@@ -1,6 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { getUserEmailFromLocalStorage } from './../session-managment/utils'
 
 const NavBarUserComponent = () => {
     const userIcon = <FontAwesomeIcon icon={faUser} />
@@ -9,7 +10,7 @@ const NavBarUserComponent = () => {
         <div>
             <h6>
                 {userIcon}
-                <p>{localStorage.getItem("userEmail")}</p>
+                <p>{getUserEmailFromLocalStorage()}</p>
             </h6>
         </div>
     )
