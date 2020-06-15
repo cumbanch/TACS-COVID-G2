@@ -135,7 +135,7 @@ In this mode you can connect your host machine to the database with the followin
  - **Database name**: `POSTGRES_DB`
 
 <a id="testing"></a>
- ##### Testing mode
+ ##### Testing mode 
  
 You have to run `npm run testing`.
 The container (in foreground) will be run the tests, print the coverage and finally will be stopped.
