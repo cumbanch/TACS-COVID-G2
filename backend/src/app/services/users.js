@@ -109,3 +109,11 @@ exports.getUserWithLists = ({ id }) =>
         throw databaseError(`Error getting user with lists, reason: ${err.message}`);
       });
   });
+
+exports.findOrCreateUser = ({ email, name, lastName }) =>
+  User.findOrCreate({ where: { email }, defaults: { email, name, lastName, external: true } }).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
+    throw databaseError(`Error finding or creating the user, reason: ${err.message}`);
+  });
