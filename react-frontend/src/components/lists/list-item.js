@@ -62,6 +62,17 @@ const ListItemComponent = (props) => {
   const changeMode = () => {
     setParams(Object.assign({}, params, { editMode: !params.editMode }));
   }
+  
+  const uploadList = async () => {
+    const response = await axiosInstance.put('/lists/' + params.listId,
+      JSON.stringify(
+        {
+          'name': params.listName,
+          'countries': params.listItems.map((country) => (country.id)),
+        }
+      ));
+    setParams(Object.assign({}, params, { editMode: !params.editMode }));
+  }
 
   const handleInputChange = (event) => {
     setParams(Object.assign({}, params, { newCountry: event.target.value }));
@@ -69,7 +80,9 @@ const ListItemComponent = (props) => {
 
   const handleSubmit = () => {
     let countryList = params.listItems;
-    countryList.push(createData(countryList.length + 1, params.newCountry));
+    countryList.push(selectedCountry);
+    setParams(Object.assign({}, params, { listItems: countryList }));
+    console.log(params.listItems);
     closeModal();
   }
   
@@ -91,7 +104,6 @@ const ListItemComponent = (props) => {
   const [countries, setCountries] = useState([]);
   const [selectedCountry, selectCountry] = React.useState({});
   
-  useEffect(() => {
     const axiosInstance = axios.create({
       baseURL: process.env.REACT_APP_API_BASE_URL,
       headers: {
@@ -100,21 +112,31 @@ const ListItemComponent = (props) => {
       }
     });
 
+  useEffect(() => {
 
     const fetchData = async () => {
       const response = await axiosInstance.get('/countries?page=1&limit=253');
       const listOfCountries = response.data.data;
       setCountries(listOfCountries);
-      console.log(listOfCountries);
+    }
+    
+    const getListInfo = async () => {
+      const listId = props.location.pathname.split("/").slice(-1)[0];
+      const response = await axiosInstance.get('/lists/' + listId);
+      const listInfo = response.data;
+      const response2 = await axiosInstance.get('/lists/' + listId + '/countries');
+      const listItems = response2.data.data;
+      setParams(Object.assign({}, params, { listId : listId, listName: listInfo.name, listItems: listItems }));
     }
     fetchData();
+    getListInfo();
   }, [])
 
   return (
     <div className="container layout-dashboard" style={{backgroundColor: "#1C8EF9"}}>
       <div className={classes.content}>
         <h1 className={classes.title}>
-          Norteamérica
+          {params.listName}
         </h1>
         <div style={{textAlign: "left"}}>
           {!params.editMode? (
@@ -125,7 +147,7 @@ const ListItemComponent = (props) => {
               </Button>
             </div>
           ): (
-              <Button onClick={() => changeMode()}
+              <Button onClick={() => uploadList()}
                 className={classes.editButton} variant="contained">
                 Guardar
               </Button>
@@ -192,10 +214,7 @@ const ListItemComponent = (props) => {
                       {...params}
                       label="Choose a country"
                       variant="outlined"
-                      inputProps={{
-                        ...params.inputProps,
-                        autoComplete: 'new-password', // disable autocomplete and autofill
-                      }}
+                      autoComplete='new-password'
                     />
                   )}
                 />

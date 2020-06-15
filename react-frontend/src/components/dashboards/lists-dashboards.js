@@ -9,7 +9,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Dialog from '@material-ui/core/Dialog';
 import { ValidatorForm } from "react-form-validator-core";
-import { ValidatorComponent } from "react-form-validator-core";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -59,6 +58,7 @@ const ListsComponent = (props) => {
   const [params, setParams] = useState({
     editMode: false,
     listItems: [],
+    newListCountries: [],
     openDialog: false,
     openCountryDialog: false,
     selectedCountry: undefined,
@@ -101,11 +101,26 @@ const ListsComponent = (props) => {
     console.log(response);
     return response;
   }
+  
+  useEffect(() => {
+  const getUserLists = async () => {
+    const response = await axiosInstance.get('/lists');
+    const listOfLists = response.data.data;
+    setParams(Object.assign({}, params, { listItems: listOfLists }));
+  }
+  getUserLists();
+  }, [])
+
+  const getUserLists = async () => {
+    const response = await axiosInstance.get('/lists');
+    const listOfLists = response.data.data;
+    setParams(Object.assign({}, params, { listItems: listOfLists }));
+  }
 
   const addCountry = (country) => {
-    let countryList = params.listItems;
+    let countryList = params.newListCountries;
     countryList.push(country);
-    setParams(Object.assign({}, params, { listItems: countryList }));
+    setParams(Object.assign({}, params, { newListCountries: countryList }));
 
   }
 
@@ -165,7 +180,7 @@ const ListsComponent = (props) => {
                   onChange={handleInputChange}
                 />
                   <List>
-                    {params.listItems.map((row) =>(
+                    {params.newListCountries.map((row) =>(
                       <ListItem>
                         <ListItemIcon>
                           <FlagIcon />

@@ -88,7 +88,6 @@ const AddCountryDialog = (props) => {
                   selectCountry(country);
                 }}
                 autoHighlight
-                autoComplete='new-password'
                 getOptionLabel={(option) => option.name}
                 renderInput={(params) => (
                   <TextField
