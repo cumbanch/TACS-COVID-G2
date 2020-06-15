@@ -167,8 +167,8 @@ exports.compareListsSchema = {
 
 exports.getCloserCountriesSchema = {
   ...authorization,
-  latitude: { in: ['query'], isString: true, trim: true, errorMessage: latitude, optional: true },
-  longitude: { in: ['query'], isString: true, trim: true, errorMessage: longitude, optional: true },
+  latitude: { in: ['query'], isString: true, trim: true, errorMessage: latitude, optional: false },
+  longitude: { in: ['query'], isString: true, trim: true, errorMessage: longitude, optional: false },
   offsets: {
     in: ['query'],
     isJSON: true,

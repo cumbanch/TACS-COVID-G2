@@ -1,7 +1,6 @@
 const { inspect } = require('util');
 const { Op } = require('sequelize');
 
-const db = require('../models');
 const logger = require('../logger');
 const { List, CountryByList, sequelizeInstance, Country } = require('../models');
 const { databaseError, notFound, invalidCountries, invalidListIds } = require('../errors/builders');
@@ -17,7 +16,7 @@ exports.getCloserCountries = params => {
   logger.info(`Attempting to get list of closer countries with params: ${inspect(params)}`);
   const sequelizeOptions = {
     limit: defaultCloserCountries,
-    order: db.sequelizeInstance.literal(
+    order: sequelizeInstance.literal(
       `distance(latitude, longitude, '${params.latitude}', '${params.longitude}')`
     )
   };
