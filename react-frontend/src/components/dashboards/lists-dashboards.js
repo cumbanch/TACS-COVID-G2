@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,12 +9,17 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Dialog from '@material-ui/core/Dialog';
 import { ValidatorForm } from "react-form-validator-core";
+import { ValidatorComponent } from "react-form-validator-core";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import ValidatableField from "../validation/validatable-field";
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import axios from 'axios';
+import { getUserAccessToken } from '../session-managment/utils';
+import FlagIcon from '@material-ui/icons/Flag';
+import AddCountryDialog from '../lists/addCountry';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -38,23 +43,25 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(id, name) {
-  return { id, name };
-}
-
 const rows = [
   createData(0, 'Países Occidente'),
   createData(1, 'Países Oriente'),
   createData(2, 'Norteamérica'),
 ];
 
+function createData(id, name) {
+  return { id, name };
+}
+
 const ListsComponent = (props) => {
   const classes = useStyles();
   
   const [params, setParams] = useState({
     editMode: false,
-    listItems: rows,
+    listItems: [],
     openDialog: false,
+    openCountryDialog: false,
+    selectedCountry: undefined,
   });
   
   const handleInputChange = (event) => {
@@ -62,8 +69,7 @@ const ListsComponent = (props) => {
   }
 
   const handleSubmit = () => {
-    let listList = params.listItems;
-    listList.push(createData(listList.length + 1, params.newCountry));
+    postList(params.newCountry);
     closeModal();
   }
   
@@ -76,6 +82,41 @@ const ListsComponent = (props) => {
     setParams(Object.assign({}, params, { openDialog: true }));
   }
 
+  const axiosInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_BASE_URL,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': getUserAccessToken(),
+    }
+  });
+
+  const postList = async (listName) => {
+    const response = await axiosInstance.post('/lists',
+      JSON.stringify(
+        {
+          'name': listName,
+          'countries': params.listItems.map((country) => (country.id)),
+        }
+      ));
+    console.log(response);
+    return response;
+  }
+
+  const addCountry = (country) => {
+    let countryList = params.listItems;
+    countryList.push(country);
+    setParams(Object.assign({}, params, { listItems: countryList }));
+
+  }
+
+  const openCountryModal = () => {
+    setParams(Object.assign({}, params, { openCountryDialog: true }));
+  }
+  
+  const closeCountryModal = () => {
+    setParams(Object.assign({}, params, { openCountryDialog: false }));
+  }
+
   return (
     <div className="container layout-dashboard" style={{backgroundColor: "#1C8EF9"}}>
       <Paper className={classes.paper}>
@@ -83,7 +124,7 @@ const ListsComponent = (props) => {
           Mis Listas
         </h1>
         <List>
-          {rows.map((row) => (
+          {params.listItems.map((row) => (
             <ListItem button component={Link} to={"/list/" + row.id}>
               <ListItemText classes={{primary:classes.listItem}}
                 primary={row.name}
@@ -111,10 +152,9 @@ const ListsComponent = (props) => {
         <Paper className={classes.addCountry}>
           <ValidatorForm
             instantValidate={false}
-            onSubmit={handleSubmit}
           >
             <div>
-              <DialogTitle id="form-dialog-title">Agregar nueva lista...</DialogTitle>
+              <DialogTitle id="new-list-dialog">Agregar nueva lista...</DialogTitle>
               <DialogContent>
                 <ValidatableField
                   label='Pais'
@@ -124,16 +164,34 @@ const ListsComponent = (props) => {
                   className="form-control"
                   onChange={handleInputChange}
                 />
+                  <List>
+                    {params.listItems.map((row) =>(
+                      <ListItem>
+                        <ListItemIcon>
+                          <FlagIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={row.name}
+                        />
+                      </ListItem>
+                    ))}
+
+                  </List>
+              <label onClick={openCountryModal} className="btn btn-primary">Agregar país...</label>
+              <AddCountryDialog openCountryDialog={params.openCountryDialog} addCountry={addCountry} closeCountryModal={closeCountryModal}/>
               </DialogContent>
 
             </div>
             <DialogActions>
               <label onClick={closeModal} className="btn">Cancelar</label>
-              <button type="submit" className="btn btn-primary">Crear</button>
+              <button onClick={handleSubmit} className="btn btn-primary">Crear</button>
+            
             </DialogActions>
           </ValidatorForm>
         </Paper>
       </Dialog>
+
+
     </div>
 
   );

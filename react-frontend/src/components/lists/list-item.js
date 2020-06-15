@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -16,6 +16,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import axios from 'axios';
+import { getUserAccessToken } from '../session-managment/utils';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const useStyles = makeStyles((theme) => ({
   addCountry: {
@@ -83,6 +87,28 @@ const ListItemComponent = (props) => {
   const openModal = () => {
     setParams(Object.assign({}, params, { openDialog: true }));
   }
+  
+  const [countries, setCountries] = useState([]);
+  const [selectedCountry, selectCountry] = React.useState({});
+  
+  useEffect(() => {
+    const axiosInstance = axios.create({
+      baseURL: process.env.REACT_APP_API_BASE_URL,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': getUserAccessToken(),
+      }
+    });
+
+
+    const fetchData = async () => {
+      const response = await axiosInstance.get('/countries?page=1&limit=253');
+      const listOfCountries = response.data.data;
+      setCountries(listOfCountries);
+      console.log(listOfCountries);
+    }
+    fetchData();
+  }, [])
 
   return (
     <div className="container layout-dashboard" style={{backgroundColor: "#1C8EF9"}}>
@@ -116,8 +142,8 @@ const ListItemComponent = (props) => {
                   primary={row.name}
                 />
                 { params.editMode ? 
-                  <HighlightOffIcon onClick={() => removeItem(row.id)} /> : null
-                }
+                  <HighlightOffIcon onClick={() => removeItem(row.id)} /> 
+                : null }
               </ListItem>
             ))}
 
@@ -147,13 +173,31 @@ const ListItemComponent = (props) => {
             <div>
               <DialogTitle id="form-dialog-title">Agregar país</DialogTitle>
               <DialogContent>
-                <ValidatableField
-                  label='Pais'
-                  placeholder='País'
-                  name="pais"
-                  type="text"
-                  className="form-control"
-                  onChange={handleInputChange}
+                <Autocomplete
+                  id="country-select"
+                  value={selectedCountry}
+                  style={{ width: 300 }}
+                  options={countries}
+                  classes={{
+                    option: classes.option,
+                  }}
+                  onChange={(event, country) => {
+                    selectCountry(country);
+                  }}
+                  autoHighlight
+                  autoComplete='new-password'
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Choose a country"
+                      variant="outlined"
+                      inputProps={{
+                        ...params.inputProps,
+                        autoComplete: 'new-password', // disable autocomplete and autofill
+                      }}
+                    />
+                  )}
                 />
               </DialogContent>
 
