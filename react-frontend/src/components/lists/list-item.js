@@ -34,8 +34,13 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: 'flex-start',
   },
   editButton: {
+    marginTop: '13px',
     alignSelf: 'flex-start',
     marginBottom: '20px',
+  },
+  editTitle: {
+    backgroundColor: 'white',
+    borderRadius: '5px',
   }
 }));
 
@@ -112,6 +117,10 @@ const ListItemComponent = (props) => {
       }
     });
 
+  const onChangeListName = (event) => {
+    setParams(Object.assign({}, params, { listName: event.target.value }));
+  }
+
   useEffect(() => {
 
     const fetchData = async () => {
@@ -135,9 +144,13 @@ const ListItemComponent = (props) => {
   return (
     <div className="container layout-dashboard" style={{backgroundColor: "#1C8EF9"}}>
       <div className={classes.content}>
-        <h1 className={classes.title}>
-          {params.listName}
-        </h1>
+        {!params.editMode
+          ? <h1 className={classes.title}>{params.listName}</h1>
+          : <TextField id="outlined-basic" className={classes.editTitle}
+              defaultValue={params.listName} variant="outlined"
+              onChange={onChangeListName}
+            />
+        }
         <div style={{textAlign: "left"}}>
           {!params.editMode? (
             <div>
