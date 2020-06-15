@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -16,6 +16,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import axios from 'axios';
+import { getUserAccessToken } from '../session-managment/utils';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const useStyles = makeStyles((theme) => ({
   addCountry: {
@@ -30,8 +34,13 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: 'flex-start',
   },
   editButton: {
+    marginTop: '13px',
     alignSelf: 'flex-start',
     marginBottom: '20px',
+  },
+  editTitle: {
+    backgroundColor: 'white',
+    borderRadius: '5px',
   }
 }));
 
@@ -58,6 +67,17 @@ const ListItemComponent = (props) => {
   const changeMode = () => {
     setParams(Object.assign({}, params, { editMode: !params.editMode }));
   }
+  
+  const uploadList = async () => {
+    const response = await axiosInstance.put('/lists/' + params.listId,
+      JSON.stringify(
+        {
+          'name': params.listName,
+          'countries': params.listItems.map((country) => (country.id)),
+        }
+      ));
+    setParams(Object.assign({}, params, { editMode: !params.editMode }));
+  }
 
   const handleInputChange = (event) => {
     setParams(Object.assign({}, params, { newCountry: event.target.value }));
@@ -65,7 +85,9 @@ const ListItemComponent = (props) => {
 
   const handleSubmit = () => {
     let countryList = params.listItems;
-    countryList.push(createData(countryList.length + 1, params.newCountry));
+    countryList.push(selectedCountry);
+    setParams(Object.assign({}, params, { listItems: countryList }));
+    console.log(params.listItems);
     closeModal();
   }
   
@@ -83,13 +105,52 @@ const ListItemComponent = (props) => {
   const openModal = () => {
     setParams(Object.assign({}, params, { openDialog: true }));
   }
+  
+  const [countries, setCountries] = useState([]);
+  const [selectedCountry, selectCountry] = React.useState({});
+  
+    const axiosInstance = axios.create({
+      baseURL: process.env.REACT_APP_API_BASE_URL,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': getUserAccessToken(),
+      }
+    });
+
+  const onChangeListName = (event) => {
+    setParams(Object.assign({}, params, { listName: event.target.value }));
+  }
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+      const response = await axiosInstance.get('/countries?page=1&limit=253');
+      const listOfCountries = response.data.data;
+      setCountries(listOfCountries);
+    }
+    
+    const getListInfo = async () => {
+      const listId = props.location.pathname.split("/").slice(-1)[0];
+      const response = await axiosInstance.get('/lists/' + listId);
+      const listInfo = response.data;
+      const response2 = await axiosInstance.get('/lists/' + listId + '/countries');
+      const listItems = response2.data.data;
+      setParams(Object.assign({}, params, { listId : listId, listName: listInfo.name, listItems: listItems }));
+    }
+    fetchData();
+    getListInfo();
+  }, [])
 
   return (
     <div className="container layout-dashboard" style={{backgroundColor: "#1C8EF9"}}>
       <div className={classes.content}>
-        <h1 className={classes.title}>
-          Norteamérica
-        </h1>
+        {!params.editMode
+          ? <h1 className={classes.title}>{params.listName}</h1>
+          : <TextField id="outlined-basic" className={classes.editTitle}
+              defaultValue={params.listName} variant="outlined"
+              onChange={onChangeListName}
+            />
+        }
         <div style={{textAlign: "left"}}>
           {!params.editMode? (
             <div>
@@ -99,7 +160,7 @@ const ListItemComponent = (props) => {
               </Button>
             </div>
           ): (
-              <Button onClick={() => changeMode()}
+              <Button onClick={() => uploadList()}
                 className={classes.editButton} variant="contained">
                 Guardar
               </Button>
@@ -116,8 +177,8 @@ const ListItemComponent = (props) => {
                   primary={row.name}
                 />
                 { params.editMode ? 
-                  <HighlightOffIcon onClick={() => removeItem(row.id)} /> : null
-                }
+                  <HighlightOffIcon onClick={() => removeItem(row.id)} /> 
+                : null }
               </ListItem>
             ))}
 
@@ -147,13 +208,28 @@ const ListItemComponent = (props) => {
             <div>
               <DialogTitle id="form-dialog-title">Agregar país</DialogTitle>
               <DialogContent>
-                <ValidatableField
-                  label='Pais'
-                  placeholder='País'
-                  name="pais"
-                  type="text"
-                  className="form-control"
-                  onChange={handleInputChange}
+                <Autocomplete
+                  id="country-select"
+                  value={selectedCountry}
+                  style={{ width: 300 }}
+                  options={countries}
+                  classes={{
+                    option: classes.option,
+                  }}
+                  onChange={(event, country) => {
+                    selectCountry(country);
+                  }}
+                  autoHighlight
+                  autoComplete='new-password'
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Choose a country"
+                      variant="outlined"
+                      autoComplete='new-password'
+                    />
+                  )}
                 />
               </DialogContent>
 
