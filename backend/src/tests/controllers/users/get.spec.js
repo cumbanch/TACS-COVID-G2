@@ -21,7 +21,8 @@ const expectedUserKeys = [
   'type',
   'name',
   'last_name',
-  'email'
+  'email',
+  'external'
 ];
 const totalUsers = 25;
 const limit = 4;
