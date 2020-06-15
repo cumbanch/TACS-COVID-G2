@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import ComparisonItemComponent from './comparison-item'
+import Button from '@material-ui/core/Button';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+
+import Grid from '@material-ui/core/Grid';
+import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-
+import TextField from '@material-ui/core/TextField';
+const lodash = require('lodash');
 const useStyles = makeStyles((theme) => ({
     chips: {
         display: 'flex',
@@ -19,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
         margin: 2,
     }
 }));
+
 
 function getStyles(name, params, theme) {
 
@@ -40,25 +47,26 @@ const MenuProps = {
     },
 };
 const ComparisonComponent = (props) => {
+
     const classes = useStyles();
     const theme = useTheme();
     const handleChangeFirst = (event) => {
-        console.log("handleChangeFirst");
-        console.log(params);
-        console.log(event.target.value);
+        // console.log("handleChangeFirst");
+        // console.log(params);
+        // console.log(event.target.value);
         if (event.target.value == []) setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: true, selectedItemsSecond: [] }));
         const countries = getDependantDataArrayByProperty(params.listSelect);
         setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: false, selectedItemsSecond: [], selectedObjectsSecond: [], countriesList: countries }));
 
     };
     const handleChangeSecond = (event) => {
-        console.log("handleChangeSecond")
-        console.log(event.target.value);
-        console.log("params");
-        console.log(params);
+        // console.log("handleChangeSecond")
+        // console.log(event.target.value);
+        // console.log("params");
+        // console.log(params);
         const selectObjects = getCountriesFromList(getListFromId(params.listSelect, !params.selectedItemsFirst[0] ? undefined : params.selectedItemsFirst[0].id), event.target.value);
-        console.log("select objects")
-        console.log(selectObjects);
+        // console.log("select objects")
+        // console.log(selectObjects);
         setOtherParams(Object.assign({}, params, { selectedItemsSecond: event.target.value, selectedObjectsSecond: selectObjects }));
     }
     const getDependantDataArrayByProperty = (someArray) => {
@@ -71,15 +79,52 @@ const ComparisonComponent = (props) => {
     }
     const [params, setOtherParams] = useState({
         isCountryListDisabled: true, listSelect: [], countriesList: [], selectedItemsFirst: [],
-        selectedItemsSecond: [], selectedObjectsSecond: []
+        selectedItemsSecond: [], selectedObjectsSecond: [], selection: "deaths"
     })
     const getListFromId = (someListArray, someListId) => {
-        console.log("getListFromId");
-        console.log(someListArray);
-        console.log(someListId);
+        // console.log("getListFromId");
+        // console.log(someListArray);
+        // console.log(someListId);
         if (!someListArray || !someListId) return [{ countries: [] }];
         return someListArray.find((someList) => someList.name == someListId)
     };
+    const mapTimeSeriesForGraphic = (someCountry) => {
+        var testresult = someCountry.timeseries.map((someTimeSerie) =>
+            ({
+                countryName: someCountry.name,
+                deaths: someTimeSerie.deaths,
+                recovered: someTimeSerie.recovered,
+                confirmed: someTimeSerie.confirmed,
+                date: someTimeSerie.date
+            }));
+
+        return testresult;
+    }
+    const getTimeSeriesForGraphic = (someCountries, someSelection) => {
+        var allTimeSeries = someCountries.flatMap((someCountry) => (mapTimeSeriesForGraphic(someCountry)));
+        console.log("allTimeSeries");
+        console.log(allTimeSeries);
+        const groupedTimeSeries = lodash.groupBy(allTimeSeries, "date");
+        const keys = Object.keys(groupedTimeSeries);
+        const timeSeriesForGraphic = keys.map((someDate) => {
+            const seriesFromThatDate = groupedTimeSeries[someDate];
+            var jsonForGraphic = {};
+
+            jsonForGraphic["name"] = someDate;
+            seriesFromThatDate.forEach((someSerie) => {
+
+                jsonForGraphic[someSerie["countryName"]] = someSerie[params.selection];
+            });
+
+
+            return jsonForGraphic;
+        });
+        console.log("timeSeriesForGraphic");
+        console.log(timeSeriesForGraphic);
+        return lodash.orderBy(timeSeriesForGraphic, "name");
+
+    };
+    const changeSelection = (someSelection) => { setOtherParams(Object.assign({}, params, { selection: someSelection })) }
     const getUserLists = async () => {
         const tokens = JSON.parse(localStorage.getItem('userInfo'));
         const response = await fetch("http://localhost:8080/lists",
@@ -105,18 +150,53 @@ const ComparisonComponent = (props) => {
                 "created_at": "2020-05-25T23:49:27.000Z",
                 "updated_at": "2020-05-25T23:49:27.000Z",
                 "deleted_at": null,
-                "timeseries": [{
-                    "confirmed": 0,
-                    "deaths": 0,
-                    "recovered": 0,
-                    "date": "2020/02/26"
-                },
-                {
-                    "confirmed": 0,
-                    "deaths": 0,
-                    "recovered": 0,
-                    "date": "2020/02/26"
-                }]
+                "timeseries": [
+                    {
+                        "confirmed": 50,
+                        "deaths": 50,
+                        "recovered": 2,
+                        "date": "2020/02/23"
+                    }, {
+                        "confirmed": 15,
+                        "deaths": 185,
+                        "recovered": 3,
+                        "date": "2020/02/26"
+                    },
+                    {
+                        "confirmed": 70,
+                        "deaths": 290,
+                        "recovered": 4,
+                        "date": "2020/02/27"
+                    }]
+            }, {
+                "id": 101,
+                "name": "Paraguay",
+                "flag": "https://image.shutterstock.com/image-vector/original-simple-argentina-flag-isolated-260nw-516324706.jpg",
+                "iso_2": "AR",
+                "iso_3": "ARG",
+                "latitude": "-34",
+                "longitude": "-64",
+                "created_at": "2020-05-25T23:49:27.000Z",
+                "updated_at": "2020-05-25T23:49:27.000Z",
+                "deleted_at": null,
+                "timeseries": [
+                    {
+                        "confirmed": 100,
+                        "deaths": 70,
+                        "recovered": 2,
+                        "date": "2020/02/20"
+                    }, {
+                        "confirmed": 500,
+                        "deaths": 200,
+                        "recovered": 3,
+                        "date": "2020/02/21"
+                    },
+                    {
+                        "confirmed": 70,
+                        "deaths": 500,
+                        "recovered": 4,
+                        "date": "2020/02/23"
+                    }]
             },
             {
                 "id": 204,
@@ -129,18 +209,24 @@ const ComparisonComponent = (props) => {
                 "created_at": "2020-05-25T23:49:27.000Z",
                 "updated_at": "2020-05-25T23:49:27.000Z",
                 "deleted_at": null,
-                "timeseries": [{
-                    "confirmed": 0,
-                    "deaths": 0,
-                    "recovered": 0,
-                    "date": "2020/02/26"
-                },
-                {
-                    "confirmed": 0,
-                    "deaths": 0,
-                    "recovered": 0,
-                    "date": "2020/02/26"
-                }]
+                "timeseries": [
+                    {
+                        "confirmed": 10,
+                        "deaths": 1,
+                        "recovered": 2,
+                        "date": "2020/02/24"
+                    }, {
+                        "confirmed": 80,
+                        "deaths": 12,
+                        "recovered": 1,
+                        "date": "2020/02/26"
+                    },
+                    {
+                        "confirmed": 710,
+                        "deaths": 60,
+                        "recovered": 20,
+                        "date": "2020/02/27"
+                    }]
             }]
         }];
         const result = await response.json();
@@ -174,28 +260,13 @@ const ComparisonComponent = (props) => {
         }
         FetchData();
     }, []);
-    const rowsTest = [
-        { date: "2020-04-20", deaths: 42 },
-        { date: "2020-04-21", deaths: 121 },
-        { date: "2020-04-22", deaths: 32 },
-        { date: "2020-04-23", deaths: 10 },
-        { date: "2020-04-24", deaths: 9 },
-        { date: "2020-04-25", deaths: 69 },
-        { date: "2020-04-26", deaths: 14 },
-        { date: "2020-04-27", deaths: 31 },
-        { date: "2020-04-28", deaths: 75 },
-    ];
 
-    const rowsTest2 = rowsTest.map(row => ({ date: row.date, deaths: row.deaths + 15 }));
-    let dataForLines = rowsTest.map(row => ({ name: row.date, Mexico: row.deaths, Argentina: 0 }));
-    dataForLines = dataForLines.map(row => ({ name: row.name, Mexico: row.Mexico, Argentina: rowsTest2.find(a_row => (a_row.date === row.name)).deaths }));
 
-    //[{ id: 0, name: "saraza", countries: [] }]
     return (
         <div className="container layout-dashboard">
 
 
-            <div style={{ display: "flex", flexFlow: "row" }}  >
+            <div style={{ display: "flex", flexFlow: "row", marginTop: 30 }}  >
                 <FormControl className={classes.formControl} style={{ maxWidth: '200px', minWidth: 75, marginInlineEnd: 50 }}>
                     <InputLabel id="demo-simple-select-label">{"Listas"}</InputLabel>
                     <Select
@@ -235,30 +306,68 @@ const ComparisonComponent = (props) => {
                     </Select>
                 </FormControl> : null}
             </div>
-            <div style={{ display: "flex", flexFlow: "row" }}>
-                {/* {getCountriesFromList(getListFromId(params.listSelect, params.selectedItemsFirst), params.selectedItemsSecond).map((someCountry) => (<p > a {someCountry.id}</p>))} */}
-                {params.selectedObjectsSecond.map((someCountry) => (<ComparisonItemComponent id={someCountry.id} flag={someCountry.flag} rows={someCountry.timeseries} />))}
-                {/* <ComparisonItemComponent flag="https://image.shutterstock.com/image-vector/original-simple-argentina-flag-isolated-260nw-516324706.jpg" rows={rowsTest2} /> */}
+            <div style={{ display: "flex", flexFlow: "row", marginTop: 30 }}>
+                {params.selectedObjectsSecond.length == 0 ? null :
+                    <div style={{ flexGrow: 1 }}>
+                        <Grid container spacing={6} alignItems="stretch">
+                            <Grid item xs>
 
-                <LineChart
-                    width={400}
-                    height={300}
-                    data={dataForLines}
-                    margin={{
-                        top: 5, right: 30, left: 20, bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="Mexico" stroke="#8884d8" activeDot={{ r: 8 }} />
-                    <Line type="monotone" dataKey="Argentina" stroke="#82ca9d" />
+                                <div className={classes.demo}>
+                                    <List >
+                                        {params.selectedItemsSecond.map((x) => (<ListItem>
+                                            <ListItemText
+                                                primary={params.selectedObjectsSecond.find((y) => (y.id == x)).name}
+                                            />
+                                            <TextField
+                                                id="standard-number"
+                                                label="Offset"
+                                                type="number"
+                                                InputLabelProps={{
+                                                    shrink: true,
+                                                }}
+                                            />
+                                        </ListItem>))
+                                        }
+                                    </List>
+                                </div>
+                            </Grid></Grid>
+                    </div>
+                }
+                <div>
+                    {params.selectedObjectsSecond.length == 0 ? null :
+                        <div style={{ display: "flex", flexFlow: "column" }} >
+                            <div style={{ display: "flex", flexFlow: "row", marginBottom: 30 }}>
+                                <Button onClick={() => changeSelection("deaths")} id="deathsButton" variant="outlined" color="primary" style={{ marginLeft: 60 }}>Muertes</Button>
+                                <Button onClick={() => changeSelection("confirmed")} id="confirmedButton" variant="outlined" color="primary" style={{ marginLeft: 30 }}>Confirmados </Button>
+                                <Button onClick={() => changeSelection("recovered")} id="recoveredButton" variant="outlined" color="primary" style={{ marginLeft: 30 }}>Recuperados </Button>
+                            </div>
+                            <div style={{ display: "flex", flexFlow: "row" }}>
+                                <LineChart
+                                    width={600}
+                                    height={300}
+                                    data={params.selectedObjectsSecond === [] ? [] : getTimeSeriesForGraphic(params.selectedObjectsSecond)}
+                                    margin={{
+                                        top: 5, right: 30, left: 20, bottom: 5,
+                                    }}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    {params.countriesList.map((someCountry) => (<Line type="monotone" connectNulls={true} dataKey={someCountry.name} stroke={"#" + ('00000' + (Math.random() * (1 << 24) | 0).toString(16)).slice(-6)} activeDot={{ r: 8 }} />))}
 
-                </LineChart>
+
+                                </LineChart>
+                            </div>
+                        </div>}
+
+                </div>
+
+
             </div>
-        </div>
+
+        </div >
     );
 
 }
