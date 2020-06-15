@@ -1,13 +1,14 @@
 /* eslint-disable max-lines */
-const { mockSuccessGetLatest, mockSuccessGetHistoryForCloser } = require('../../mocks/covid');
+//const { mockSuccessGetLatest, mockSuccessGetHistoryForCloser } = require('../../mocks/covid');
+const { mockSuccessGetHistoryForCloser } = require('../../mocks/covid');
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createCountry } = require('../../factories/countries');
 const { createUser } = require('../../factories/users');
 const { generateToken } = require('../../factories/tokens');
 
-const expectedLatestKeys = ['confirmed', 'deaths', 'recovered'];
-
+/*
 describe('GET /lists/closer/latest', () => {
+  const expectedLatestKeys = ['confirmed', 'deaths', 'recovered'];
   let successResponse = {};
   let invalidParamsResponse = {};
   beforeAll(async () => {
@@ -60,7 +61,7 @@ describe('GET /lists/closer/latest', () => {
     });
   });
 });
-
+*/
 describe('GET /lists/closer/history', () => {
   let successResponse = {};
   let invalidParamsResponse = {};
