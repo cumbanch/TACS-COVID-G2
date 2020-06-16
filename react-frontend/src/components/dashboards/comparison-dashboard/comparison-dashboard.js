@@ -67,6 +67,7 @@ const ComparisonComponent = (props) => {
         const selectObjects = getCountriesFromList(getListFromId(params.listSelect, !params.selectedItemsFirst[0] ? undefined : params.selectedItemsFirst[0].id), event.target.value);
         // console.log("select objects")
         // console.log(selectObjects);
+        selectObjects.map((someObject) => { someObject["offset"] = !someObject["offset"] ? 0 : someObject["offset"]; return someObject; });
         setOtherParams(Object.assign({}, params, { selectedItemsSecond: event.target.value, selectedObjectsSecond: selectObjects }));
     }
     const getDependantDataArrayByProperty = (someArray) => {
@@ -252,13 +253,32 @@ const ComparisonComponent = (props) => {
         ));
 
     }
+    const queryOffset = async (someListId, offsetsquery) => {
+        const tokens = JSON.parse(localStorage.getItem('userInfo'));
+        const countriesWithOffset = await fetch(`http://localhost:8080/lists/${someListId}/history/${offsetsquery}`,
+            {
+                method: 'GET',
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': 'https://localhost:8080',
+                    'Authorization': tokens.access_token
+                }
+            });
+        setOtherParams(Object.assign({}, params, { selectedObjectsSecond: {} }))
+    }
+    const handleOffsetChange = (event) => {
+        console.log("handleoffsetChange");
+        console.log(event);
+    };
     useEffect(() => {
         async function FetchData() {
             const result = await getUserLists();
             //populateLists(result);
             setOtherParams(Object.assign({}, params, { listSelect: result }));
         }
-        FetchData();
+        if (params.listSelect.length == 0) FetchData();
     }, []);
 
 
@@ -313,22 +333,20 @@ const ComparisonComponent = (props) => {
                             <Grid item xs>
 
                                 <div className={classes.demo}>
-                                    <List >
-                                        {params.selectedItemsSecond.map((x) => (<ListItem>
-                                            <ListItemText
-                                                primary={params.selectedObjectsSecond.find((y) => (y.id == x)).name}
-                                            />
-                                            <TextField
-                                                id="standard-number"
-                                                label="Offset"
-                                                type="number"
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                }}
-                                            />
-                                        </ListItem>))
-                                        }
-                                    </List>
+
+                                    <form onSubmit={handleOffsetChange}>
+                                        <List >
+                                            {/* {params.selectedItemsSecond.map((x) => (<input type={"number"} name={x} />))} */}
+                                            {params.selectedItemsSecond.map((x) => (<ListItem>
+                                                <ListItemText
+                                                    primary={params.selectedObjectsSecond.find((y) => (y.id == x)).name}
+                                                />
+                                                <input type={"number"} name={x.id} defaultValue={params.selectedObjectsSecond.find((y) => (y.id == x)).offset} />
+                                            </ListItem>))
+                                            }
+                                        </List>
+                                        <input type="submit" value="Submit" />
+                                    </form>
                                 </div>
                             </Grid></Grid>
                     </div>
