@@ -24,9 +24,10 @@
     "production": "docker-compose up -d --build",
     "testing": "docker-compose -f docker-compose.testing.yml up --abort-on-container-exit --build",
     "docker-stop-dev": "docker stop covid-19-dev covid-19-db-dev; docker rm covid-19-dev covid-19-db-dev",
-    "start": "docker-compose -f docker-compose.development.yml up -d --build",
+    "start-docker": "docker-compose -f docker-compose.development.yml up -d --build",
     "build-docker": "docker-compose -f docker-compose.development.yml build",
-    "build": "npm run migrations; node src/server.js",
+    "start": "node src/server.js",
+    "build": "npm run migrations",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
   },
