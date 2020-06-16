@@ -19,6 +19,7 @@ import axios from 'axios';
 import { getUserAccessToken } from '../session-managment/utils';
 import FlagIcon from '@material-ui/icons/Flag';
 import AddCountryDialog from '../lists/addCountry';
+import { useFormik } from 'formik';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -68,9 +69,12 @@ const ListsComponent = (props) => {
     setParams(Object.assign({}, params, { newCountry: event.target.value }));
   }
 
-  const handleSubmit = () => {
-    postList(params.newCountry);
+  const handleSubmit = (values) => {
+    const listName = values.listName;
+    let response = postList(listName);
+    setParams(Object.assign({}, params, { newListCountries: [] }));
     closeModal();
+    window.location.reload(false);
   }
   
   const closeModal = () => {
@@ -91,37 +95,70 @@ const ListsComponent = (props) => {
   });
 
   const postList = async (listName) => {
+    try {
     const response = await axiosInstance.post('/lists',
       JSON.stringify(
         {
           'name': listName,
-          'countries': params.listItems.map((country) => (country.id)),
+          'countries': params.newListCountries.map((country) => (country.id)),
         }
       ));
-    console.log(response);
     return response;
+    } catch (error){
+      if (error.response)
+        alert(error.response.data.message);
+      else 
+        alert("Error desconocido")
+    }
+
   }
   
-  useEffect(() => {
   const getUserLists = async () => {
-    const response = await axiosInstance.get('/lists');
-    const listOfLists = response.data.data;
-    setParams(Object.assign({}, params, { listItems: listOfLists }));
+    try {
+      const response = await axiosInstance.get('/lists');
+      const listOfLists = response.data.data;
+      setParams(Object.assign({}, params, { listItems: listOfLists }));
+    } catch (error){
+      if (error.response)
+        alert(error.response.data.message);
+      else 
+        alert("Error desconocido")
+    }
   }
-  getUserLists();
-  }, [])
 
-  const getUserLists = async () => {
-    const response = await axiosInstance.get('/lists');
-    const listOfLists = response.data.data;
-    setParams(Object.assign({}, params, { listItems: listOfLists }));
-  }
+  useEffect(() => {
+
+    getUserLists();
+  }, [])
+  
+  const validate = values => {
+    const errors = {};
+    if (!values.listName) {
+      errors.listName = 'Required';
+    } 
+    if (params.newListCountries.length == 0){
+      errors.listItems = "Debe seleccionar al menos un país"
+    }
+
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      listName: '',
+    },
+    validate,
+    onSubmit: values => {
+      handleSubmit(values);
+    },
+    validateOnChange: false,
+    validateOnBlur: false
+  });
 
   const addCountry = (country) => {
     let countryList = params.newListCountries;
     countryList.push(country);
     setParams(Object.assign({}, params, { newListCountries: countryList }));
-
   }
 
   const openCountryModal = () => {
@@ -165,44 +202,47 @@ const ListsComponent = (props) => {
 
       <Dialog open={params.openDialog} onClose={closeModal} aria-labelledby="form-dialog-title">
         <Paper className={classes.addCountry}>
-          <ValidatorForm
-            instantValidate={false}
-          >
-            <div>
-              <DialogTitle id="new-list-dialog">Agregar nueva lista...</DialogTitle>
-              <DialogContent>
-                <ValidatableField
-                  label='Pais'
-                  placeholder='Nombre'
-                  name="pais"
+
+
+          <div>
+            <DialogTitle id="new-list-dialog">Agregar nueva lista...</DialogTitle>
+            <DialogContent>
+              <form onSubmit={formik.handleSubmit}>
+                <input
+                  id="listName"
+                  name="listName"
                   type="text"
-                  className="form-control"
-                  onChange={handleInputChange}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.listName}
                 />
-                  <List>
-                    {params.newListCountries.map((row) =>(
-                      <ListItem>
-                        <ListItemIcon>
-                          <FlagIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={row.name}
-                        />
-                      </ListItem>
-                    ))}
+                {formik.errors.listName ? <div>El campo nombre es requerido</div> : null}
 
-                  </List>
-              <label onClick={openCountryModal} className="btn btn-primary">Agregar país...</label>
-              <AddCountryDialog openCountryDialog={params.openCountryDialog} addCountry={addCountry} closeCountryModal={closeCountryModal}/>
-              </DialogContent>
+                <List>
+                  {params.newListCountries.map((row) =>(
+                    <ListItem>
+                      <ListItemIcon>
+                        <FlagIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={row.name}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+                <label onClick={openCountryModal} className="btn btn-primary">Agregar país...</label>
+                {formik.errors.listItems ? <div>Debe seleccionar al menos un país</div> : null}
+                <AddCountryDialog openCountryDialog={params.openCountryDialog} addCountry={addCountry} closeCountryModal={closeCountryModal}/>
 
-            </div>
-            <DialogActions>
-              <label onClick={closeModal} className="btn">Cancelar</label>
-              <button onClick={handleSubmit} className="btn btn-primary">Crear</button>
-            
-            </DialogActions>
-          </ValidatorForm>
+                <DialogActions>
+                  <label onClick={closeModal} className="btn">Cancelar</label>
+                  <button type="submit" className="btn btn-primary">Crear</button>
+                </DialogActions>
+
+              </form>
+            </DialogContent>
+          </div>
+
         </Paper>
       </Dialog>
 
