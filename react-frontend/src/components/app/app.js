@@ -24,15 +24,15 @@ import CompareListsOfDifferentUsers from '../admin/compare-lists-of-different-us
 
 const AppComponent = (props) => {
 
-    const isUserLogged = isUserLogin();
-    const [params, setparams] = useState({ isUserLogged });
+    const isUserLogged = () => (isUserLogin());
+    const [params, setparams] = useState({ isUserLogged: isUserLogin() });
 
     return (
         <div className="App" id="root">
 
+            <SideMenuComponent userType={"admin"} />
             <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
 
-            <SideMenuComponent userType={"admin"} />
 
             <Switch>
                 <Route exact path='/' component={SignInComponent} />

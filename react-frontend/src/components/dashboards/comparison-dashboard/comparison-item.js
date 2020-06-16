@@ -11,7 +11,10 @@ import { makeStyles } from '@material-ui/core/styles';
 
 
 const ComparisonItemComponent = (props) => {
-    const [params, setParams] = useState({ flag: props.flag, rows: props.rows });
+    const [params, setParams] = useState({ flag: props.flag, rows: props.rows, id: props.id });
+    console.log("comparisonitem")
+    console.log(props);
+    console.log(params);
     const useStyles = makeStyles({
         table: {
             minWidth: 150
@@ -21,7 +24,7 @@ const ComparisonItemComponent = (props) => {
     return (
         <div style={{ paddingTop: 30, paddingRight: 30 }}>
 
-            <TableContainer component={Paper} style={{ width: 300 }}>
+            <TableContainer component={Paper} style={{ width: 300, maxHeight: 200 }}>
                 <img src={params.flag} style={{ borderRadius: "20px", width: "120px", height: "70px", paddingTop: 10 }} />
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
@@ -32,7 +35,7 @@ const ComparisonItemComponent = (props) => {
                     </TableHead>
                     <TableBody>
                         {params.rows.map((row) => (
-                            <TableRow key={row.date}>
+                            <TableRow key={row.date + row.id}>
                                 <TableCell align="center">{row.date}</TableCell>
                                 <TableCell align="center">{row.deaths}</TableCell>
                             </TableRow>
