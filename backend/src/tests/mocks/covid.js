@@ -69,6 +69,47 @@ exports.mockSuccessGetHistory = isocodes => {
   ]);
 };
 
+const mockSuccessHistoryForCloser = (
+  [iso2_1, iso2_2, iso2_3, iso2_4, iso2_5],
+  [valueMock_1, valueMock_2, valueMock_3, valueMock_4, valueMock_5]
+) => {
+  mockSuccessGetAll();
+  axios.get
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_1, countrycode: { iso2: iso2_1 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_2, countrycode: { iso2: iso2_2 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_3, countrycode: { iso2: iso2_3 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_4, countrycode: { iso2: iso2_4 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([{ ...valueMock_5, countrycode: { iso2: iso2_5 } }]))
+    )
+    .mockImplementationOnce((_, { transformResponse: [transformFunction] }) =>
+      transformFunction(JSON.stringify([]))
+    );
+};
+
+exports.mockSuccessGetHistoryForCloser = isocodes => {
+  mockSuccessGetAll();
+  const valueMocks = [];
+  isocodes.forEach(() =>
+    valueMocks.push({
+      timeseries: {
+        '4/21/20': getRandomLatest(1),
+        '4/22/20': getRandomLatest(1),
+        '4/23/20': getRandomLatest(1)
+      }
+    })
+  );
+  mockSuccessHistoryForCloser(isocodes, valueMocks);
+};
+
 exports.mockSuccessGetHistory5LastDays = isocodes => {
   mockSuccessHistory(isocodes, [
     {

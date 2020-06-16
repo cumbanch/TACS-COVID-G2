@@ -55,9 +55,11 @@ const ComparisonComponent = (props) => {
         // console.log(params);
         // console.log(event.target.value);
         if (event.target.value == []) setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: true, selectedItemsSecond: [] }));
+
         const countries = getDependantDataArrayByProperty(params.listSelect.filter((x) => (event.target.value.includes(x.name))));
         console.log("countries");
         console.log(countries);
+
         countries.map((x) => { x["color"] = "#" + ('00000' + (Math.random() * (1 << 24) | 0).toString(16)).slice(-6); return x; });
         setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: false, selectedItemsSecond: [], selectedObjectsSecond: [], countriesList: countries }));
 
@@ -248,7 +250,9 @@ const ComparisonComponent = (props) => {
         // console.log("someListList");
         // console.log(someListsList);
         await someListsList.forEach(async (aList) => {
+
             var result = await fetch(`${process.env.REACT_APP_API_BASE_URL}lists/${aList.id}/history`,
+
                 {
                     method: 'GET',
                     headers:
@@ -271,7 +275,9 @@ const ComparisonComponent = (props) => {
         console.log(someListId);
         console.log(offsetsquery);
         const tokens = JSON.parse(localStorage.getItem('userInfo'));
+
         const countriesWithOffset = await fetch(`${process.env.REACT_APP_API_BASE_URL}lists/${someListId}/history?offsets=${offsetsquery}`,
+
             {
                 method: 'GET',
                 headers:

@@ -39,7 +39,7 @@
         }
       }
     },
-    "/login": {
+    "/sessions/login": {
       "post": {
         "tags": [
           "session"
@@ -94,10 +94,11 @@
         }
       }
     },
-    "/logout": {
+    "/sessions/logout": {
+      "security": { "JWT": [] },
       "post": {
         "tags": [
-          "session"
+          "sessions"
         ],
         "summary": "Logout user",
         "description": "Finish session",
@@ -834,6 +835,98 @@
           }
         }
       }
+    },
+    "/lists/closer/latest": {
+      "get": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Gets latest values for the closer countries",
+        "description": "Returns the total of countries' latest values for the given list",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/latitude"
+          },
+          {
+            "$ref": "#/parameters/longitude"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A List",
+            "schema": {
+              "$ref": "#/definitions/Latest"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
+    },
+    "/lists/closer/history": {
+      "get": {
+        "tags": [
+          "lists"
+        ],
+        "summary": "Gets history for the closer countries",
+        "description": "Returns a list with the comparision of values for each country",
+        "parameters": [
+          {
+            "$ref": "#/parameters/authorization"
+          },
+          {
+            "$ref": "#/parameters/latitude"
+          },
+          {
+            "$ref": "#/parameters/longitude"
+          },
+          {
+            "$ref": "#/parameters/offsets"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The historic lists' values",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/Country"
+                  },
+                  {
+                    "properties": {
+                      "timeseries": {
+                        "$ref": "#/definitions/Timeseries"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400Response"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404Response"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500Response"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1155,6 +1248,12 @@
       "description": "Number of items returned by page",
       "type": "integer"
     },
+    "coordinate": {
+      "name": "limit",
+      "in": "query",
+      "description": "Number of items returned by page",
+      "type": "integer"
+    },
     "orderColumn": {
       "name": "order_column",
       "in": "query",
@@ -1258,6 +1357,18 @@
       "type": "string",
       "required": true,
       "example": "facebook"
+    },
+    "latitude": {
+      "name": "latitude",
+      "in": "query",
+      "description": "The latitude of the user GPS",
+      "type": "float"
+    },
+    "longitude": {
+      "name": "longitude",
+      "in": "query",
+      "description": "The longitude of the user GPS",
+      "type": "float"
     }
   }
 }
