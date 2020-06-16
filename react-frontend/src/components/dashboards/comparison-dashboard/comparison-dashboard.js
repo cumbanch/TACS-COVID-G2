@@ -104,6 +104,7 @@ const ComparisonComponent = (props) => {
     }
     const getTimeSeriesForGraphic = (someCountries, someSelection) => {
         var allTimeSeries = someCountries.flatMap((someCountry) => (mapTimeSeriesForGraphic(someCountry)));
+
         // console.log("allTimeSeries");
         // console.log(allTimeSeries);
         const groupedTimeSeries = lodash.groupBy(allTimeSeries, "date");
@@ -121,8 +122,10 @@ const ComparisonComponent = (props) => {
 
             return jsonForGraphic;
         });
+
         // console.log("timeSeriesForGraphic");
         // console.log(timeSeriesForGraphic);
+
         return lodash.orderBy(timeSeriesForGraphic, "name");
 
     };
@@ -234,6 +237,7 @@ const ComparisonComponent = (props) => {
         const result = await response.json();
         const list = result.data.length > 0 ? result.data : mock;
         return list.map(someList =>
+
             ({ id: someList.id, name: someList.name, countries: [] }))
 
     };
@@ -283,8 +287,9 @@ const ComparisonComponent = (props) => {
     }
     const handleOffsetChange = async (event, countryId) => {
         const countriesInSelect = params.selectedObjectsSecond;
+        const value = !event.target.value ? 0 : event.target.value;
         const countryMapped = countriesInSelect.map((someCountry) => {
-            if (someCountry.id == countryId) someCountry.offset = event.target.value;
+            if (someCountry.id == countryId) someCountry.offset = value;
             return someCountry;
         });
         const countriesWithOffset1 = await queryOffset(params.listSelect.find((x) => (params.selectedItemsFirst.includes(x.name))).id, "[" + countryMapped.map((c) => (`{"country_id":${c.id},"offset": ${c.offset}}`)).join(',') + "]");
@@ -293,10 +298,12 @@ const ComparisonComponent = (props) => {
 
         setOtherParams(Object.assign({}, params, { selectedObjectsSecond: countryMapped }));
 
+
     };
     useEffect(() => {
         async function FetchData() {
             const result = await getUserLists();
+
             populateLists(result);
             setOtherParams(Object.assign({}, params, { listSelect: result }));
         }
@@ -309,7 +316,9 @@ const ComparisonComponent = (props) => {
 
 
             <div style={{ display: "flex", flexFlow: "row", marginTop: 30 }}  >
+
                 <FormControl className={classes.formControl} style={{ maxWidth: '250px', minWidth: 120, marginInlineEnd: 50 }}>
+
                     <InputLabel id="demo-simple-select-label">{"Listas"}</InputLabel>
                     <Select
                         labelId="demo-mutiple-chip-label"
@@ -328,7 +337,9 @@ const ComparisonComponent = (props) => {
                         ))}
                     </Select>
                 </FormControl>
+
                 {!params.isCountryListDisabled ? <FormControl className={classes.formControl} style={{ maxWidth: '200px', minWidth: 120, marginInlineEnd: 50 }}>
+
                     <InputLabel id="demo-simple-select-label2">{"Paises"}</InputLabel>
                     <Select
                         labelId="demo-mutiple-chip-label2"
@@ -347,6 +358,7 @@ const ComparisonComponent = (props) => {
                         ))}
                     </Select>
                 </FormControl> : null}
+
             </div>
             <div style={{ display: "flex", flexFlow: "row", marginTop: 30 }}>
                 {params.selectedObjectsSecond.length == 0 ? null :
@@ -403,6 +415,7 @@ const ComparisonComponent = (props) => {
 
 
             </div>
+
 
         </div >
     );

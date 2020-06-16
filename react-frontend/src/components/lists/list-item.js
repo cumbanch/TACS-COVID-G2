@@ -6,20 +6,14 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import { ValidatorForm } from "react-form-validator-core";
-import ValidatableField from "../validation/validatable-field";
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import FlagIcon from '@material-ui/icons/Flag';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios';
 import { getUserAccessToken } from '../session-managment/utils';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import AddCountryDialog from '../lists/addCountry';
+import { useFormik } from 'formik';
 
 const useStyles = makeStyles((theme) => ({
   addCountry: {
@@ -32,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     alignSelf: 'flex-start',
+    fontSize: 'xx-large',
   },
   editButton: {
     marginTop: '13px',
@@ -41,18 +36,9 @@ const useStyles = makeStyles((theme) => ({
   editTitle: {
     backgroundColor: 'white',
     borderRadius: '5px',
+    fontSize: 'xx-large',
   }
 }));
-
-function createData(id, name) {
-  return { id, name };
-}
-
-let rows = [
-  createData(1, 'Canada'),
-  createData(2, 'Estados Unidos'),
-  createData(3, 'Mexico'),
-];
 
 const ListItemComponent = (props) => {
   const classes = useStyles();
@@ -60,7 +46,7 @@ const ListItemComponent = (props) => {
     editMode: false,
     listName: props.listName,
     listId: props.listId,
-    listItems: rows,
+    listItems: [],
     openDialog: false,
   });
 
@@ -68,26 +54,21 @@ const ListItemComponent = (props) => {
     setParams(Object.assign({}, params, { editMode: !params.editMode }));
   }
   
-  const uploadList = async () => {
-    const response = await axiosInstance.put('/lists/' + params.listId,
+  const uploadList = async (values) => {
+    await axiosInstance.put('/lists/' + params.listId,
       JSON.stringify(
         {
-          'name': params.listName,
+          'name': values.listName,
           'countries': params.listItems.map((country) => (country.id)),
         }
       ));
-    setParams(Object.assign({}, params, { editMode: !params.editMode }));
+    setParams(Object.assign({}, params, { listName: values.listName, editMode: !params.editMode }));
   }
 
-  const handleInputChange = (event) => {
-    setParams(Object.assign({}, params, { newCountry: event.target.value }));
-  }
-
-  const handleSubmit = () => {
+  const handleSubmit = (country) => {
     let countryList = params.listItems;
-    countryList.push(selectedCountry);
+    countryList.push(country);
     setParams(Object.assign({}, params, { listItems: countryList }));
-    console.log(params.listItems);
     closeModal();
   }
   
@@ -107,7 +88,6 @@ const ListItemComponent = (props) => {
   }
   
   const [countries, setCountries] = useState([]);
-  const [selectedCountry, selectCountry] = React.useState({});
   
     const axiosInstance = axios.create({
       baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -116,10 +96,6 @@ const ListItemComponent = (props) => {
         'Authorization': getUserAccessToken(),
       }
     });
-
-  const onChangeListName = (event) => {
-    setParams(Object.assign({}, params, { listName: event.target.value }));
-  }
 
   useEffect(() => {
 
@@ -140,32 +116,69 @@ const ListItemComponent = (props) => {
     fetchData();
     getListInfo();
   }, [])
+  
+  const validate = values => {
+    const errors = {};
+    if (!values.listName) {
+      errors.listName = 'Required';
+    } 
+    if (params.listItems.length == 0){
+      errors.listItems = "Debe seleccionar al menos un país"
+    }
+    console.log(errors);
+    return errors;
+  };
+  
+  const formik = useFormik({
+    initialValues: {
+      listName: params.listName,
+    },
+    validate,
+    enableReinitialize: true,
+    onSubmit: values => {
+      uploadList(values);
+    },
+    validateOnChange: false,
+    validateOnBlur: false
+  });
 
   return (
     <div className="container layout-dashboard" style={{backgroundColor: "#1C8EF9"}}>
       <div className={classes.content}>
-        {!params.editMode
-          ? <h1 className={classes.title}>{params.listName}</h1>
-          : <TextField id="outlined-basic" className={classes.editTitle}
-              defaultValue={params.listName} variant="outlined"
-              onChange={onChangeListName}
-            />
-        }
-        <div style={{textAlign: "left"}}>
-          {!params.editMode? (
-            <div>
-              <Button onClick={() => changeMode()}
-                className={classes.editButton} variant="contained">
-                Editar
-              </Button>
-            </div>
-          ): (
-              <Button onClick={() => uploadList()}
-                className={classes.editButton} variant="contained">
+        <form onSubmit={formik.handleSubmit}>
+
+          {formik.errors.firstName ? <div>El campo nombre es requerido</div> : null}
+
+          {!params.editMode
+            ? <h1 className={classes.title}>{params.listName}</h1>
+            : <input
+            id="listName"
+            name="listName"
+            type="text"
+            className={classes.editTitle}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            value={formik.values.listName}
+          />
+          }
+
+          <div style={{textAlign: "left"}}>
+            {!params.editMode? (
+              <div>
+                <Button onClick={() => changeMode()}
+                  className={classes.editButton} variant="contained">
+                  Editar
+                </Button>
+              </div>
+            ): (
+              <Button 
+                className={classes.editButton} type="submit" variant="contained">
                 Guardar
               </Button>
-          )}
-        </div>
+            )}
+          </div>
+          {formik.errors.listItems ? <div>Seleccione por lo menos un país</div> : null}
+        </form>
         <Paper>
           <List>
             {params.listItems.map((row) =>(
@@ -199,48 +212,7 @@ const ListItemComponent = (props) => {
         </Paper>
       </div>
 
-      <Dialog open={params.openDialog} onClose={closeModal} aria-labelledby="form-dialog-title">
-        <Paper className={classes.addCountry}>
-          <ValidatorForm
-            instantValidate={false}
-            onSubmit={handleSubmit}
-          >
-            <div>
-              <DialogTitle id="form-dialog-title">Agregar país</DialogTitle>
-              <DialogContent>
-                <Autocomplete
-                  id="country-select"
-                  value={selectedCountry}
-                  style={{ width: 300 }}
-                  options={countries}
-                  classes={{
-                    option: classes.option,
-                  }}
-                  onChange={(event, country) => {
-                    selectCountry(country);
-                  }}
-                  autoHighlight
-                  autoComplete='new-password'
-                  getOptionLabel={(option) => option.name}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Choose a country"
-                      variant="outlined"
-                      autoComplete='new-password'
-                    />
-                  )}
-                />
-              </DialogContent>
-
-            </div>
-            <DialogActions>
-              <label onClick={closeModal} className="btn">Cancelar</label>
-              <button type="submit" className="btn btn-primary">Agregar</button>
-            </DialogActions>
-          </ValidatorForm>
-        </Paper>
-      </Dialog>
+      <AddCountryDialog openCountryDialog={params.openDialog} addCountry={handleSubmit} closeCountryModal={closeModal}/>
     </div>
   );
 }

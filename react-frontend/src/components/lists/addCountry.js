@@ -18,35 +18,38 @@ const useStyles = makeStyles((theme) => ({
   content: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '25px',
-  },
-  title: {
-    alignSelf: 'flex-start',
-  },
-  editButton: {
-    alignSelf: 'flex-start',
-    marginBottom: '20px',
-  }
+  padding: '25px',
+},
+title: {
+  alignSelf: 'flex-start',
+},
+editButton: {
+  alignSelf: 'flex-start',
+  marginBottom: '20px',
+}
 }));
 
 const AddCountryDialog = (props) => {
   const classes = useStyles();
-  
+
   const [params, setParams] = useState({
     openCountryDialog: props.openCountryDialog,
     newCountry: props.addCountry,
+    showError: false,
   });
-  
+
   const [selectedCountry, selectCountry] = React.useState({});
   const [countries, setCountries] = useState([]);
-
   const addNewCountry = () => {
-    props.addCountry(selectedCountry);
     console.log(selectedCountry);
-
+    if (  !selectedCountry || Object.keys(selectedCountry).length === 0){
+      setParams(Object.assign({}, params, { showError: true }));
+      return
+    }
+    props.addCountry(selectedCountry);
     props.closeCountryModal();
   }
-  
+
   useEffect(() => {
     const axiosInstance = axios.create({
       baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -61,7 +64,6 @@ const AddCountryDialog = (props) => {
       const response = await axiosInstance.get('/countries?page=1&limit=253');
       const listOfCountries = response.data.data;
       setCountries(listOfCountries);
-      console.log(listOfCountries);
     }
     fetchData();
   }, [])
@@ -69,43 +71,40 @@ const AddCountryDialog = (props) => {
   return (
     <Dialog id="new-country-dialog" open={props.openCountryDialog} onClose={props.closeCountryModal} aria-labelledby="form-dialog-title">
       <Paper className={classes.addCountry}>
-        <ValidatorForm
-          instantValidate={false}
-          onSubmit={addNewCountry}
-        >
-          <div>
-            <DialogTitle>Agregar país</DialogTitle>
-            <DialogContent>
-              <Autocomplete
-                id="country-select"
-                value={selectedCountry}
-                style={{ width: 300 }}
-                options={countries}
-                classes={{
-                  option: classes.option,
-                }}
-                onChange={(event, country) => {
-                  selectCountry(country);
-                }}
-                autoHighlight
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Choose a country"
-                    variant="outlined"
-                    autoComplete='new-password'
-                  />
-                )}
-              />
-            </DialogContent>
+        <div>
+          <DialogTitle>Agregar país</DialogTitle>
+          <DialogContent>
+            <Autocomplete
+              id="country-select"
+              value={selectedCountry}
+              style={{ width: 300 }}
+              options={countries}
+              classes={{
+                option: classes.option,
+              }}
+              onChange={(event, country) => {
+                selectCountry(country);
+                setParams(Object.assign({}, params, { showError: false }));
+              }}
+              autoHighlight
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Choose a country"
+                  variant="outlined"
+                  autoComplete='new-password'
+                />
+              )}
+            />
+          {params.showError ? <div>Seleccione un país de la lista</div> : null}
+          </DialogContent>
 
-          </div>
-          <DialogActions>
-            <label onClick={props.closeCountryModal} className="btn">Cancelar</label>
-            <button type="submit" className="btn btn-primary">Agregar</button>
-          </DialogActions>
-        </ValidatorForm>
+        </div>
+        <DialogActions>
+          <label onClick={props.closeCountryModal} className="btn">Cancelar</label>
+          <button onClick={addNewCountry} className="btn btn-primary">Agregar</button>
+        </DialogActions>
       </Paper>
     </Dialog>
   )
