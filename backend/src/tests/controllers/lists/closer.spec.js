@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-//const { mockSuccessGetLatest, mockSuccessGetHistoryForCloser } = require('../../mocks/covid');
+// const { mockSuccessGetLatest, mockSuccessGetHistoryForCloser } = require('../../mocks/covid');
 const { mockSuccessGetHistoryForCloser } = require('../../mocks/covid');
 const { getResponse, truncateDatabase } = require('../../utils/app');
 const { createCountry } = require('../../factories/countries');
