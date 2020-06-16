@@ -1,0 +1,16 @@
+FROM node:10.14.1-alpine
+
+WORKDIR /usr/local/
+
+COPY package*.json /usr/local/
+
+RUN npm install
+
+COPY src /usr/local/src
+COPY public /usr/local/public
+
+RUN npm run build:dev
+
+ENV NODE_ENV production
+
+CMD  npm run start:heroku
