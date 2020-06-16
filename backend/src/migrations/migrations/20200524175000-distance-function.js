@@ -12,8 +12,7 @@ module.exports = {
       ],
       'decimal',
       'plpgsql',
-      'RETURN ACOS(SIN(PI()*CAST(lat1 AS DECIMAL)/180.0)*SIN(PI()*CAST(lat2 AS DECIMAL)/180.0)+COS(PI()*CAST(lat1 AS DECIMAL)/180.0)*COS(PI()*CAST(lat2 AS DECIMAL)/180.0)*COS(PI()*CAST(lon2 AS DECIMAL)/180.0-PI()*CAST(lon1 AS DECIMAL)/180.0))*6371*1000;',
-      ['IMMUTABLE', 'LEAKPROOF']
+      'RETURN ACOS(SIN(PI()*CAST(lat1 AS DECIMAL)/180.0)*SIN(PI()*CAST(lat2 AS DECIMAL)/180.0)+COS(PI()*CAST(lat1 AS DECIMAL)/180.0)*COS(PI()*CAST(lat2 AS DECIMAL)/180.0)*COS(PI()*CAST(lon2 AS DECIMAL)/180.0-PI()*CAST(lon1 AS DECIMAL)/180.0))*6371*1000;'
     ),
   down: queryInterface =>
     queryInterface.dropFunction('distance', [
