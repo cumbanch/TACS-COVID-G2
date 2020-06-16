@@ -12,9 +12,10 @@ const SideMenuAdminComponent = () => {
 
     return (
         <Menu outerContainerId={"root"} pageWrapId={"navCovid"}  >
-            <MenuItemComponent anId="Usuarios" anIcon={userIcon} urlRef="/admin/usuarios" aTitle="USUARIOS" />
-            <MenuItemComponent anId="Paises" anIcon={countryIcon} urlRef="/admin/paises" aTitle="PAISES" />
-            <MenuItemComponent anId="Listas" anIcon={listIcon} urlRef="/admin/listas" aTitle="LISTAS" />
+            <MenuItemComponent anId="Users" anIcon={userIcon} urlRef="/admin/users" aTitle="USERS INFO" />
+            <MenuItemComponent anId="Compare" anIcon={userIcon} urlRef="/admin/compare" aTitle="LISTS COMPARE" />
+            <MenuItemComponent anId="Countries" anIcon={countryIcon} urlRef="/admin/countries" aTitle="COUNTRIES INFO" />
+            <MenuItemComponent anId="Lists" anIcon={listIcon} urlRef="/admin/lists" aTitle="REGISTERED LISTS" />
         </Menu>
     )
 }
