@@ -18,6 +18,7 @@ const config = {
     port: process.env.PORT || 8080,
     defaultPagination: process.env.DEFAULT_PAGINATION || 20,
     momentTimezone: process.env.MOMENT_TIMEZONE || 'America/Buenos_Aires',
+    defaultCloserCountries: process.env.CLOSER_COUNTRIES || 3,
     initialPasswordAdmin: process.env.PASSWORD_ADMIN
   },
   logger: {

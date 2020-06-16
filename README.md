@@ -135,7 +135,7 @@ In this mode you can connect your host machine to the database with the followin
  - **Database name**: `POSTGRES_DB`
 
 <a id="testing"></a>
- ##### Testing mode
+ ##### Testing mode 
  
 You have to run `npm run testing`.
 The container (in foreground) will be run the tests, print the coverage and finally will be stopped.
@@ -153,7 +153,7 @@ Inside this section we assume the `react-frontend` folder as the root of the pro
 ### Starting the frontend
 
 The frontend consists in one container for the React application. You need to create an environment file (`.env.development`) in the root folder and then run `npm start`. These are the environment variables:
-
+ 
 <a id="environment-fe"></a>
 #### Environment variables
 You can also check the `.env.example` file for guidance:

@@ -38,12 +38,13 @@
   },
   "scripts": {
     "start:dev": "react-scripts start",
-    "start": "docker-compose up -d",
+    "start:docker": "docker-compose up -d",
     "build:dev": "react-scripts build",
-    "build": "docker-compose build",
+    "build": "react-scripts build",
+    "build:docker": "docker-compose build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start:heroku": "serve -s build"
+    "start": "serve -s build"
   },
   "eslintConfig": {
     "extends": [

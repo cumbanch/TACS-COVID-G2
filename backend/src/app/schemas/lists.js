@@ -1,6 +1,8 @@
 const pagination = require('./pagination');
 const authorization = require('./authorizations');
 const {
+  latitude,
+  longitude,
   listName,
   countries,
   listId,
@@ -160,5 +162,17 @@ exports.compareListsSchema = {
     toInt: true,
     trim: true,
     errorMessage: listIdArray
+  }
+};
+
+exports.getCloserCountriesSchema = {
+  ...authorization,
+  latitude: { in: ['query'], isString: true, trim: true, errorMessage: latitude, optional: false },
+  longitude: { in: ['query'], isString: true, trim: true, errorMessage: longitude, optional: false },
+  offsets: {
+    in: ['query'],
+    isJSON: true,
+    optional: true,
+    errorMessage: offsets
   }
 };

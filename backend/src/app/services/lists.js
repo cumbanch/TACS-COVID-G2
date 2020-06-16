@@ -6,9 +6,27 @@ const { List, CountryByList, sequelizeInstance, Country } = require('../models')
 const { databaseError, notFound, invalidCountries, invalidListIds } = require('../errors/builders');
 const { getCountry } = require('./countries');
 const { deleteUndefined } = require('../utils/objects');
+const { defaultCloserCountries } = require('../../config').server;
+
 const {
   USER_ROLES: { REGULAR, ADMIN }
 } = require('../utils/constants');
+
+exports.getCloserCountries = params => {
+  logger.info(`Attempting to get list of closer countries with params: ${inspect(params)}`);
+  const sequelizeOptions = {
+    limit: defaultCloserCountries,
+    order: sequelizeInstance.literal(
+      `distance(latitude, longitude, '${params.latitude}', '${params.longitude}')`
+    )
+  };
+  return Country.findAndCountAll(sequelizeOptions).catch(err => {
+    /* istanbul ignore next */
+    logger.error(inspect(err));
+    /* istanbul ignore next */
+    throw databaseError(`Error getting closer countries, reason: ${err.message}`);
+  });
+};
 
 const getCountriesToDeleteAndCreate = (list, attributes) => {
   const countriesByListToDelete = list.countryByList.filter(
@@ -29,14 +47,12 @@ const getCountriesToDeleteAndCreate = (list, attributes) => {
 };
 
 exports.getAllList = params => {
-  logger.debug(params);
   logger.info(`Attempting to get lists with filters: ${inspect(params)}`);
   const filters = {
     // eslint-disable-next-line
     createdAt: (params.createdAt ? (params.userType === ADMIN ? { [Op.gte]: params.createdAt } : undefined) : undefined),
     userId: params.userType === REGULAR ? params.userId : undefined
   };
-  logger.debug(filters);
   return List.findAndCountAll({
     where: deleteUndefined(filters),
     offset: (params.page - 1) * params.limit,
