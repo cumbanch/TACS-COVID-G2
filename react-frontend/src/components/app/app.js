@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './app.css'
 import NavBarComponent from '../dashboards/navbar-Cov'
@@ -26,13 +26,21 @@ const AppComponent = (props) => {
 
     const isUserLogged = () => (isUserLogin());
     const [params, setparams] = useState({ isUserLogged: isUserLogin() });
+    const [userType, setUserType] = useState(null);
+
+    useEffect(() => {
+        const checkAndSetUserType = () => {
+            if (getUserTypeFromLocalStorage() !== null) {
+                setUserType(getUserTypeFromLocalStorage());
+            }
+        }
+        checkAndSetUserType();
+    }, [userType]);
 
     return (
         <div className="App" id="root">
-
-            <SideMenuComponent userType={"admin"} />
+            <SideMenuComponent userType={userType} />
             <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
-
 
             <Switch>
                 <Route exact path='/' component={SignInComponent} />
@@ -47,7 +55,8 @@ const AppComponent = (props) => {
                 <Route path="/home" component={HomeComponent} />
                 {/* Admin Routes */}
                 <Route path="/admin/users" component={UsersInfo} />
-                <Route path="/admin/compare" component={CompareListsOfDifferentUsers} />
+                {/* <Route path="/admin/compare" component={CompareListsOfDifferentUsers} /> */}
+                <Route path="/admin/compare" component={PageNotFound} />
                 <Route path="/admin/countries" component={CountriesTable} />
                 <Route path="/admin/lists" component={ListsOfCountriesInfo} />
                 <Route component={PageNotFound} />

@@ -4,6 +4,9 @@ import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
+import axios from 'axios';
+import { getUserAccessToken } from '../../../session-managment/utils';
+import MyTreeItem from './MyTreeItem'
 
 const useStyles = makeStyles({
     root: {
@@ -13,7 +16,7 @@ const useStyles = makeStyles({
     },
 });
 
-const ControlledTreeView = () => {
+const ControlledTreeView = (props) => {
     const classes = useStyles();
     const [expanded, setExpanded] = useState([]);
     const [selected, setSelected] = useState([]);
@@ -36,15 +39,13 @@ const ControlledTreeView = () => {
             onNodeToggle={handleToggle}
             onNodeSelect={handleSelect}
         >
-            <TreeItem nodeId="1" label="akdn1k8">
-                <TreeItem nodeId="2" label="Calendar" />
-                <TreeItem nodeId="3" label="Chrome" />
-                <TreeItem nodeId="4" label="Webstorm" />
-            </TreeItem>
-            <TreeItem nodeId="5" label="pepita">
-                <TreeItem nodeId="8" label="index.js" />
-                <TreeItem nodeId="9" label="tree-view.js" />
-            </TreeItem>
+            {
+                props.users.map(user => {
+                    return (
+                        <MyTreeItem user={user} />
+                    )
+                })
+            }
         </TreeView>
     );
 }
