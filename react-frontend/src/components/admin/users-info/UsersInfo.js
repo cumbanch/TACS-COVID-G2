@@ -9,8 +9,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import axios from 'axios';
-import { getUserAccessToken } from '../session-managment/utils';
-import CheckUserInfoButton from './user-info/CheckUserInfoButton';
+import { getUserAccessToken } from '../../session-managment/utils';
+import CheckUserInfoButton from './CheckUserInfoButton';
 
 const useStyles = makeStyles({
     root: {
@@ -60,14 +60,14 @@ const UsersInfo = () => {
             }
         });
 
-        const fetchData = async () => {
+        const fetchUsers = async () => {
             const response = await axiosInstance.get('/users?page=1&limit=100&order_column=id&order_type=ASC');
-            const listOfUsers = response.data.data
+            const listOfUsers = response.data.data;
             const usersRows = prepareToShow(listOfUsers);
             setRows(usersRows);
         }
 
-        fetchData();
+        fetchUsers();
     }, []);
 
     const handleChangePage = (event, newPage) => {

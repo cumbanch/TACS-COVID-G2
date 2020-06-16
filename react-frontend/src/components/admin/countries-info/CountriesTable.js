@@ -10,7 +10,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import axios from 'axios';
 import { getUserAccessToken } from '../../session-managment/utils';
-import AmountButton from '../countries-info/AmountButton'
+import CheckNumberOfInterestedUsersButton from './CheckNumberOfInterestedUsersButton'
 import './CountriesTable.css'
 
 const useStyles = makeStyles({
@@ -29,7 +29,7 @@ const columns = [
     { id: 'iso2', label: 'ISO2', align: 'center' },
     {
         id: 'buttonCheckAmount',
-        label: 'Number of interested persons',
+        label: 'Number of interested users',
         align: 'center',
     }
 ];
@@ -44,7 +44,7 @@ const prepareToShow = (countries) => countries.map(country => {
         <img src={`https://www.countryflags.io/${country.iso_2}/shiny/32.png`} alt={country.name} />,
         country.name,
         country.iso_2,
-        <AmountButton idCountry={country.id} iso2={country.iso_2} countryName={country.name} />);
+        <CheckNumberOfInterestedUsersButton idCountry={country.id} iso2={country.iso_2} countryName={country.name} />);
 });
 
 const CountriesTable = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios';
-import './list-info.css'
-import DropMenuComponent from './drop-menu';
+import './ListsOfCountriesInfo.css'
+import DropMenuOfRegisteredLists from './DropMenuOfRegisteredLists';
 import 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
@@ -18,7 +18,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-const ListInfoComponent = () => {
+const ListsOfCountriesInfo = () => {
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [amount, setAmount] = useState(99);
@@ -59,7 +59,7 @@ const ListInfoComponent = () => {
                 <h2>Number of registered lists</h2>
                 <h4>frequently asked dates</h4>
                 <p>Select one of the following options to see the number of registered lists at the date entered</p>
-                <DropMenuComponent />
+                <DropMenuOfRegisteredLists />
                 <br />
                 <h4>Select specific date</h4>
                 <p>If you need check another date you can use the follow date-picker. Just select a date in it and
@@ -113,4 +113,4 @@ const ListInfoComponent = () => {
     )
 }
 
-export default ListInfoComponent;
+export default ListsOfCountriesInfo;

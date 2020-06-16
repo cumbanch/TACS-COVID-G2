@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function DropMenuComponent() {
+const DropMenuOfRegisteredLists = () => {
     const classes = useStyles();
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [open, setOpen] = useState(false);
@@ -104,3 +104,5 @@ export default function DropMenuComponent() {
         </div>
     );
 }
+
+export default DropMenuOfRegisteredLists;

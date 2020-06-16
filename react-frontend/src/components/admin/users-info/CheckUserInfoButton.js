@@ -7,11 +7,12 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import ListsCountriesTable from './ListsCountriesTable';
 
-const AmountButton = (props) => {
+const CheckUserInfoButton = (props) => {
 
     const [open, setOpen] = useState(false);
-    const [amount, setAmount] = useState(null);
+    const [userInfo, setUserInfo] = useState([]);
 
     const handleClose = () => {
         setOpen(false);
@@ -27,8 +28,8 @@ const AmountButton = (props) => {
         });
 
         const fetchData = async () => {
-            const result = await axiosInstance.get(`/countries/${props.idCountry}/interested_users`);
-            setAmount(result.data.amount);
+            const result = await axiosInstance.get(`/users/${props.userId}`);
+            setUserInfo(result.data.lists);
         }
         fetchData();
         setOpen(true);
@@ -37,7 +38,7 @@ const AmountButton = (props) => {
     return (
         <div>
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-                Check amount
+                Check
             </Button>
             <Dialog
                 open={open}
@@ -45,12 +46,11 @@ const AmountButton = (props) => {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{`Number of interested users about ${props.countryName}(${props.iso2})`}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{`User: ${props.userEmail}`}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {`The number of users that follow ${props.countryName} at`}
-                        {` ${(new Date).toTimeString()} are ${amount}`}
-                        {console.log("render date")}
+                        <ListsCountriesTable lists={userInfo} />
+                        Total registered lists: {userInfo.length}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -63,5 +63,5 @@ const AmountButton = (props) => {
     )
 }
 
-export default AmountButton;
+export default CheckUserInfoButton;
 

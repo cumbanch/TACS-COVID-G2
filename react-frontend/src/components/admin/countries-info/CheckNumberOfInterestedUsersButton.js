@@ -7,12 +7,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import ListsCountriesTable from '../user-info/ListsCountriesTable';
 
-const CheckUserInfoButton = (props) => {
+const CheckNumberOfInterestedUsersButton = (props) => {
 
     const [open, setOpen] = useState(false);
-    const [userInfo, setUserInfo] = useState([]);
+    const [amount, setAmount] = useState(null);
 
     const handleClose = () => {
         setOpen(false);
@@ -28,8 +27,8 @@ const CheckUserInfoButton = (props) => {
         });
 
         const fetchData = async () => {
-            const result = await axiosInstance.get(`/users/${props.userId}`);
-            setUserInfo(result.data.lists);
+            const result = await axiosInstance.get(`/countries/${props.idCountry}/interested_users`);
+            setAmount(result.data.amount);
         }
         fetchData();
         setOpen(true);
@@ -38,7 +37,7 @@ const CheckUserInfoButton = (props) => {
     return (
         <div>
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-                Check amount
+                Check
             </Button>
             <Dialog
                 open={open}
@@ -46,11 +45,12 @@ const CheckUserInfoButton = (props) => {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{`User: ${props.userEmail}`}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{`Number of interested users about ${props.countryName}(${props.iso2})`}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <ListsCountriesTable lists={userInfo} />
-                        Total of registered lists: {userInfo.length}
+                        {`The number of users that follow ${props.countryName} at`}
+                        {` ${(new Date).toTimeString()} are ${amount}`}
+                        {console.log("render date")}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -63,5 +63,5 @@ const CheckUserInfoButton = (props) => {
     )
 }
 
-export default CheckUserInfoButton;
+export default CheckNumberOfInterestedUsersButton;
 

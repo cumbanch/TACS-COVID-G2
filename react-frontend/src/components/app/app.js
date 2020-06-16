@@ -16,10 +16,11 @@ import PageNotFound from '../dashboards/page-not-found'
 import { isUserLogin } from "../session-managment/utils"
 import PrivateRoute from "../session-managment/private-route"
 import SideMenuComponent from "../side-menu/side-menu"
-import UsersInfo from "../admin/UsersInfo"
-import ListInfoComponent from "../admin/list-info/list-info"
+import UsersInfo from "../admin/users-info/UsersInfo"
+import ListsOfCountriesInfo from "../admin/list-info/ListsOfCountriesInfo"
 import { getUserTypeFromLocalStorage } from './../session-managment/utils';
 import CountriesTable from '../admin/countries-info/CountriesTable';
+import CompareListsOfDifferentUsers from '../admin/compare-lists-of-different-users/CompareListsOfDifferentUsers';
 
 const AppComponent = (props) => {
 
@@ -46,9 +47,9 @@ const AppComponent = (props) => {
                 <Route path="/home" component={HomeComponent} />
                 {/* Admin Routes */}
                 <Route path="/admin/users" component={UsersInfo} />
-                <Route path="/admin/compare" component={PageNotFound} />
+                <Route path="/admin/compare" component={CompareListsOfDifferentUsers} />
                 <Route path="/admin/countries" component={CountriesTable} />
-                <Route path="/admin/lists" component={ListInfoComponent} />
+                <Route path="/admin/lists" component={ListsOfCountriesInfo} />
                 <Route component={PageNotFound} />
             </Switch>
 
