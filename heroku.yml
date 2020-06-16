@@ -1,0 +1,4 @@
+build:
+    docker: 
+        backend: ./backend/Dockerfile
+        web: ./react-frontend/Dockerfile.production

@@ -4,9 +4,9 @@ const Sequelize = require('sequelize');
 
 const config = require('../../config');
 
-const { dialect, username, password, port, database, host, logging } = config.database;
+const { url, dialect, username, password, port, database, host, logging } = config.database;
 const options = { logging: logging.toLowerCase() === 'true' };
-const connectionString = `${dialect}://${username}:${password}@${host}:${port}/${database}`;
+const connectionString = url || `${dialect}://${username}:${password}@${host}:${port}/${database}`;
 const basename = path.basename(__filename);
 const db = {};
 const sequelize = new Sequelize(connectionString, options);
