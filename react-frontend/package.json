@@ -31,7 +31,8 @@
     "react-scripts": "3.4.1",
     "recharts": "^1.8.5",
     "serve": "^11.3.2",
-    "typeface-roboto": "0.0.75"
+    "typeface-roboto": "0.0.75",
+    "snyk": "^1.342.1"
   },
   "scripts": {
     "start:dev": "react-scripts start",
@@ -40,7 +41,9 @@
     "build": "docker-compose build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start:heroku": "serve -s build"
+    "start:heroku": "serve -s build",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "eslintConfig": {
     "extends": [
@@ -62,5 +65,6 @@
   },
   "devDependencies": {
     "concurrently": "^5.1.0"
-  }
+  },
+  "snyk": true
 }
