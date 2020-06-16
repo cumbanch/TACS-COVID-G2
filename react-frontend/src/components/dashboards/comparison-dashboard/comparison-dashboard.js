@@ -56,6 +56,7 @@ const ComparisonComponent = (props) => {
         // console.log(event.target.value);
         if (event.target.value == []) setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: true, selectedItemsSecond: [] }));
         const countries = getDependantDataArrayByProperty(params.listSelect);
+        countries.map((x) => { x["color"] = "#" + ('00000' + (Math.random() * (1 << 24) | 0).toString(16)).slice(-6); return x; });
         setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: false, selectedItemsSecond: [], selectedObjectsSecond: [], countriesList: countries }));
 
     };
@@ -103,8 +104,8 @@ const ComparisonComponent = (props) => {
     }
     const getTimeSeriesForGraphic = (someCountries, someSelection) => {
         var allTimeSeries = someCountries.flatMap((someCountry) => (mapTimeSeriesForGraphic(someCountry)));
-        console.log("allTimeSeries");
-        console.log(allTimeSeries);
+        // console.log("allTimeSeries");
+        // console.log(allTimeSeries);
         const groupedTimeSeries = lodash.groupBy(allTimeSeries, "date");
         const keys = Object.keys(groupedTimeSeries);
         const timeSeriesForGraphic = keys.map((someDate) => {
@@ -120,8 +121,8 @@ const ComparisonComponent = (props) => {
 
             return jsonForGraphic;
         });
-        console.log("timeSeriesForGraphic");
-        console.log(timeSeriesForGraphic);
+        // console.log("timeSeriesForGraphic");
+        // console.log(timeSeriesForGraphic);
         return lodash.orderBy(timeSeriesForGraphic, "name");
 
     };
@@ -233,13 +234,15 @@ const ComparisonComponent = (props) => {
         const result = await response.json();
         const list = result.data.length > 0 ? result.data : mock;
         return list.map(someList =>
-            ({ id: someList.id, name: someList.name, countries: someList.countries }))
+            ({ id: someList.id, name: someList.name, countries: [] }))
 
     };
     const populateLists = async (someListsList) => {
         const tokens = JSON.parse(localStorage.getItem('userInfo'));
-        someListsList.forEach(async (aList) => (
-            aList.countries = await fetch(`http://localhost:8080/lists/${aList.id}/history`,
+        // console.log("someListList");
+        // console.log(someListsList);
+        await someListsList.forEach(async (aList) => {
+            var result = await fetch(`http://localhost:8080/lists/${aList.id}/history`,
                 {
                     method: 'GET',
                     headers:
@@ -249,13 +252,20 @@ const ComparisonComponent = (props) => {
                         'Access-Control-Allow-Origin': 'https://localhost:8080',
                         'Authorization': tokens.access_token
                     }
-                })
-        ));
+                }).then(response => response.json());
+            console.log(result);
+            aList.countries = result;
+        }
+        );
+        // console.log("populate")
+        // console.log(someListsList);
 
     }
     const queryOffset = async (someListId, offsetsquery) => {
+        console.log(someListId);
+        console.log(offsetsquery);
         const tokens = JSON.parse(localStorage.getItem('userInfo'));
-        const countriesWithOffset = await fetch(`http://localhost:8080/lists/${someListId}/history/${offsetsquery}`,
+        const countriesWithOffset = await fetch(`http://localhost:8080/lists/${someListId}/history?offsets=${offsetsquery}`,
             {
                 method: 'GET',
                 headers:
@@ -265,17 +275,29 @@ const ComparisonComponent = (props) => {
                     'Access-Control-Allow-Origin': 'https://localhost:8080',
                     'Authorization': tokens.access_token
                 }
-            });
-        setOtherParams(Object.assign({}, params, { selectedObjectsSecond: {} }))
+            }).then(response => response.json());
+        console.log(countriesWithOffset);
+        console.log("countriesWithOffset");
+        return countriesWithOffset;
+        // setOtherParams(Object.assign({}, params, { selectedObjectsSecond: {} }))
     }
-    const handleOffsetChange = (event) => {
-        console.log("handleoffsetChange");
-        console.log(event);
+    const handleOffsetChange = async (event, countryId) => {
+        const countriesInSelect = params.selectedObjectsSecond;
+        const countryMapped = countriesInSelect.map((someCountry) => {
+            if (someCountry.id == countryId) someCountry.offset = event.target.value;
+            return someCountry;
+        });
+        const countriesWithOffset1 = await queryOffset(params.listSelect.find((x) => (params.selectedItemsFirst.includes(x.name))).id, "[" + countryMapped.map((c) => (`{"country_id":${c.id},"offset": ${c.offset}}`)).join(',') + "]");
+        countryMapped.map((someCountry) => { someCountry.timeseries = countriesWithOffset1.find((x) => (x.id == someCountry.id)).timeseries; return someCountry })
+
+
+        setOtherParams(Object.assign({}, params, { selectedObjectsSecond: countryMapped }));
+
     };
     useEffect(() => {
         async function FetchData() {
             const result = await getUserLists();
-            //populateLists(result);
+            populateLists(result);
             setOtherParams(Object.assign({}, params, { listSelect: result }));
         }
         if (params.listSelect.length == 0) FetchData();
@@ -287,7 +309,7 @@ const ComparisonComponent = (props) => {
 
 
             <div style={{ display: "flex", flexFlow: "row", marginTop: 30 }}  >
-                <FormControl className={classes.formControl} style={{ maxWidth: '200px', minWidth: 75, marginInlineEnd: 50 }}>
+                <FormControl className={classes.formControl} style={{ maxWidth: '250px', minWidth: 120, marginInlineEnd: 50 }}>
                     <InputLabel id="demo-simple-select-label">{"Listas"}</InputLabel>
                     <Select
                         labelId="demo-mutiple-chip-label"
@@ -306,7 +328,7 @@ const ComparisonComponent = (props) => {
                         ))}
                     </Select>
                 </FormControl>
-                {!params.isCountryListDisabled ? <FormControl className={classes.formControl} style={{ maxWidth: '200px', minWidth: 75, marginInlineEnd: 50 }}>
+                {!params.isCountryListDisabled ? <FormControl className={classes.formControl} style={{ maxWidth: '200px', minWidth: 120, marginInlineEnd: 50 }}>
                     <InputLabel id="demo-simple-select-label2">{"Paises"}</InputLabel>
                     <Select
                         labelId="demo-mutiple-chip-label2"
@@ -333,20 +355,17 @@ const ComparisonComponent = (props) => {
                             <Grid item xs>
 
                                 <div className={classes.demo}>
+                                    <List >
+                                        {/* {params.selectedItemsSecond.map((x) => (<input type={"number"} name={x} />))} */}
+                                        {params.selectedItemsSecond.map((x) => (<ListItem>
+                                            <ListItemText
+                                                primary={params.selectedObjectsSecond.find((y) => (y.id == x)).name}
+                                            />
+                                            <input onKeyUp={(e) => (handleOffsetChange(e, x))} type={"number"} name={x.id} defaultValue={params.selectedObjectsSecond.find((y) => (y.id == x)).offset} />
+                                        </ListItem>))
+                                        }
+                                    </List>
 
-                                    <form onSubmit={handleOffsetChange}>
-                                        <List >
-                                            {/* {params.selectedItemsSecond.map((x) => (<input type={"number"} name={x} />))} */}
-                                            {params.selectedItemsSecond.map((x) => (<ListItem>
-                                                <ListItemText
-                                                    primary={params.selectedObjectsSecond.find((y) => (y.id == x)).name}
-                                                />
-                                                <input type={"number"} name={x.id} defaultValue={params.selectedObjectsSecond.find((y) => (y.id == x)).offset} />
-                                            </ListItem>))
-                                            }
-                                        </List>
-                                        <input type="submit" value="Submit" />
-                                    </form>
                                 </div>
                             </Grid></Grid>
                     </div>
@@ -373,7 +392,7 @@ const ComparisonComponent = (props) => {
                                     <YAxis />
                                     <Tooltip />
                                     <Legend />
-                                    {params.countriesList.map((someCountry) => (<Line type="monotone" connectNulls={true} dataKey={someCountry.name} stroke={"#" + ('00000' + (Math.random() * (1 << 24) | 0).toString(16)).slice(-6)} activeDot={{ r: 8 }} />))}
+                                    {params.countriesList.map((someCountry) => (<Line type="monotone" connectNulls={true} dataKey={someCountry.name} stroke={someCountry.color} activeDot={{ r: 8 }} />))}
 
 
                                 </LineChart>
