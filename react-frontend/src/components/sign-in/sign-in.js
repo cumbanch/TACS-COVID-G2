@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import { ValidatorForm } from "react-form-validator-core";
 import ValidatableField from "../validation/validatable-field";
@@ -6,17 +6,23 @@ import useSignUpForm from "../../hooks/custom-hooks";
 import { SignIn } from "../../services/sessions";
 import AlertPasswordIncorrectComponent from "../sign-in/login-incorrect";
 import jwtDecode from "jwt-decode";
+import { getUserTypeFromLocalStorage } from '../session-managment/utils';
 
 const SignInComponent = () => {
 
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
+    const [wasRefreshed, setWasRefreshed] = useState(false);
 
     const signIn = () => {
         return SignIn(inputs)
             .then((res) => {
                 if (res.status == 200) {
                     localStorage.setItem('userInfo', JSON.stringify(res.data));
-                    setRedirect('/graphics');
+                    const userType = getUserTypeFromLocalStorage();
+                    if (userType === "regular")
+                        setRedirect('/graphics');
+                    else if (userType === "admin")
+                        setRedirect('/admin/users');
                 }
             })
             .catch((error) => { // Incorrect password (Error 401)

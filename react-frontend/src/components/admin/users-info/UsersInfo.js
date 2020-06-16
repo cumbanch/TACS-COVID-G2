@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState, useEffect } from 'react'
 import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,8 +10,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import axios from 'axios';
 import { getUserAccessToken } from '../../session-managment/utils';
-import CheckNumberOfInterestedUsersButton from './CheckNumberOfInterestedUsersButton'
-import './CountriesTable.css'
+import CheckUserInfoButton from './CheckUserInfoButton';
 
 const useStyles = makeStyles({
     root: {
@@ -23,31 +22,30 @@ const useStyles = makeStyles({
 });
 
 const columns = [
-    { id: 'idCountry', label: '#' },
-    { id: 'flag', label: 'Flag' },
-    { id: 'name', label: 'Name' },
-    { id: 'iso2', label: 'ISO2', align: 'center' },
+    { id: 'id', label: '#' },
+    { id: 'user', label: 'User' },
+    { id: 'lastAccess', label: 'Last access', minWidth: '230px' },
     {
-        id: 'buttonCheckAmount',
-        label: 'Number of interested users',
-        align: 'center',
+        id: 'checkInfoUserButton',
+        label: 'Check user lists',
+        align: 'center'
     }
 ];
 
-const createData = (idCountry, flag, name, iso2, buttonCheckAmount) => {
-    return { idCountry, flag, name, iso2, buttonCheckAmount };
+const createData = (id, user, lastAccess, checkInfoUserButton) => {
+    return { id, user, lastAccess, checkInfoUserButton };
 };
 
-const prepareToShow = (countries) => countries.map(country => {
+const prepareToShow = (users) => users.map(user => {
     return createData(
-        country.id,
-        <img src={`https://www.countryflags.io/${country.iso_2}/shiny/32.png`} alt={country.name} />,
-        country.name,
-        country.iso_2,
-        <CheckNumberOfInterestedUsersButton idCountry={country.id} iso2={country.iso_2} countryName={country.name} />);
+        user.id,
+        user.email,
+        user.last_access,
+        <CheckUserInfoButton userId={user.id} userEmail={user.email} />
+    )
 });
 
-const CountriesTable = () => {
+const UsersInfo = () => {
     const classes = useStyles();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -62,15 +60,15 @@ const CountriesTable = () => {
             }
         });
 
-        const fetchData = async () => {
-            const response = await axiosInstance.get('/countries?page=1&limit=253');
-            const listOfCountries = response.data.data
-            const countriesRows = prepareToShow(listOfCountries);
-            setRows(countriesRows);
+        const fetchUsers = async () => {
+            const response = await axiosInstance.get('/users?page=1&limit=100&order_column=id&order_type=ASC');
+            const listOfUsers = response.data.data;
+            const usersRows = prepareToShow(listOfUsers);
+            setRows(usersRows);
         }
 
-        fetchData();
-    }, [])
+        fetchUsers();
+    }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -130,7 +128,7 @@ const CountriesTable = () => {
                 </Paper>
             </div>
         </div>
-    );
+    )
 }
 
-export default CountriesTable;
+export default UsersInfo;

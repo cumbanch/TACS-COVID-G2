@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './app.css'
 import NavBarComponent from '../dashboards/navbar-Cov'
@@ -16,22 +16,31 @@ import PageNotFound from '../dashboards/page-not-found'
 import { isUserLogin } from "../session-managment/utils"
 import PrivateRoute from "../session-managment/private-route"
 import SideMenuComponent from "../side-menu/side-menu"
-import UsersInfo from "../admin/UsersInfo"
-import ListInfoComponent from "../admin/list-info/list-info"
+import UsersInfo from "../admin/users-info/UsersInfo"
+import ListsOfCountriesInfo from "../admin/list-info/ListsOfCountriesInfo"
 import { getUserTypeFromLocalStorage } from './../session-managment/utils';
 import CountriesTable from '../admin/countries-info/CountriesTable';
+import CompareListsOfDifferentUsers from '../admin/compare-lists-of-different-users/CompareListsOfDifferentUsers';
 
 const AppComponent = (props) => {
 
     const isUserLogged = () => (isUserLogin());
     const [params, setparams] = useState({ isUserLogged: isUserLogin() });
+    const [userType, setUserType] = useState(null);
+
+    useEffect(() => {
+        const checkAndSetUserType = () => {
+            if (getUserTypeFromLocalStorage() !== null) {
+                setUserType(getUserTypeFromLocalStorage());
+            }
+        }
+        checkAndSetUserType();
+    }, [userType]);
 
     return (
         <div className="App" id="root">
-
-            <SideMenuComponent userType={"admin"} />
+            <SideMenuComponent userType={userType} />
             <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
-
 
             <Switch>
                 <Route exact path='/' component={SignInComponent} />
@@ -41,13 +50,15 @@ const AppComponent = (props) => {
                 <Route path="/graphics" component={ComparisonComponent} />
                 {/* <PrivateRoute path="/users" component={UsersComponent} /> */}
                 <PrivateRoute path="/countries" component={CountriesComponent} />
-                <Route path="/lists" component={ListsComponent} />
-                <Route path="/list/:id" component={ListItemComponent} />
-                <Route path="/home" component={HomeComponent} />
+                <PrivateRoute path="/lists" component={ListsComponent} />
+                <PrivateRoute path="/list/:id" component={ListItemComponent} />
+                <PrivateRoute path="/home" component={HomeComponent} />
                 {/* Admin Routes */}
-                <Route path="/admin/usuarios" component={UsersInfo} />
-                <Route path="/admin/paises" component={CountriesTable} />
-                <Route path="/admin/listas" component={PageNotFound} />
+                <PrivateRoute path="/admin/users" component={UsersInfo} />
+                {/* <Route path="/admin/compare" component={CompareListsOfDifferentUsers} /> */}
+                <PrivateRoute path="/admin/compare" component={PageNotFound} />
+                <PrivateRoute path="/admin/countries" component={CountriesTable} />
+                <PrivateRoute path="/admin/lists" component={ListsOfCountriesInfo} />
                 <Route component={PageNotFound} />
             </Switch>
 

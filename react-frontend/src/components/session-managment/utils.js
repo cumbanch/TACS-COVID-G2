@@ -44,8 +44,12 @@ export const getUserEmailFromLocalStorage = () => {
 }
 
 export const getUserTypeFromLocalStorage = () => {
-    const idToken = getUserTokens().id_token;
-    const idTokenDecoded = jwtDecode(idToken);
-    const userType = idTokenDecoded.user_type;
-    return userType;
+    try {
+        const idToken = getUserTokens().id_token;
+        const idTokenDecoded = jwtDecode(idToken);
+        const userType = idTokenDecoded.user_type;
+        return userType;
+    } catch {
+        return null;
+    }
 }
