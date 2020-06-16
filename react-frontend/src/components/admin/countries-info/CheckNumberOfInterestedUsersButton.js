@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { getUserAccessToken } from '../../session-managment/utils'
 import Button from '@material-ui/core/Button';
@@ -8,7 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-const AmountButton = (props) => {
+const CheckNumberOfInterestedUsersButton = (props) => {
 
     const [open, setOpen] = useState(false);
     const [amount, setAmount] = useState(null);
@@ -37,7 +37,7 @@ const AmountButton = (props) => {
     return (
         <div>
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-                Check amount
+                Check
             </Button>
             <Dialog
                 open={open}
@@ -48,9 +48,8 @@ const AmountButton = (props) => {
                 <DialogTitle id="alert-dialog-title">{`Number of interested users about ${props.countryName}(${props.iso2})`}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {`The number of users that follow ${props.countryName} at`}
-                        {` ${(new Date).toTimeString()} are ${amount}`}
-                        {console.log("render date")}
+                        {`The number of users that follows ${props.countryName} at`}
+                        {` ${(new Date).toTimeString()} is ${amount}`}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -63,5 +62,5 @@ const AmountButton = (props) => {
     )
 }
 
-export default AmountButton;
+export default CheckNumberOfInterestedUsersButton;
 
