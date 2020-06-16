@@ -25,6 +25,7 @@
     "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-burger-menu": "^2.6.13",
+    "formik": "2.1.4",
     "react-dom": "^16.13.1",
     "react-facebook-login": "^4.1.1",
     "react-form-validator-core": "^0.6.5",
@@ -32,6 +33,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "recharts": "^1.8.5",
+    "serve": "^11.3.2",
     "typeface-roboto": "0.0.75"
   },
   "scripts": {
@@ -40,7 +42,8 @@
     "build:dev": "react-scripts build",
     "build": "docker-compose build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start:heroku": "serve -s build"
   },
   "eslintConfig": {
     "extends": [
