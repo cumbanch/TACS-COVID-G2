@@ -38,6 +38,8 @@ exports.listIdArray = `${integerMessage(
   'every list_id in lists array'
 )}, be greater than zero ${containedMessage('body')}`;
 exports.countryIdParam = `${integerMessage('country id')} ${containedMessage('path')}`;
+exports.latitude = `${stringMessage('latitude')} ${containedMessage('body')}`;
+exports.longitude = `${stringMessage('longitude')} ${containedMessage('body')}`;
 exports.externalToken = `${stringMessage(externalTokenHeaderName)} ${containedMessage('headers')}`;
 exports.externalProviderName = `${stringMessage(externalProviderNameHeaderName)}, one of ${Object.values(
   EXTERNAL_PROVIDERS

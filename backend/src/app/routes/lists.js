@@ -11,7 +11,9 @@ const {
   deleteCountriesByList,
   getLatest,
   getHistory,
-  compareLists
+  compareLists,
+  getLatestOfCloserCountries,
+  getHistoryOfCloserCountries
 } = require('../controllers/lists');
 const {
   getListsSchema,
@@ -24,7 +26,8 @@ const {
   getCountriesByListSchema,
   addCountryInListSchema,
   deleteCountryInListSchema,
-  compareListsSchema
+  compareListsSchema,
+  getCloserCountriesSchema
 } = require('../schemas/lists');
 const { validateSchemaAndFail, bodyNotEmpty } = require('../middlewares/params_validator');
 const { checkTokenAndSetUser, checkPermissions } = require('../middlewares/authorization');
@@ -42,6 +45,18 @@ exports.init = app => {
     checkTokenAndSetUser,
     checkPermissions,
     compareLists
+  );
+  listRouter.get(
+    '/closer/latest',
+    validateSchemaAndFail(getCloserCountriesSchema),
+    checkTokenAndSetUser,
+    getLatestOfCloserCountries
+  );
+  listRouter.get(
+    '/closer/history',
+    validateSchemaAndFail(getCloserCountriesSchema),
+    checkTokenAndSetUser,
+    getHistoryOfCloserCountries
   );
   listRouter.put(
     '/:id',

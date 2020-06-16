@@ -9,7 +9,8 @@ const {
   createCountriesByList,
   deleteCountriesByList,
   getListWithCountries,
-  countAndCheckLists
+  countAndCheckLists,
+  getCloserCountries
 } = require('../services/lists');
 const { paginateResponse } = require('../serializers/paginations');
 const {
@@ -22,7 +23,9 @@ const {
   createCountriesByListMapper,
   deleteCountriesByListMapper,
   getHistoryMapper,
-  getLatestMapper
+  getLatestMapper,
+  getLatestCloserCountriesMapper,
+  getHistoryCloserMapper
 } = require('../mappers/lists');
 const { notFound } = require('../errors/builders');
 const { getListSerializer, getHistorySerializer, compareListsSerializer } = require('../serializers/lists');
@@ -103,15 +106,39 @@ exports.getLatest = (req, res, next) => {
     .catch(next);
 };
 
+exports.getLatestOfCloserCountries = (req, res, next) => {
+  const filters = getLatestCloserCountriesMapper(req);
+  return getCloserCountries(filters)
+    .then(countries => getLatestByList({ countries: countries.rows }))
+    .then(latestResult =>
+      res.status(200).send(
+        latestResult || {
+          confirmed: 0,
+          deaths: 0,
+          recovered: 0
+        }
+      )
+    )
+    .catch(next);
+};
+
 exports.getHistory = (req, res, next) => {
   const params = getHistoryMapper(req);
   return getListWithCountries(params)
     .then(list => {
       if (!list) throw notFound('List not found');
-      return getTimeseriesByList(list, params.offsets).then(historyResult => {
-        res.status(200).send(getHistorySerializer(historyResult));
-      });
+      return getTimeseriesByList(list, params.offsets).then(historyResult =>
+        res.status(200).send(getHistorySerializer(historyResult))
+      );
     })
+    .catch(next);
+};
+
+exports.getHistoryOfCloserCountries = (req, res, next) => {
+  const params = getHistoryCloserMapper(req);
+  return getCloserCountries(params)
+    .then(countries => getTimeseriesByList({ countries: countries.rows }, params.offsets))
+    .then(historyResult => res.status(200).send(getHistorySerializer(historyResult)))
     .catch(next);
 };
 
