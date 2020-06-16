@@ -50,15 +50,15 @@ const AppComponent = (props) => {
                 <Route path="/graphics" component={ComparisonComponent} />
                 {/* <PrivateRoute path="/users" component={UsersComponent} /> */}
                 <PrivateRoute path="/countries" component={CountriesComponent} />
-                <Route path="/lists" component={ListsComponent} />
-                <Route path="/list/:id" component={ListItemComponent} />
-                <Route path="/home" component={HomeComponent} />
+                <PrivateRoute path="/lists" component={ListsComponent} />
+                <PrivateRoute path="/list/:id" component={ListItemComponent} />
+                <PrivateRoute path="/home" component={HomeComponent} />
                 {/* Admin Routes */}
-                <Route path="/admin/users" component={UsersInfo} />
+                <PrivateRoute path="/admin/users" component={UsersInfo} />
                 {/* <Route path="/admin/compare" component={CompareListsOfDifferentUsers} /> */}
-                <Route path="/admin/compare" component={PageNotFound} />
-                <Route path="/admin/countries" component={CountriesTable} />
-                <Route path="/admin/lists" component={ListsOfCountriesInfo} />
+                <PrivateRoute path="/admin/compare" component={PageNotFound} />
+                <PrivateRoute path="/admin/countries" component={CountriesTable} />
+                <PrivateRoute path="/admin/lists" component={ListsOfCountriesInfo} />
                 <Route component={PageNotFound} />
             </Switch>
 

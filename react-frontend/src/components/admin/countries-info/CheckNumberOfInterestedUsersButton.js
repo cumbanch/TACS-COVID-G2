@@ -48,9 +48,8 @@ const CheckNumberOfInterestedUsersButton = (props) => {
                 <DialogTitle id="alert-dialog-title">{`Number of interested users about ${props.countryName}(${props.iso2})`}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {`The number of users that follow ${props.countryName} at`}
-                        {` ${(new Date).toTimeString()} are ${amount}`}
-                        {console.log("render date")}
+                        {`The number of users that follows ${props.countryName} at`}
+                        {` ${(new Date).toTimeString()} is ${amount}`}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

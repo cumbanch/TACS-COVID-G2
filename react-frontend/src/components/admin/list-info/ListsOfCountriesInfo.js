@@ -57,7 +57,7 @@ const ListsOfCountriesInfo = () => {
         <div className="auth-wrapper">
             <div className="box-content">
                 <h2>Number of registered lists</h2>
-                <h4>frequently asked dates</h4>
+                <h4>Frequently asked dates</h4>
                 <p>Select one of the following options to see the number of registered lists at the date entered</p>
                 <DropMenuOfRegisteredLists />
                 <br />
