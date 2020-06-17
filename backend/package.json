@@ -54,7 +54,7 @@
     "express-validator": "^6.5.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
-    "moment-timezone": "^0.5.28",
+    "moment-timezone": "^0.5.31",
     "pg": "^8.0.2",
     "pino": "^6.1.1",
     "pino-pretty": "^4.0.0",
