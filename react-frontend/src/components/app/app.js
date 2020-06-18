@@ -24,27 +24,30 @@ import CompareListsOfDifferentUsers from '../admin/compare-lists-of-different-us
 
 const AppComponent = (props) => {
 
-    const isUserLogged = () => (isUserLogin());
-    const [params, setparams] = useState({ isUserLogged: isUserLogin() });
+    const [isUserLogged, setIsUserLogged] = useState(false);
     const [userType, setUserType] = useState(null);
 
-    useEffect(() => {
-        const checkAndSetUserType = () => {
-            if (getUserTypeFromLocalStorage() !== null) {
-                setUserType(getUserTypeFromLocalStorage());
-            }
-        }
-        checkAndSetUserType();
-    }, [userType]);
+    // useEffect(() => {
+    //     const checkAndSetUserType = () => {
+    //         if (getUserTypeFromLocalStorage() !== null) {
+    //             setUserType(getUserTypeFromLocalStorage());
+    //         }
+    //     }
+    //     checkAndSetUserType();
+    // }, [userType]);
+
+    const setUserIsLogged = () => {
+        setIsUserLogged(true);
+    }
 
     return (
         <div className="App" id="root">
             <SideMenuComponent userType={userType} />
-            <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
+            <NavBarComponent id="navCovid" isUserLogged={isUserLogged} />
 
             <Switch>
                 <Route exact path='/' component={SignInComponent} />
-                <Route path="/sign-in" component={SignInComponent} />
+                <Route path="/sign-in" render={() => <SignInComponent setUserIsLoggedInApp={() => { setIsUserLogged(true); }} />} />
                 <Route path="/sign-up" component={SignUpComponent} />
                 <Route path="/log-out" component={SignUpComponent} />
                 <Route path="/graphics" component={ComparisonComponent} />

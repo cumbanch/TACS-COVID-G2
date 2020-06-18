@@ -8,7 +8,7 @@ import AlertPasswordIncorrectComponent from "../sign-in/login-incorrect";
 import jwtDecode from "jwt-decode";
 import { getUserTypeFromLocalStorage } from '../session-managment/utils';
 
-const SignInComponent = () => {
+const SignInComponent = (props) => {
 
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
     const [wasRefreshed, setWasRefreshed] = useState(false);
@@ -19,6 +19,7 @@ const SignInComponent = () => {
                 if (res.status == 200) {
                     localStorage.setItem('userInfo', JSON.stringify(res.data));
                     const userType = getUserTypeFromLocalStorage();
+                    props.setUserIsLoggedInApp();
                     if (userType === "regular")
                         setRedirect('/graphics');
                     else if (userType === "admin")

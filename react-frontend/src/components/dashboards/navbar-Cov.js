@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from 'react-router-dom'
-import { isUserLogin, logOut } from '../session-managment/utils'
+import { getIfUserIsLogged, logOut } from '../session-managment/utils'
 import NavBarUserComponent from '../dashboards/nav-bar-user'
 import FacebookLoginButton from '../sign-in/FacebookLogin/FacebookLoginButton'
 
