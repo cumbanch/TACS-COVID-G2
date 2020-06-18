@@ -24,30 +24,30 @@ import CompareListsOfDifferentUsers from '../admin/compare-lists-of-different-us
 
 const AppComponent = (props) => {
 
-    const isUserLogged = () => (isUserLogin());
-    const [params, setparams] = useState({ isUserLogged: isUserLogin() });
+    const [isUserLogged, setIsUserLogged] = useState(false);
     const [userType, setUserType] = useState(null);
 
-    useEffect(() => {
-        const checkAndSetUserType = () => {
-            if (getUserTypeFromLocalStorage() !== null) {
-                setUserType(getUserTypeFromLocalStorage());
-            }
-        }
-        checkAndSetUserType();
-    }, [userType]);
+    const handleLogin = (anUserType) => {
+        setIsUserLogged(true);
+        setUserType(anUserType);
+    }
+
+    const handleLogout = () => {
+        setIsUserLogged(false);
+        setUserType(null);
+    }
 
     return (
         <div className="App" id="root">
             <SideMenuComponent userType={userType} />
-            <NavBarComponent id="navCovid" isUserLogged={params.isUserLogged} />
+            <NavBarComponent id="navCovid" isUserLogged={isUserLogged} handleLogout={handleLogout} />
 
             <Switch>
-                <Route exact path='/' component={SignInComponent} />
-                <Route path="/sign-in" component={SignInComponent} />
+                <Route exact path='/' render={() => <SignInComponent handleLogin={handleLogin} />} />
+                <Route path="/sign-in" render={() => <SignInComponent handleLogin={handleLogin} />} />
                 <Route path="/sign-up" component={SignUpComponent} />
                 <Route path="/log-out" component={SignUpComponent} />
-                <Route path="/graphics" component={ComparisonComponent} />
+                <PrivateRoute path="/graphics" component={ComparisonComponent} />
                 {/* <PrivateRoute path="/users" component={UsersComponent} /> */}
                 <PrivateRoute path="/countries" component={CountriesComponent} />
                 <PrivateRoute path="/lists" component={ListsComponent} />

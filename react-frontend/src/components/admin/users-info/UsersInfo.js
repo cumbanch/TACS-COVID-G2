@@ -11,6 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import axios from 'axios';
 import { getUserAccessToken } from '../../session-managment/utils';
 import CheckUserInfoButton from './CheckUserInfoButton';
+import './UsersInfo.css'
 
 const useStyles = makeStyles({
     root: {

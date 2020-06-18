@@ -4,7 +4,7 @@ import axios from 'axios';
 export const regularUser = "regular";
 export const adminUser = "admin";
 
-export const isUserLogin = () => {
+export const getIfUserIsLogged = () => {
     if (localStorage.getItem("userInfo") == null)
         return false;
     return true;
@@ -13,27 +13,19 @@ export const isUserLogin = () => {
 export const getUserTokens = () => JSON.parse(localStorage.getItem("userInfo"));
 export const getUserAccessToken = () => getUserTokens().access_token;
 
-export const logOut = () => {
+export const logOut = (handleLogout) => {
     const axiosInstance = axios.create({
         baseURL: process.env.REACT_APP_API_BASE_URL,
         timeout: 1000,
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': getUserTokens().access_token,
+            'Authorization': getUserAccessToken(),
         }
     });
 
     axiosInstance.post('/sessions/logout')
-        .then(response => {
-            console.log("The response to /logout was...");
-            console.log(response);
-        })
-        .catch(error => {
-            console.log("An error has occurred when post to /logout...");
-            console.log(error);
-        });
-
     localStorage.removeItem("userInfo");
+    handleLogout();
 }
 
 export const getUserEmailFromLocalStorage = () => {
