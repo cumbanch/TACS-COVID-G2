@@ -27,30 +27,27 @@ const AppComponent = (props) => {
     const [isUserLogged, setIsUserLogged] = useState(false);
     const [userType, setUserType] = useState(null);
 
-    // useEffect(() => {
-    //     const checkAndSetUserType = () => {
-    //         if (getUserTypeFromLocalStorage() !== null) {
-    //             setUserType(getUserTypeFromLocalStorage());
-    //         }
-    //     }
-    //     checkAndSetUserType();
-    // }, [userType]);
-
-    const setUserIsLogged = () => {
+    const handleLogin = (anUserType) => {
         setIsUserLogged(true);
+        setUserType(anUserType);
+    }
+
+    const handleLogout = () => {
+        setIsUserLogged(false);
+        setUserType(null);
     }
 
     return (
         <div className="App" id="root">
             <SideMenuComponent userType={userType} />
-            <NavBarComponent id="navCovid" isUserLogged={isUserLogged} />
+            <NavBarComponent id="navCovid" isUserLogged={isUserLogged} handleLogout={handleLogout} />
 
             <Switch>
-                <Route exact path='/' component={SignInComponent} />
-                <Route path="/sign-in" render={() => <SignInComponent setUserIsLoggedInApp={() => { setIsUserLogged(true); }} />} />
+                <Route exact path='/' render={() => <SignInComponent handleLogin={handleLogin} />} />
+                <Route path="/sign-in" render={() => <SignInComponent handleLogin={handleLogin} />} />
                 <Route path="/sign-up" component={SignUpComponent} />
                 <Route path="/log-out" component={SignUpComponent} />
-                <Route path="/graphics" component={ComparisonComponent} />
+                <PrivateRoute path="/graphics" component={ComparisonComponent} />
                 {/* <PrivateRoute path="/users" component={UsersComponent} /> */}
                 <PrivateRoute path="/countries" component={CountriesComponent} />
                 <PrivateRoute path="/lists" component={ListsComponent} />

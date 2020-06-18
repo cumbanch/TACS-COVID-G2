@@ -11,14 +11,15 @@ const NavBarComponent = (props) => {
         <nav className="navbar navbar-expand-lg navbar-light fixed-top" style={{ zIndex: "900" }} id={params.id}  >
             <div className="container" id="inner-container" >
 
-                <NavLink className="navbar-brand" to={"/"} style={{ textAlign: "right", width: "600px" }}> Covid 19 - TACS - G2 </NavLink>
+                {/* <NavLink className="navbar-brand" to={"/"} style={{ textAlign: "right", width: "600px" }}> Covid 19 - TACS - G2 </NavLink> */}
+                <div style={{ textAlign: "right", width: "600px" }}> Covid 19 - TACS - G2 </div>
                 <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
                     <ul className="navbar-nav ml-auto">
                         <li className="nav-item">
                             <NavBarUserComponent />
                         </li>
                         <li className="nav-item">
-                            <NavLink className="nav-link" to={"/sign-in"} onClick={logOut}>Log out</NavLink>
+                            <NavLink className="nav-link" to={"/sign-in"} onClick={() => logOut(props.handleLogout)}>Log out</NavLink>
                         </li>
                     </ul>
                 </div>
@@ -28,7 +29,7 @@ const NavBarComponent = (props) => {
         <nav className="navbar navbar-expand-lg navbar-light fixed-top" style={{ zIndex: "900" }} id={params.id}  >
             <div className="container" id="inner-container" >
 
-                <NavLink className="navbar-brand" to={"/"} style={{ textAlign: "right", width: "600px" }}> Covid 19 - TACS - G2 </NavLink>
+                <div style={{ textAlign: "right", width: "600px" }}> Covid 19 - TACS - G2 </div>
                 <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
                     <ul className="navbar-nav ml-auto">
                         <li className="nav-item">

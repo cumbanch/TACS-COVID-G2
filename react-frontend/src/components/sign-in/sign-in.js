@@ -19,7 +19,7 @@ const SignInComponent = (props) => {
                 if (res.status == 200) {
                     localStorage.setItem('userInfo', JSON.stringify(res.data));
                     const userType = getUserTypeFromLocalStorage();
-                    props.setUserIsLoggedInApp();
+                    props.handleLogin(userType);
                     if (userType === "regular")
                         setRedirect('/graphics');
                     else if (userType === "admin")

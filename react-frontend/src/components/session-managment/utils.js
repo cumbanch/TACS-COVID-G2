@@ -13,7 +13,7 @@ export const getIfUserIsLogged = () => {
 export const getUserTokens = () => JSON.parse(localStorage.getItem("userInfo"));
 export const getUserAccessToken = () => getUserTokens().access_token;
 
-export const logOut = () => {
+export const logOut = (handleLogout) => {
     const axiosInstance = axios.create({
         baseURL: process.env.REACT_APP_API_BASE_URL,
         timeout: 1000,
@@ -25,6 +25,7 @@ export const logOut = () => {
 
     axiosInstance.post('/sessions/logout')
     localStorage.removeItem("userInfo");
+    handleLogout();
 }
 
 export const getUserEmailFromLocalStorage = () => {

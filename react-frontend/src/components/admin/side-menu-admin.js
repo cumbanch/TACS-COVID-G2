@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { elastic as Menu } from 'react-burger-menu';
 import MenuItemComponent from '../dashboards/menu-item'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,12 +10,15 @@ const SideMenuAdminComponent = () => {
     const countryIcon = <FontAwesomeIcon icon={faGlobeAmericas} />
     const listIcon = <FontAwesomeIcon icon={faList} />
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const closeMenu = () => setIsMenuOpen(false);
+
     return (
-        <Menu outerContainerId={"root"} pageWrapId={"navCovid"}  >
-            <MenuItemComponent anId="Users" anIcon={userIcon} urlRef="/admin/users" aTitle="USERS INFO" />
-            <MenuItemComponent anId="Compare" anIcon={userIcon} urlRef="/admin/compare" aTitle="LISTS COMPARE" />
-            <MenuItemComponent anId="Countries" anIcon={countryIcon} urlRef="/admin/countries" aTitle="COUNTRIES INFO" />
-            <MenuItemComponent anId="Lists" anIcon={listIcon} urlRef="/admin/lists" aTitle="REGISTERED LISTS" />
+        <Menu isOpen={isMenuOpen} outerContainerId={"root"} pageWrapId={"navCovid"}  >
+            <MenuItemComponent handleIsMenuOpen={closeMenu} anId="Users" anIcon={userIcon} urlRef="/admin/users" aTitle="USERS INFO" />
+            <MenuItemComponent handleIsMenuOpen={closeMenu} anId="Compare" anIcon={userIcon} urlRef="/admin/compare" aTitle="LISTS COMPARE" />
+            <MenuItemComponent handleIsMenuOpen={closeMenu} anId="Countries" anIcon={countryIcon} urlRef="/admin/countries" aTitle="COUNTRIES INFO" />
+            <MenuItemComponent handleIsMenuOpen={closeMenu} anId="Lists" anIcon={listIcon} urlRef="/admin/lists" aTitle="REGISTERED LISTS" />
         </Menu>
     )
 }
