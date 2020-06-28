@@ -16,6 +16,12 @@ import axios from 'axios';
 import { getUserAccessToken } from '../session-managment/utils';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { Prompt } from 'react-router-dom';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import { Link } from "react-router-dom";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,6 +47,8 @@ const NewListComponent = (props) => {
   const [params, setParams] = React.useState({
     openCountryDialog: false,
     listName: "",
+    successfulCreatedListDialog: false,
+    createdList: false,
   });
   const [activeStep, setActiveStep] = React.useState(0);
   const [countries, setCountries] = React.useState([]);
@@ -110,14 +118,15 @@ const NewListComponent = (props) => {
 
   const postList = async (listName) => {
     try {
-    const response = await axiosInstance.post('/lists',
-      JSON.stringify(
-        {
-          'name': params.listName,
-          'countries': countries.map((country) => (country.id)),
-        }
-      ));
-    return response;
+      const response = await axiosInstance.post('/lists',
+        JSON.stringify(
+          {
+            'name': params.listName,
+            'countries': countries.map((country) => (country.id)),
+          }
+        ));
+      setParams(Object.assign({}, params, { successfulCreatedListDialog: true, createdList: true }));
+      return response;
     } catch (error){
       if (error.response)
         alert(error.response.data.message);
@@ -131,10 +140,15 @@ const NewListComponent = (props) => {
     countryList.splice( countryList.findIndex(c => c.id === id) , 1);
     setCountries(countryList);
   }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    postList();
+  }
   
 const getThirdStep = () => {
   return  <div>
-    <form onSubmit={formik.handleSubmit}>
+    <form>
       <input
         id="listName"
         name="listName"
@@ -159,8 +173,27 @@ const getThirdStep = () => {
         ))}
       </List>
       {formik.errors.listItems || !countries.length ? <div>Debe seleccionar al menos un país</div> : null}
-      <button type="submit" onClick={(event) => event.preventDefault()} className="btn btn-primary">Crear</button>
+      <button onClick={handleSubmit} className="btn btn-primary">Crear</button>
     </form>
+      <Dialog
+        open={params.successfulCreatedListDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            La lista se creó exitosamente
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary">
+              <Link to="/lists">
+            Volver a Mis Listas
+              </Link>
+
+          </Button>
+        </DialogActions>
+      </Dialog>
   </div>
 }
 
@@ -195,9 +228,6 @@ const getThirdStep = () => {
     },
     validate,
     enableReinitialize: true,
-    onSubmit: values => {
-      postList();
-    },
     validateOnChange: false,
     validateOnBlur: false
   });
@@ -205,7 +235,7 @@ const getThirdStep = () => {
   return (
     <div className={"container layout-dashboard " + classes.root}>
       <Prompt
-        when={params.listName !== "" || countries.length !== 0}
+        when={!params.createdList && (params.listName !== "" || countries.length !== 0)}
         message="Hay cambios sin guardar, deseas salir de la página?"
       />
       <Stepper activeStep={activeStep} alternativeLabel>

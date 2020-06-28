@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
-import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
 import axios from 'axios';
 import { getUserAccessToken } from '../session-managment/utils';
-import FlagIcon from '@material-ui/icons/Flag';
-import AddCountryDialog from '../lists/addCountry';
-import { useFormik } from 'formik';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -45,27 +37,11 @@ const ListsComponent = (props) => {
     selectedCountry: undefined,
   });
   
-  const handleInputChange = (event) => {
-    setParams(Object.assign({}, params, { newCountry: event.target.value }));
-  }
-
-  const handleSubmit = (values) => {
-    const listName = values.listName;
-    let response = postList(listName);
-    setParams(Object.assign({}, params, { newListCountries: [] }));
-    closeModal();
-    window.location.reload(false);
-  }
-  
   const closeModal = () => {
     setParams(Object.assign({}, params, { newCountry: undefined }));
     setParams(Object.assign({}, params, { openDialog: false }));
   }
   
-  const openModal = () => {
-    setParams(Object.assign({}, params, { openDialog: true }));
-  }
-
   const axiosInstance = axios.create({
     baseURL: process.env.REACT_APP_API_BASE_URL,
     headers: {
@@ -116,38 +92,12 @@ const ListsComponent = (props) => {
     if (!values.listName) {
       errors.listName = 'Required';
     } 
-    if (params.newListCountries.length == 0){
+    if (params.newListCountries.length === 0){
       errors.listItems = "Debe seleccionar al menos un país"
     }
 
     return errors;
   };
-
-  const formik = useFormik({
-    initialValues: {
-      listName: '',
-    },
-    validate,
-    onSubmit: values => {
-      handleSubmit(values);
-    },
-    validateOnChange: false,
-    validateOnBlur: false
-  });
-
-  const addCountry = (country) => {
-    let countryList = params.newListCountries;
-    countryList.push(country);
-    setParams(Object.assign({}, params, { newListCountries: countryList }));
-  }
-
-  const openCountryModal = () => {
-    setParams(Object.assign({}, params, { openCountryDialog: true }));
-  }
-  
-  const closeCountryModal = () => {
-    setParams(Object.assign({}, params, { openCountryDialog: false }));
-  }
 
   return (
     <div className={"container layout-dashboard " + classes.listDashboard}>
@@ -172,56 +122,7 @@ const ListsComponent = (props) => {
               </Link>
             </button>
           </ListItem>
-
         </List>
-
-      <Dialog open={params.openDialog} onClose={closeModal} aria-labelledby="form-dialog-title">
-        <Paper className={classes.addCountry}>
-
-
-          <div>
-            <DialogTitle id="new-list-dialog">Agregar nueva lista...</DialogTitle>
-            <DialogContent>
-              <form onSubmit={formik.handleSubmit}>
-                <input
-                  id="listName"
-                  name="listName"
-                  type="text"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.listName}
-                />
-                {formik.errors.listName ? <div>El campo nombre es requerido</div> : null}
-
-                <List>
-                  {params.newListCountries.map((row) =>(
-                    <ListItem>
-                      <ListItemIcon>
-                        <FlagIcon />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={row.name}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-                <label onClick={openCountryModal} className="btn btn-primary">Agregar país...</label>
-                {formik.errors.listItems ? <div>Debe seleccionar al menos un país</div> : null}
-                <AddCountryDialog openCountryDialog={params.openCountryDialog} addCountry={addCountry} closeCountryModal={closeCountryModal}/>
-
-                <DialogActions>
-                  <label onClick={closeModal} className="btn">Cancelar</label>
-                  <button type="submit" className="btn btn-primary">Crear</button>
-                </DialogActions>
-
-              </form>
-            </DialogContent>
-          </div>
-
-        </Paper>
-      </Dialog>
-
-
     </div>
 
   );

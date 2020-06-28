@@ -134,7 +134,7 @@ const ListItemComponent = (props) => {
     if (!values.listName) {
       errors.listName = 'Required';
     } 
-    if (params.listItems.length == 0){
+    if (params.listItems.length === 0){
       errors.listItems = "Debe seleccionar al menos un país"
     }
     return errors;
