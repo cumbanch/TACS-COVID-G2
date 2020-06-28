@@ -14,6 +14,8 @@ import AddCountryDialog from '../lists/addCountry';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { getUserAccessToken } from '../session-managment/utils';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import { Prompt } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -90,6 +92,7 @@ const NewListComponent = (props) => {
           <ListItemText
             primary={row.name}
           />
+          {/*<HighlightOffIcon onClick={() => removeItem(row.id)}/>*/} 
         </ListItem>
       ))}
       <label onClick={openCountryModal} className="btn btn-primary">Agregar país...</label>
@@ -121,7 +124,12 @@ const NewListComponent = (props) => {
       else 
         alert("Error desconocido")
     }
-
+  }
+  
+  const removeItem = (id) => {
+    let countryList = countries;
+    countryList.splice( countryList.findIndex(c => c.id === id) , 1);
+    setCountries(countryList);
   }
   
 const getThirdStep = () => {
@@ -136,6 +144,7 @@ const getThirdStep = () => {
         value={formik.values.listName}
         disabled="disabled"
       />
+      {formik.errors.listName || !params.listName ? <div>El campo nombre es requerido</div> : null}
       <List>
         {countries.map((row) =>(
           <ListItem>
@@ -145,10 +154,12 @@ const getThirdStep = () => {
             <ListItemText
               primary={row.name}
             />
+
           </ListItem>
         ))}
       </List>
-      <button type="submit" className="btn btn-primary">Crear</button>
+      {formik.errors.listItems || !countries.length ? <div>Debe seleccionar al menos un país</div> : null}
+      <button type="submit" onClick={(event) => event.preventDefault()} className="btn btn-primary">Crear</button>
     </form>
   </div>
 }
@@ -193,6 +204,10 @@ const getThirdStep = () => {
 
   return (
     <div className={"container layout-dashboard " + classes.root}>
+      <Prompt
+        when={params.listName !== "" || countries.length !== 0}
+        message="Hay cambios sin guardar, deseas salir de la página?"
+      />
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
           <Step key={label}>
@@ -217,8 +232,9 @@ const getThirdStep = () => {
               >
                 Back
               </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+              <Button style={{visibility: activeStep === steps.length - 1 ? 'hidden' : 'visible'}}
+                variant="contained" color="primary" onClick={handleNext}>
+                Siguiente
               </Button>
             </div>
           </div>

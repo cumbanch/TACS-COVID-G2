@@ -14,6 +14,7 @@ import axios from 'axios';
 import { getUserAccessToken } from '../session-managment/utils';
 import AddCountryDialog from '../lists/addCountry';
 import { useFormik } from 'formik';
+import { Prompt } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   addCountry: {
@@ -40,6 +41,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const arraysMatch = function (arr1, arr2) {
+	if (arr1.length !== arr2.length) return false;
+	for (var i = 0; i < arr1.length; i++) {
+		if (arr1[i] !== arr2[i]) return false;
+	}
+	return true;
+};
+
 const ListItemComponent = (props) => {
   const classes = useStyles();
   const [params, setParams] = useState({
@@ -48,6 +57,7 @@ const ListItemComponent = (props) => {
     listId: props.listId,
     listItems: [],
     openDialog: false,
+    origListItems: [],
   });
 
   const changeMode = () => {
@@ -61,8 +71,9 @@ const ListItemComponent = (props) => {
           'name': values.listName,
           'countries': params.listItems.map((country) => (country.id)),
         }
-      ));
-    setParams(Object.assign({}, params, { listName: values.listName, editMode: !params.editMode }));
+    ));
+    setParams(Object.assign({}, params, { listName: values.listName, editMode: !params.editMode,
+      origListItems: params.listItems, origListName: values.listName }));
   }
 
   const handleSubmit = (country) => {
@@ -110,8 +121,9 @@ const ListItemComponent = (props) => {
       const response = await axiosInstance.get('/lists/' + listId);
       const listInfo = response.data;
       const response2 = await axiosInstance.get('/lists/' + listId + '/countries');
-      const listItems = response2.data.data;
-      setParams(Object.assign({}, params, { listId : listId, listName: listInfo.name, listItems: listItems }));
+      let listItems = response2.data.data;
+      setParams(Object.assign({}, params, { listId : listId, listName: listInfo.name,
+        listItems: listItems, origListItems: listItems.slice(), origListName: listInfo.name }));
     }
     fetchData();
     getListInfo();
@@ -125,7 +137,6 @@ const ListItemComponent = (props) => {
     if (params.listItems.length == 0){
       errors.listItems = "Debe seleccionar al menos un país"
     }
-    console.log(errors);
     return errors;
   };
   
@@ -144,6 +155,10 @@ const ListItemComponent = (props) => {
 
   return (
     <div className="container layout-dashboard" style={{backgroundColor: "#1C8EF9"}}>
+      <Prompt
+        when={params.editMode && (!arraysMatch(params.listItems, params.origListItems) || formik.values.listName !== params.origListName)}
+        message="Hay cambios sin guardar, deseas salir de la página?"
+      />
       <div className={classes.content}>
         <form onSubmit={formik.handleSubmit}>
 
@@ -182,7 +197,7 @@ const ListItemComponent = (props) => {
         <Paper>
           <List>
             {params.listItems.map((row) =>(
-              <ListItem>
+              <ListItem key={row.id}>
                 <ListItemIcon>
                   <FlagIcon />
                 </ListItemIcon>
