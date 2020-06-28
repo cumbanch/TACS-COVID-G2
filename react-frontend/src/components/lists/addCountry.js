@@ -79,6 +79,7 @@ const AddCountryDialog = (props) => {
               value={selectedCountry}
               style={{ width: 300 }}
               options={countries}
+              freeSolo
               classes={{
                 option: classes.option,
               }}
@@ -87,11 +88,11 @@ const AddCountryDialog = (props) => {
                 setParams(Object.assign({}, params, { showError: false }));
               }}
               autoHighlight
-              getOptionLabel={(option) => option.name}
+              getOptionLabel={(option) => option.name || ""}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Choose a country"
+                  label="Escribe para seleccionar un país"
                   variant="outlined"
                   autoComplete='new-password'
                 />

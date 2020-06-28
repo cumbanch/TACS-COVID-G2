@@ -8,18 +8,15 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Dialog from '@material-ui/core/Dialog';
-import { ValidatorForm } from "react-form-validator-core";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import ValidatableField from "../validation/validatable-field";
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios';
 import { getUserAccessToken } from '../session-managment/utils';
 import FlagIcon from '@material-ui/icons/Flag';
 import AddCountryDialog from '../lists/addCountry';
 import { useFormik } from 'formik';
+
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -28,30 +25,13 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: '100px',
     margin: 'auto',
   },
-  paper: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    padding: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      padding: theme.spacing(3),
-    },
+  listDashboard: {
+    paddingTop: '50px',
   },
   listItem: {
     fontSize: 'x-large'
   }
 }));
-
-const rows = [
-  createData(0, 'Países Occidente'),
-  createData(1, 'Países Oriente'),
-  createData(2, 'Norteamérica'),
-];
-
-function createData(id, name) {
-  return { id, name };
-}
 
 const ListsComponent = (props) => {
   const classes = useStyles();
@@ -170,8 +150,7 @@ const ListsComponent = (props) => {
   }
 
   return (
-    <div className="container layout-dashboard" style={{backgroundColor: "#1C8EF9"}}>
-      <Paper className={classes.paper}>
+    <div className={"container layout-dashboard " + classes.listDashboard}>
         <h1>
           Mis Listas
         </h1>
@@ -186,19 +165,15 @@ const ListsComponent = (props) => {
               </ListItemIcon>
             </ListItem>
           ))}
-              <ListItem
-                onClick={openModal}
-              >
-                <ListItemIcon>
-                  <FontAwesomeIcon icon={faPlus} />
-                </ListItemIcon>
-                <ListItemText classes={{primary:classes.listItem}}
-                  primary="Crear nueva lista..."
+          <ListItem>
+            <button className="btn btn-primary">
+              <Link to="/new-list" className={classes.ListItem}>
+                Agregar nueva lista...
+              </Link>
+            </button>
+          </ListItem>
 
-                />
-              </ListItem>
         </List>
-      </Paper>
 
       <Dialog open={params.openDialog} onClose={closeModal} aria-labelledby="form-dialog-title">
         <Paper className={classes.addCountry}>
