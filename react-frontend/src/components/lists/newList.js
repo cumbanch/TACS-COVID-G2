@@ -140,15 +140,10 @@ const NewListComponent = (props) => {
     countryList.splice( countryList.findIndex(c => c.id === id) , 1);
     setCountries(countryList);
   }
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    postList();
-  }
   
 const getThirdStep = () => {
   return  <div>
-    <form>
+    <form onSubmit={formik.handleSubmit}>
       <input
         id="listName"
         name="listName"
@@ -173,7 +168,7 @@ const getThirdStep = () => {
         ))}
       </List>
       {formik.errors.listItems || !countries.length ? <div>Debe seleccionar al menos un país</div> : null}
-      <button onClick={handleSubmit} className="btn btn-primary">Crear</button>
+      <button type="submit" className="btn btn-primary">Crear</button>
     </form>
       <Dialog
         open={params.successfulCreatedListDialog}
@@ -228,6 +223,9 @@ const getThirdStep = () => {
     },
     validate,
     enableReinitialize: true,
+    onSubmit: values => {
+      postList();
+    },
     validateOnChange: false,
     validateOnBlur: false
   });

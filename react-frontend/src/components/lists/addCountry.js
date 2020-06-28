@@ -46,6 +46,7 @@ const AddCountryDialog = (props) => {
       return
     }
     props.addCountry(selectedCountry);
+    selectCountry({});
     props.closeCountryModal();
   }
 
