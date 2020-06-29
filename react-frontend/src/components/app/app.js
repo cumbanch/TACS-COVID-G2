@@ -57,7 +57,7 @@ const AppComponent = (props) => {
                 <PrivateRoute path="/home" component={HomeComponent} />
                 {/* Admin Routes */}
                 <PrivateRoute path="/admin/users" component={UsersInfo} />
-                {/* <Route path="/admin/compare" component={CompareListsOfDifferentUsers} /> */}
+                <PrivateRoute path="/admin/compare" component={CompareListsOfDifferentUsers} />
                 <PrivateRoute path="/admin/compare" component={PageNotFound} />
                 <PrivateRoute path="/admin/countries" component={CountriesTable} />
                 <PrivateRoute path="/admin/lists" component={ListsOfCountriesInfo} />

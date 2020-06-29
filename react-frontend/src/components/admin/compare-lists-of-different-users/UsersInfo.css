@@ -1,0 +1,8 @@
+.auth-wrapper-table {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+    padding-top: 100px;
+    padding-bottom: 50px;
+  }
