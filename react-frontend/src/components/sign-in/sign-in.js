@@ -8,6 +8,18 @@ import AlertPasswordIncorrectComponent from "../sign-in/login-incorrect";
 import jwtDecode from "jwt-decode";
 import { getUserTypeFromLocalStorage } from '../session-managment/utils';
 
+const setUserPosition = () => {
+    if (navigator.geolocation) {
+
+        navigator.geolocation.getCurrentPosition(function (position) {
+            localStorage.setItem("lat", position.coords.latitude);
+            localStorage.setItem("long", position.coords.longitude);
+        }, function (error) {
+            alert('ouch');
+        })
+    }
+}
+
 const SignInComponent = (props) => {
 
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
@@ -17,13 +29,14 @@ const SignInComponent = (props) => {
         return SignIn(inputs)
             .then((res) => {
                 if (res.status == 200) {
+                    setUserPosition();
                     localStorage.setItem('userInfo', JSON.stringify(res.data));
                     const userType = getUserTypeFromLocalStorage();
                     props.handleLogin(userType);
                     if (userType === "regular")
                         setRedirect('/graphics');
                     else if (userType === "admin")
-                        setRedirect('/admin/users');
+                        setRedirect('/admin/compare');
                 }
             })
             .catch((error) => { // Incorrect password (Error 401)

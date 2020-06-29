@@ -51,27 +51,15 @@ const ComparisonComponent = (props) => {
     const classes = useStyles();
     const theme = useTheme();
     const handleChangeFirst = (event) => {
-        // console.log("handleChangeFirst");
-        // console.log(params);
-        // console.log(event.target.value);
+
         if (event.target.value == []) setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: true, selectedItemsSecond: [] }));
-
         const countries = getDependantDataArrayByProperty(params.listSelect.filter((x) => (event.target.value.includes(x.name))));
-        console.log("countries");
-        console.log(countries);
-
         countries.map((x) => { x["color"] = "#" + ('00000' + (Math.random() * (1 << 24) | 0).toString(16)).slice(-6); return x; });
         setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: false, selectedItemsSecond: [], selectedObjectsSecond: [], countriesList: countries }));
-
+        console.log("Pase por handleChangeFirst");
     };
     const handleChangeSecond = (event) => {
-        // console.log("handleChangeSecond")
-        // console.log(event.target.value);
-        // console.log("params");
-        // console.log(params);
         const selectObjects = getCountriesFromList(getListFromId(params.listSelect, !params.selectedItemsFirst[0] ? undefined : params.selectedItemsFirst[0].id), event.target.value);
-        // console.log("select objects")
-        // console.log(selectObjects);
         selectObjects.map((someObject) => { someObject["offset"] = !someObject["offset"] ? 0 : someObject["offset"]; return someObject; });
         setOtherParams(Object.assign({}, params, { selectedItemsSecond: event.target.value, selectedObjectsSecond: selectObjects }));
     }
@@ -79,45 +67,40 @@ const ComparisonComponent = (props) => {
         return someArray.flatMap((someData) => (someData["countries"]));
     }
     const getCountriesFromList = (someList, countriesIds) => {
-        console.log("someList"); console.log(someList); console.log(countriesIds);
         if (!someList || !countriesIds) return [{ id: 0, name: "error", flag: "https://image.shutterstock.com/image-vector/original-simple-argentina-flag-isolated-260nw-516324706.jpg", timeseries: [] }];
         return params.countriesList.filter((someCountry) => (countriesIds.includes(someCountry.id)));
     }
     const [params, setOtherParams] = useState({
         isCountryListDisabled: true, listSelect: [], countriesList: [], selectedItemsFirst: [],
-        selectedItemsSecond: [], selectedObjectsSecond: [], selection: "deaths"
+        selectedItemsSecond: [], selectedObjectsSecond: [], selection: "confirmed"
     })
     const getListFromId = (someListArray, someListId) => {
-        // console.log("getListFromId");
-        // console.log(someListArray);
-        // console.log(someListId);
         if (!someListArray || !someListId) return [{ countries: [] }];
         return someListArray.find((someList) => someList.name == someListId)
     };
     const mapTimeSeriesForGraphic = (someCountry) => {
-        var testresult = someCountry.timeseries.map((someTimeSerie) =>
+        var testresult = someCountry.timeseries.map((someTimeSerie, index) =>
             ({
                 countryName: someCountry.name,
                 deaths: someTimeSerie.deaths,
                 recovered: someTimeSerie.recovered,
                 confirmed: someTimeSerie.confirmed,
-                date: someTimeSerie.date
+                date: index
             }));
 
         return testresult;
     }
-    const getTimeSeriesForGraphic = (someCountries, someSelection) => {
+    const getTimeSeriesForGraphic = (someCountries) => {
         var allTimeSeries = someCountries.flatMap((someCountry) => (mapTimeSeriesForGraphic(someCountry)));
 
-        // console.log("allTimeSeries");
-        // console.log(allTimeSeries);
+
         const groupedTimeSeries = lodash.groupBy(allTimeSeries, "date");
         const keys = Object.keys(groupedTimeSeries);
         const timeSeriesForGraphic = keys.map((someDate) => {
             const seriesFromThatDate = groupedTimeSeries[someDate];
             var jsonForGraphic = {};
 
-            jsonForGraphic["name"] = someDate;
+            jsonForGraphic["name"] = parseInt(someDate);
             seriesFromThatDate.forEach((someSerie) => {
 
                 jsonForGraphic[someSerie["countryName"]] = someSerie[params.selection];
@@ -127,23 +110,60 @@ const ComparisonComponent = (props) => {
             return jsonForGraphic;
         });
 
-        // console.log("timeSeriesForGraphic");
-        // console.log(timeSeriesForGraphic);
+
 
         return lodash.orderBy(timeSeriesForGraphic, "name");
 
     };
     const changeSelection = (someSelection) => { setOtherParams(Object.assign({}, params, { selection: someSelection })) }
-    const getUserLists = async () => {
-        const tokens = JSON.parse(localStorage.getItem('userInfo'));
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}lists`,
+    const closerCountriesQuery = (lat, long, offsetQuery) => (`latitude=${lat}&longitude=${long}${!offsetQuery ? "" : "&" + offsetQuery}`)
+    const fetchCloserCountries = async (token, lat, long, offset) => {
+        const query = closerCountriesQuery(lat, long, offset);
+        console.log("query");
+        console.log(query);
+        console.log("url fetchCloserCountries");
+        console.log(`${process.env.REACT_APP_API_BASE_URL}/lists/closer/history?${query}`);
+        return await fetch(`${process.env.REACT_APP_API_BASE_URL}/lists/closer/history?${query}`,
             {
                 method: 'GET',
                 headers:
                 {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}`,
+                    'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}/`,
+                    'Authorization': token.access_token
+                }
+            });
+    }
+    const SetCloserCountries = async (offsetQuery) => {
+        const tokens = JSON.parse(localStorage.getItem('userInfo'));
+        const lat = localStorage.getItem('lat');
+        const long = localStorage.getItem('long');
+        if (!!lat && !!long) {
+            const response = await fetchCloserCountries(tokens, lat, long, offsetQuery)
+            console.log("response");
+            console.log(response);
+            const result = await response.json();
+            console.log("result in SetCloserCountries");
+            console.log(result);
+            const closerCountriesList = { 'id': 0, 'name': "CloserCountries", 'countries': result }
+            console.log("Line 148 - closerCountriesList");
+            console.log(closerCountriesList);
+            localStorage.setItem("closerCountriesList", JSON.stringify(closerCountriesList));
+        }
+
+
+    }
+    const getUserLists = async () => {
+        const tokens = JSON.parse(localStorage.getItem('userInfo'));
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/lists`,
+            {
+                method: 'GET',
+                headers:
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}/`,
                     'Authorization': tokens.access_token
                 }
             });
@@ -247,11 +267,10 @@ const ComparisonComponent = (props) => {
     };
     const populateLists = async (someListsList) => {
         const tokens = JSON.parse(localStorage.getItem('userInfo'));
-        // console.log("someListList");
-        // console.log(someListsList);
+
         await someListsList.forEach(async (aList) => {
 
-            var result = await fetch(`${process.env.REACT_APP_API_BASE_URL}lists/${aList.id}/history`,
+            var result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/lists/${aList.id}/history`,
 
                 {
                     method: 'GET',
@@ -259,37 +278,39 @@ const ComparisonComponent = (props) => {
                     {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}`,
+                        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}/`,
                         'Authorization': tokens.access_token
                     }
                 }).then(response => response.json());
-            console.log(result);
+
             aList.countries = result;
         }
         );
-        // console.log("populate")
-        // console.log(someListsList);
+
 
     }
-    const queryOffset = async (someListId, offsetsquery) => {
-        console.log(someListId);
-        console.log(offsetsquery);
+    const queryOffset = async (someListId, offsetquery) => {
+
         const tokens = JSON.parse(localStorage.getItem('userInfo'));
+        const lat = localStorage.getItem('lat');
+        const long = localStorage.getItem('long');
+        const query = closerCountriesQuery(lat, long, offsetquery);
 
-        const countriesWithOffset = await fetch(`${process.env.REACT_APP_API_BASE_URL}lists/${someListId}/history?offsets=${offsetsquery}`,
+        const countriesWithOffset = someListId == 0 ?
+            await fetchCloserCountries(tokens, lat, long, query)
+            :
+            await fetch(`${process.env.REACT_APP_API_BASE_URL}/lists/${someListId}/history?offsets=${offsetquery}`,
 
-            {
-                method: 'GET',
-                headers:
                 {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}`,
-                    'Authorization': tokens.access_token
-                }
-            }).then(response => response.json());
-        console.log(countriesWithOffset);
-        console.log("countriesWithOffset");
+                    method: 'GET',
+                    headers:
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}/`,
+                        'Authorization': tokens.access_token
+                    }
+                }).then(response => response.json());
         return countriesWithOffset;
         // setOtherParams(Object.assign({}, params, { selectedObjectsSecond: {} }))
     }
@@ -310,10 +331,18 @@ const ComparisonComponent = (props) => {
     };
     useEffect(() => {
         async function FetchData() {
+            await SetCloserCountries();
+            console.log("331 - JSON.parse(localStorage.getItem('closerCountriesList'))");
+            console.log(JSON.parse(localStorage.getItem('closerCountriesList')));
+            var listas = [JSON.parse(localStorage.getItem('closerCountriesList'))];
             const result = await getUserLists();
 
             populateLists(result);
-            setOtherParams(Object.assign({}, params, { listSelect: result }));
+            listas = listas.concat(result);
+            setOtherParams(Object.assign({}, params, {
+                listSelect: listas, selectedItemsFirst: ["CloserCountries"], isCountryListDisabled: false,
+                selectedItemsSecond: listas[0].countries.map(lista => lista.id)
+            }));
         }
         if (params.listSelect.length == 0) FetchData();
     }, []);
@@ -381,6 +410,7 @@ const ComparisonComponent = (props) => {
                                             <ListItemText
                                                 primary={params.selectedObjectsSecond.find((y) => (y.id == x)).name}
                                             />
+                                            <span style={{ marginRight: 10 }}> Offset: </span>
                                             <input onKeyUp={(e) => (handleOffsetChange(e, x))} type={"number"} name={x.id} defaultValue={params.selectedObjectsSecond.find((y) => (y.id == x)).offset} />
                                         </ListItem>))
                                         }
@@ -394,9 +424,9 @@ const ComparisonComponent = (props) => {
                     {params.selectedObjectsSecond.length == 0 ? null :
                         <div style={{ display: "flex", flexFlow: "column" }} >
                             <div style={{ display: "flex", flexFlow: "row", marginBottom: 30 }}>
-                                <Button onClick={() => changeSelection("deaths")} id="deathsButton" variant="outlined" color="primary" style={{ marginLeft: 60 }}>Muertes</Button>
-                                <Button onClick={() => changeSelection("confirmed")} id="confirmedButton" variant="outlined" color="primary" style={{ marginLeft: 30 }}>Confirmados </Button>
-                                <Button onClick={() => changeSelection("recovered")} id="recoveredButton" variant="outlined" color="primary" style={{ marginLeft: 30 }}>Recuperados </Button>
+                                <Button onClick={() => changeSelection("deaths")} id="deathsButton" variant="outlined" color="primary" style={{ marginLeft: 60 }}>DEATHS</Button>
+                                <Button onClick={() => changeSelection("confirmed")} id="confirmedButton" variant="outlined" color="primary" style={{ marginLeft: 30 }}>CONFIRMED </Button>
+                                <Button onClick={() => changeSelection("recovered")} id="recoveredButton" variant="outlined" color="primary" style={{ marginLeft: 30 }}>RECOVERY </Button>
                             </div>
                             <div style={{ display: "flex", flexFlow: "row" }}>
                                 <LineChart

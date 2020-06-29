@@ -1,156 +1,132 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { getUserAccessToken } from '../../session-managment/utils';
-// ControlledTreeView imports
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import TreeView from '@material-ui/lab/TreeView';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import TreeItem from '@material-ui/lab/TreeItem';
-import MyTreeItem from './MyTreeItem';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
+import StepContent from '@material-ui/core/StepContent';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import SelectAnUser from './SelectAnUser';
+import SelectAList from './SelectAList';
 
-// ControlledTreeView
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     root: {
-        height: 216,
-        flexGrow: 1,
-        maxWidth: 400,
+        width: '100%',
     },
-});
+    actionsContainer: {
+        marginBottom: theme.spacing(2),
+    },
+    resetContainer: {
+        padding: theme.spacing(3),
+    },
+}));
 
-// CompareListsOfDifferentUsers
-const fetchUsers = async () => {
-    const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_API_BASE_URL,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': getUserAccessToken(),
-        }
-    });
-    const response = await axiosInstance.get('/users?page=1&limit=100&order_column=id&order_type=ASC');
-    const listOfUsers = response.data.data;
-    return listOfUsers;
+const getSteps = (firstUser, firstList, secondUser, secondList) => {
+    return [
+        `Select the first user ${firstUser.email}`,
+        `Select the first list ${firstList.name}`,
+        `Select the second user ${secondUser.email}`,
+        `Select the second list ${secondList.name}`,
+    ];
 }
 
-const CompareListsOfDifferentUsers = () => {
-    const [users, setUsers] = useState([]);
-
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const axiosInstance = axios.create({
-                baseURL: process.env.REACT_APP_API_BASE_URL,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': getUserAccessToken(),
-                }
-            });
-            const response = await axiosInstance.get('/users?page=1&limit=100&order_column=id&order_type=ASC');
-            const listOfUsers = response.data.data;
-            setUsers(listOfUsers);
-        }
-        fetchUsers();
-    }, []
+export default function CompareListsOfDifferentUsers() {
+    const classes = useStyles();
+    const [activeStep, setActiveStep] = useState(0);
+    const [firstUserSelected, setFirstUserSelected] = useState({});
+    const [firstListSelected, setFirstListSelected] = useState({});
+    const [secondUserSelected, setSecondUserSelected] = useState({});
+    const [secondListSelected, setSecondListSelected] = useState({});
+    const steps = getSteps(
+        firstUserSelected,
+        firstListSelected,
+        secondUserSelected,
+        secondListSelected
     );
 
-    // START - ControlledTreeViewLEFT
-    const classes = useStyles();
-    const [expandedLeft, setExpandedLeft] = useState([]);
-    const [selectedLeft, setSelectedLeft] = useState([]);
-    const [userLists, setUserLists] = useState([]);
-
-    const handleToggleLeft = (event, nodeIds) => {
-        setExpandedLeft(nodeIds);
+    const handleNextSelectFirstUser = (user) => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setFirstUserSelected(user);
     };
 
-    const handleSelectLeft = (event, nodeIds) => {
-        setSelectedLeft(nodeIds);
-    };
-    // END - ControlledTreeViewLEFT
-
-    // START - ControlledTreeViewRIGHT
-    const [expandedRight, setExpandedRight] = useState([]);
-    const [selectedRight, setSelectedRight] = useState([]);
-
-    const handleToggleRight = (event, nodeIds) => {
-        setExpandedRight(nodeIds);
+    const handleNextSelectFirstList = (list) => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setFirstListSelected(list);
     };
 
-    const handleSelectRight = (event, nodeIds) => {
-        setSelectedRight(nodeIds);
+    const handleNextSelectSecondUser = (user) => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSecondUserSelected(user);
     };
-    // END - ControlledTreeViewRIGHT
 
-    const handleUserClick = (event, userId) => {
-        event.preventDefault();
-        const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_API_BASE_URL,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': getUserAccessToken(),
-            }
-        });
+    const handleNextSelectSecondList = (list) => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSecondListSelected(list);
+    };
 
-        const fetchASpecificUser = async () => {
-            const result = await axiosInstance.get(`/users/${userId}`);
-            setUserLists(result.data.lists);
+    const cleanUp = () => setFirstUserSelected({});
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+        cleanUp();
+    };
+
+    const handleReset = () => {
+        setActiveStep(0);
+    };
+
+    function getStepContent(step) {
+        switch (step) {
+            case 0:
+                return <SelectAnUser handleNext={handleNextSelectFirstUser} />;
+            case 1:
+                return <SelectAList userSelected={firstUserSelected} handleNext={handleNextSelectFirstList} />;
+            case 2:
+                return <SelectAnUser handleNext={handleNextSelectSecondUser} userToExclude={firstUserSelected} />;
+            case 3:
+                return <SelectAList userSelected={secondUserSelected} handleNext={handleNextSelectSecondList} />;
+            default:
+                return 'Unknown step';
         }
-        fetchASpecificUser();
     }
 
     return (
         <div className="auth-wrapper-table">
             <div className="auth-inner-table">
-                {/* ControlledTreeView LEFT */}
-                <TreeView
-                    className={classes.root}
-                    defaultCollapseIcon={<ExpandMoreIcon />}
-                    defaultExpandIcon={<ChevronRightIcon />}
-                    expanded={expandedLeft}
-                    selected={selectedLeft}
-                    onNodeToggle={handleToggleLeft}
-                    onNodeSelect={handleSelectLeft}
-                >
-                    {
-                        users.map(user => {
-                            return (
-                                <TreeItem nodeId={user.id} label={user.email} onLabelClick={(event) => handleUserClick(event, user.id)}>
-                                    {userLists.map(list => {
-                                        return (
-                                            <MyTreeItem nodeId={list.id} label={list.name} />
-                                        )
-                                    })}
-                                </TreeItem>
-                            )
-                        })
-                    }
-                </TreeView>
-                <br />
-                <br />
-                {/* ControlledTreeView RIGHT */}
-                {/* <TreeView
-                    className={classes.root}
-                    defaultCollapseIcon={<ExpandMoreIcon />}
-                    defaultExpandIcon={<ChevronRightIcon />}
-                    expanded={expandedRight}
-                    selected={selectedRight}
-                    onNodeToggle={handleToggleRight}
-                    onNodeSelect={handleSelectRight}
-                >
-                    {
-                        users.map(user => {
-                            return (
-                                <TreeItem nodeId={user.id} label={user.email}>
-                                    <TreeItem nodeId="5" label="Calendar" />
-                                    <TreeItem nodeId="6" label="Chrome" />
-                                    <TreeItem nodeId="7" label="Webstorm" />
-                                </TreeItem>
-                            )
-                        })
-                    }
-                </TreeView> */}
+                <div className={classes.root}>
+                    <Stepper activeStep={activeStep} orientation="vertical">
+                        {steps.map((label, index) => (
+                            <Step key={label}>
+                                <StepLabel>{label}</StepLabel>
+                                <StepContent>
+                                    <Typography component="span" variant="body2">{getStepContent(index)}</Typography>
+                                    <div className={classes.actionsContainer}>
+                                        <div>
+                                            <Button
+                                                disabled={activeStep === 0}
+                                                onClick={handleBack}
+                                                className={classes.button}
+                                            >
+                                                Back
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </StepContent>
+                            </Step>
+                        ))}
+                    </Stepper>
+                    {activeStep === steps.length && (
+                        <Paper square elevation={0} className={classes.resetContainer}>
+                            <Typography>All steps completed - you&apos;re finished</Typography>
+                            <Button onClick={handleReset} className={classes.button}>
+                                Reset
+                            </Button>
+                        </Paper>
+                    )}
+                </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default CompareListsOfDifferentUsers;
