@@ -12,6 +12,7 @@ import CountriesComponent from '../dashboards/countries-dashboard'
 import ListItemComponent from '../lists/list-item'
 import "../../assets/sass/burger-menu.css"
 import ListsComponent from '../dashboards/lists-dashboards'
+import NewListComponent from '../lists/newList'
 import PageNotFound from '../dashboards/page-not-found'
 import { isUserLogin } from "../session-managment/utils"
 import PrivateRoute from "../session-managment/private-route"
@@ -51,6 +52,7 @@ const AppComponent = (props) => {
                 {/* <PrivateRoute path="/users" component={UsersComponent} /> */}
                 <PrivateRoute path="/countries" component={CountriesComponent} />
                 <PrivateRoute path="/lists" component={ListsComponent} />
+                <PrivateRoute path="/new-list" component={NewListComponent} />
                 <PrivateRoute path="/list/:id" component={ListItemComponent} />
                 <PrivateRoute path="/home" component={HomeComponent} />
                 {/* Admin Routes */}
