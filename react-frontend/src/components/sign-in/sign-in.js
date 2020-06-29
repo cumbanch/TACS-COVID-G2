@@ -36,7 +36,7 @@ const SignInComponent = (props) => {
                     if (userType === "regular")
                         setRedirect('/graphics');
                     else if (userType === "admin")
-                        setRedirect('/admin/compare');
+                        setRedirect('/admin/users');
                 }
             })
             .catch((error) => { // Incorrect password (Error 401)

@@ -12,6 +12,7 @@ import axios from 'axios';
 import { getUserAccessToken } from '../../session-managment/utils';
 import NextButton from './NextButton';
 import './UsersInfo.css';
+import { regularUser } from '../../session-managment/utils';
 
 const useStyles = makeStyles({
     root: {
@@ -40,17 +41,15 @@ const SelectAnUser = (props) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [rows, setRows] = useState([]);
-    const [userSelected, setUserSelected] = useState({});
 
     const otherHandleNext = (user) => {
         props.handleNext(user);
-        setUserSelected(user);
     }
 
     const prepareToShow = (users) => users.map(user => {
         return createData(
             user.email,
-            <NextButton content={user} handleNext={otherHandleNext} />
+            <NextButton content={user} handleNext={() => otherHandleNext(user)} />
         )
     });
 
@@ -67,11 +66,14 @@ const SelectAnUser = (props) => {
             const response = await axiosInstance.get('/users?page=1&limit=100&order_column=id&order_type=ASC');
             const listOfUsers = response.data.data;
             const firstUserSelected = props.userToExclude;
-            const usersWithFirstUserExcluded = listOfUsers.filter(user => {
-                return JSON.stringify(user) !== JSON.stringify(firstUserSelected)
+            const usersWithNoFirstUserSelectedAndNoAdmins = listOfUsers.filter(user => {
+                console.log("JSON.stringify(user.type)");
+                console.log(JSON.stringify(user.type));
+                return JSON.stringify(user) !== JSON.stringify(firstUserSelected) &&
+                    user.type == regularUser;
             });
-            const usersRows = prepareToShow(usersWithFirstUserExcluded);
-            setRows(usersRows);
+            const usersRowsToShow = prepareToShow(usersWithNoFirstUserSelectedAndNoAdmins);
+            setRows(usersRowsToShow);
         }
 
         fetchUsers();

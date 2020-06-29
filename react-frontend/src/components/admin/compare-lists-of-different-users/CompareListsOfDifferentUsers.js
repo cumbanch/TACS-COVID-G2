@@ -9,6 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import SelectAnUser from './SelectAnUser';
 import SelectAList from './SelectAList';
+import CountriesInCommon from './CountriesInCommon';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,14 +21,18 @@ const useStyles = makeStyles((theme) => ({
     resetContainer: {
         padding: theme.spacing(3),
     },
+    button: {
+        marginTop: theme.spacing(1),
+        marginRight: theme.spacing(1),
+    }
 }));
 
 const getSteps = (firstUser, firstList, secondUser, secondList) => {
     return [
-        `Select the first user ${firstUser.email}`,
-        `Select the first list ${firstList.name}`,
-        `Select the second user ${secondUser.email}`,
-        `Select the second list ${secondList.name}`,
+        `Select the first user ${firstUser.email ? firstUser.email : ''}`,
+        `Select the first list ${firstList.name ? firstList.name : ''}`,
+        `Select the second user ${secondUser.email ? secondUser.email : ''}`,
+        `Select the second list ${secondList.name ? secondList.name : ''}`,
     ];
 }
 
@@ -45,41 +50,65 @@ export default function CompareListsOfDifferentUsers() {
         secondListSelected
     );
 
+    const oneStepForward = () => setActiveStep((prevActiveStep) => prevActiveStep + 1);
+
     const handleNextSelectFirstUser = (user) => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        oneStepForward();
         setFirstUserSelected(user);
     };
 
     const handleNextSelectFirstList = (list) => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        oneStepForward();
         setFirstListSelected(list);
     };
 
     const handleNextSelectSecondUser = (user) => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        oneStepForward();
         setSecondUserSelected(user);
     };
 
     const handleNextSelectSecondList = (list) => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        oneStepForward();
         setSecondListSelected(list);
     };
 
-    const cleanUp = () => setFirstUserSelected({});
-
     const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-        cleanUp();
+        const oneStepBackward = () => setActiveStep((prevActiveStep) => prevActiveStep - 1);
+
+        switch (activeStep) {
+            case 1:
+                oneStepBackward();
+                setFirstUserSelected({});
+                break;
+            case 2:
+                oneStepBackward();
+                setFirstListSelected({});
+                break;
+            case 3:
+                oneStepBackward();
+                setSecondUserSelected({});
+                break;
+            case 4:
+                oneStepBackward();
+                setSecondListSelected({});
+                break;
+            default:
+                break;
+        }
     };
 
     const handleReset = () => {
         setActiveStep(0);
+        setFirstUserSelected({});
+        setFirstListSelected({});
+        setSecondUserSelected({});
+        setSecondListSelected({});
     };
 
     function getStepContent(step) {
         switch (step) {
             case 0:
-                return <SelectAnUser handleNext={handleNextSelectFirstUser} />;
+                return <SelectAnUser handleNext={handleNextSelectFirstUser} userToExclude={{}} />;
             case 1:
                 return <SelectAList userSelected={firstUserSelected} handleNext={handleNextSelectFirstList} />;
             case 2:
@@ -118,15 +147,22 @@ export default function CompareListsOfDifferentUsers() {
                     </Stepper>
                     {activeStep === steps.length && (
                         <Paper square elevation={0} className={classes.resetContainer}>
-                            <Typography>All steps completed - you&apos;re finished</Typography>
-                            <Button onClick={handleReset} className={classes.button}>
+                            <Typography>
+                                <CountriesInCommon firstList={firstListSelected} secondList={secondListSelected} />
+                            </Typography>
+                            <br />
+                            <Button
+                                onClick={handleReset}
+                                color="primary"
+                                className={classes.button}
+                                variant="contained">
                                 Reset
                             </Button>
                         </Paper>
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

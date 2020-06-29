@@ -40,17 +40,15 @@ const SelectAList = (props) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [rows, setRows] = useState([]);
-    const [listSelected, setListSelected] = useState({});
 
     const otherHandleNext = (list) => {
         props.handleNext(list);
-        setListSelected(list);
     }
 
     const prepareToShow = (lists) => lists.map(list => {
         return createData(
             list.name,
-            <NextButton content={list} handleNext={otherHandleNext} />
+            <NextButton content={list} handleNext={() => otherHandleNext(list)} />
         )
     });
 
