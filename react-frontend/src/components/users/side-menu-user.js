@@ -60,9 +60,8 @@ const SideMenuUserComponent = () => {
     return (
         <Menu outerContainerId={"root"} pageWrapId={"navCovid"} style={styles} >
             {/* <MenuItemComponent anId="Users" anIcon={userIcon} urlRef="/users" aTitle="USUARIOS" /> */}
-            <MenuItemComponent anId="Listas" anIcon={listIcon} urlRef="/lists" aTitle="LISTAS" />
-            <MenuItemComponent anId="Paises" anIcon={countryIcon} urlRef="/countries" aTitle="PAISES" />
-            <MenuItemComponent anId="Graphics" anIcon={chartIcon} urlRef="/graphics" aTitle="GRAFICOS" />
+            <MenuItemComponent anId="Graphics" anIcon={chartIcon} urlRef="/graphics" aTitle="GRAPHICS" />
+            <MenuItemComponent anId="Listas" anIcon={listIcon} urlRef="/lists" aTitle="LISTS" />
         </Menu>
     )
 }

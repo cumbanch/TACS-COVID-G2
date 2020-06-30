@@ -10,7 +10,6 @@ import { getUserTypeFromLocalStorage } from '../session-managment/utils';
 
 const setUserPosition = () => {
     if (navigator.geolocation) {
-
         navigator.geolocation.getCurrentPosition(function (position) {
             localStorage.setItem("lat", position.coords.latitude);
             localStorage.setItem("long", position.coords.longitude);
@@ -23,20 +22,21 @@ const setUserPosition = () => {
 const SignInComponent = (props) => {
 
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
-    const [wasRefreshed, setWasRefreshed] = useState(false);
 
     const signIn = () => {
         return SignIn(inputs)
             .then((res) => {
                 if (res.status == 200) {
-                    setUserPosition();
                     localStorage.setItem('userInfo', JSON.stringify(res.data));
                     const userType = getUserTypeFromLocalStorage();
                     props.handleLogin(userType);
-                    if (userType === "regular")
+                    if (userType === "regular") {
                         setRedirect('/graphics');
-                    else if (userType === "admin")
+                        setUserPosition();
+                    }
+                    else if (userType === "admin") {
                         setRedirect('/admin/users');
+                    }
                 }
             })
             .catch((error) => { // Incorrect password (Error 401)

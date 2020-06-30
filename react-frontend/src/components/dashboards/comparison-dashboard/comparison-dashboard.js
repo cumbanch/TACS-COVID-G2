@@ -53,14 +53,14 @@ const ComparisonComponent = (props) => {
     const handleChangeFirst = (event) => {
 
         if (event.target.value == []) setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: true, selectedItemsSecond: [] }));
-        const countries = getDependantDataArrayByProperty(params.listSelect.filter((x) => (event.target.value.includes(x.name))));
-        countries.map((x) => { x["color"] = "#" + ('00000' + (Math.random() * (1 << 24) | 0).toString(16)).slice(-6); return x; });
+        var countries = getDependantDataArrayByProperty(params.listSelect.filter((x) => (event.target.value.includes(x.name))));
+        countries = countries.map((x) => { x["color"] = "#" + ('00000' + (Math.random() * (1 << 24) | 0).toString(16)).slice(-6); return x; });
         setOtherParams(Object.assign({}, params, { selectedItemsFirst: event.target.value, isCountryListDisabled: false, selectedItemsSecond: [], selectedObjectsSecond: [], countriesList: countries }));
         console.log("Pase por handleChangeFirst");
     };
     const handleChangeSecond = (event) => {
-        const selectObjects = getCountriesFromList(getListFromId(params.listSelect, !params.selectedItemsFirst[0] ? undefined : params.selectedItemsFirst[0].id), event.target.value);
-        selectObjects.map((someObject) => { someObject["offset"] = !someObject["offset"] ? 0 : someObject["offset"]; return someObject; });
+        var selectObjects = getCountriesFromList(getListFromId(params.listSelect, !params.selectedItemsFirst[0] ? undefined : params.selectedItemsFirst[0].id), event.target.value);
+        var selectObjects = selectObjects.map((someObject) => { someObject["offset"] = !someObject["offset"] ? 0 : someObject["offset"]; return someObject; });
         setOtherParams(Object.assign({}, params, { selectedItemsSecond: event.target.value, selectedObjectsSecond: selectObjects }));
     }
     const getDependantDataArrayByProperty = (someArray) => {
@@ -297,7 +297,8 @@ const ComparisonComponent = (props) => {
         const query = closerCountriesQuery(lat, long, offsetquery);
 
         const countriesWithOffset = someListId == 0 ?
-            await fetchCloserCountries(tokens, lat, long, query)
+            await fetchCloserCountries(tokens, lat, long, offsetquery).
+                then(response => response.json())
             :
             await fetch(`${process.env.REACT_APP_API_BASE_URL}/lists/${someListId}/history?offsets=${offsetquery}`,
 
@@ -311,18 +312,22 @@ const ComparisonComponent = (props) => {
                         'Authorization': tokens.access_token
                     }
                 }).then(response => response.json());
+        console.log("countriesWithOffset");
+        console.log(countriesWithOffset);
         return countriesWithOffset;
         // setOtherParams(Object.assign({}, params, { selectedObjectsSecond: {} }))
     }
     const handleOffsetChange = async (event, countryId) => {
         const countriesInSelect = params.selectedObjectsSecond;
         const value = !event.target.value ? 0 : event.target.value;
-        const countryMapped = countriesInSelect.map((someCountry) => {
+        var countryMapped = countriesInSelect.map((someCountry) => {
             if (someCountry.id == countryId) someCountry.offset = value;
             return someCountry;
         });
         const countriesWithOffset1 = await queryOffset(params.listSelect.find((x) => (params.selectedItemsFirst.includes(x.name))).id, "[" + countryMapped.map((c) => (`{"country_id":${c.id},"offset": ${c.offset}}`)).join(',') + "]");
-        countryMapped.map((someCountry) => { someCountry.timeseries = countriesWithOffset1.find((x) => (x.id == someCountry.id)).timeseries; return someCountry })
+        console.log("countriesWithOffset1");
+        console.log(countriesWithOffset1);
+        countryMapped = countryMapped.map((someCountry) => { someCountry.timeseries = countriesWithOffset1.find((x) => (x.id == someCountry.id)).timeseries; return someCountry })
 
 
         setOtherParams(Object.assign({}, params, { selectedObjectsSecond: countryMapped }));
@@ -339,9 +344,11 @@ const ComparisonComponent = (props) => {
 
             populateLists(result);
             listas = listas.concat(result);
+            var countriesFromCloserCountries = listas[0].countries;
+            countriesFromCloserCountries = countriesFromCloserCountries.map((x) => { x["color"] = "#" + ('00000' + (Math.random() * (1 << 24) | 0).toString(16)).slice(-6); return x; });
             setOtherParams(Object.assign({}, params, {
                 listSelect: listas, selectedItemsFirst: ["CloserCountries"], isCountryListDisabled: false,
-                selectedItemsSecond: listas[0].countries.map(lista => lista.id)
+                selectedItemsSecond: listas[0].countries.map(lista => lista.id), countriesList: countriesFromCloserCountries, selectedObjectsSecond: countriesFromCloserCountries
             }));
         }
         if (params.listSelect.length == 0) FetchData();
