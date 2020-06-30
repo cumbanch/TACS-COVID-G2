@@ -61,7 +61,7 @@ const ListsOfCountriesInfo = () => {
                 <p>Select one of the following options to see the number of registered lists at the date entered</p>
                 <DropMenuOfRegisteredLists />
                 <br />
-                <h4>Select specific date</h4>
+                <h4>Select a specific date</h4>
                 <p>If you need check another date you can use the follow date-picker. Just select a date in it and
                 press the check button to see the number of registered lists from the
                 date picked to today.</p>

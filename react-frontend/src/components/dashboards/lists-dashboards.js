@@ -106,7 +106,7 @@ const ListsComponent = (props) => {
         </h1>
         <List>
           {params.listItems.map((row) => (
-            <ListItem button component={Link} to={"/list/" + row.id}>
+            <ListItem button component={Link} to={"/list/" + row.id}  key={row.id}>
               <ListItemText classes={{primary:classes.listItem}}
                 primary={row.name}
               />
@@ -116,11 +116,11 @@ const ListsComponent = (props) => {
             </ListItem>
           ))}
           <ListItem>
-            <button className="btn btn-primary">
-              <Link to="/new-list" className={classes.ListItem}>
-                Agregar nueva lista...
+            <ListItemText classes={{primary:classes.listItem}}>
+            <Link to="/new-list">
+                + Agregar nueva lista...
               </Link>
-            </button>
+              </ListItemText>
           </ListItem>
         </List>
     </div>

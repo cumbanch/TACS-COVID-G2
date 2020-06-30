@@ -27,6 +27,7 @@ const SignInComponent = (props) => {
         return SignIn(inputs)
             .then((res) => {
                 if (res.status == 200) {
+                    setUserPosition();
                     localStorage.setItem('userInfo', JSON.stringify(res.data));
                     const userType = getUserTypeFromLocalStorage();
                     props.handleLogin(userType);
