@@ -122,15 +122,15 @@ const ComparisonComponent = (props) => {
         console.log("query");
         console.log(query);
         console.log("url fetchCloserCountries");
-        console.log(`${process.env.REACT_APP_API_BASE_URL}/lists/closer/history?${query}`);
-        return await fetch(`${process.env.REACT_APP_API_BASE_URL}/lists/closer/history?${query}`,
+        console.log(`${process.env.REACT_APP_API_BASE_URL}lists/closer/history?${query}`);
+        return await fetch(`${process.env.REACT_APP_API_BASE_URL}lists/closer/history?${query}`,
             {
                 method: 'GET',
                 headers:
                 {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}/`,
+                    'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}`,
                     'Authorization': token.access_token
                 }
             });
@@ -156,14 +156,14 @@ const ComparisonComponent = (props) => {
     }
     const getUserLists = async () => {
         const tokens = JSON.parse(localStorage.getItem('userInfo'));
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/lists`,
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}lists`,
             {
                 method: 'GET',
                 headers:
                 {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}/`,
+                    'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}`,
                     'Authorization': tokens.access_token
                 }
             });
@@ -270,7 +270,7 @@ const ComparisonComponent = (props) => {
 
         await someListsList.forEach(async (aList) => {
 
-            var result = await fetch(`${process.env.REACT_APP_API_BASE_URL}/lists/${aList.id}/history`,
+            var result = await fetch(`${process.env.REACT_APP_API_BASE_URL}lists/${aList.id}/history`,
 
                 {
                     method: 'GET',
@@ -278,7 +278,7 @@ const ComparisonComponent = (props) => {
                     {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}/`,
+                        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}`,
                         'Authorization': tokens.access_token
                     }
                 }).then(response => response.json());
@@ -300,7 +300,7 @@ const ComparisonComponent = (props) => {
             await fetchCloserCountries(tokens, lat, long, offsetquery).
                 then(response => response.json())
             :
-            await fetch(`${process.env.REACT_APP_API_BASE_URL}/lists/${someListId}/history?offsets=${offsetquery}`,
+            await fetch(`${process.env.REACT_APP_API_BASE_URL}lists/${someListId}/history?offsets=${offsetquery}`,
 
                 {
                     method: 'GET',
@@ -308,7 +308,7 @@ const ComparisonComponent = (props) => {
                     {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}/`,
+                        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API_BASE_URL}`,
                         'Authorization': tokens.access_token
                     }
                 }).then(response => response.json());
