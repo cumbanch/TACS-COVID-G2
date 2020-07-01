@@ -116,7 +116,7 @@ const ComparisonComponent = (props) => {
 
     };
     const changeSelection = (someSelection) => { setOtherParams(Object.assign({}, params, { selection: someSelection })) }
-    const closerCountriesQuery = (lat, long, offsetQuery) => (`latitude=${lat}&longitude=${long}${!offsetQuery ? "" : "&offset=" + offsetQuery}`)
+    const closerCountriesQuery = (lat, long, offsetQuery) => (`latitude=${lat}&longitude=${long}${!offsetQuery ? "" : "&offsets=" + offsetQuery}`)
     const fetchCloserCountries = async (token, lat, long, offset) => {
         const query = closerCountriesQuery(lat, long, offset);
         console.log("query");
