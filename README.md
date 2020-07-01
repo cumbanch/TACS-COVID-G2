@@ -159,3 +159,9 @@ The frontend consists in one container for the React application. You need to cr
 You can also check the `.env.example` file for guidance:
 ##### `REACT_APP_API_BASE_URL` (required)
 The host of the backend API.
+
+## Admin access
+By default, an unique admin user is created. Use the follow username and password to enter as a admin:
+
+ - **Application**: admin@tacs.grupo2.com.ar
+ - **Database**: tacs_admin
