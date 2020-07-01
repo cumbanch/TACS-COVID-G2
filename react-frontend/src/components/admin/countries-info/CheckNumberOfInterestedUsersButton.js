@@ -11,7 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 const CheckNumberOfInterestedUsersButton = (props) => {
 
     const [open, setOpen] = useState(false);
-    const [amount, setAmount] = useState(null);
+    const [amount, setAmount] = useState(0);
 
     const handleClose = () => {
         setOpen(false);
