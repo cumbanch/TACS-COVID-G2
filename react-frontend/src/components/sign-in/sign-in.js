@@ -14,7 +14,7 @@ const setUserPosition = () => {
             localStorage.setItem("lat", position.coords.latitude);
             localStorage.setItem("long", position.coords.longitude);
         }, function (error) {
-            console.log('Error in set current position');
+            console.log('Error to set current position');
         })
     }
 }
