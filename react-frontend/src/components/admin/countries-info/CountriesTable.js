@@ -63,7 +63,7 @@ const CountriesTable = () => {
         });
 
         const fetchData = async () => {
-            const response = await axiosInstance.get('/countries?page=1&limit=253');
+            const response = await axiosInstance.get('/countries?page=1&limit=253&order_column=id&order_type=ASC');
             const listOfCountries = response.data.data
             const countriesRows = prepareToShow(listOfCountries);
             setRows(countriesRows);

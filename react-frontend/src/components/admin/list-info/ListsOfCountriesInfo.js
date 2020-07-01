@@ -21,7 +21,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 const ListsOfCountriesInfo = () => {
 
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [amount, setAmount] = useState(99);
+    const [amount, setAmount] = useState(0);
     const [openWindowDialog, setOpenWindowDialog] = useState(false);
     const originOfTime = new Date(2020, 0, 1);
 
@@ -97,8 +97,12 @@ const ListsOfCountriesInfo = () => {
                         <DialogTitle id="alert-dialog-title">{"Registered lists"}</DialogTitle>
                         <DialogContent>
                             <DialogContentText id="alert-dialog-description">
-                                {`From ${selectedDate.toLocaleDateString("en-US")} to today, the number of registered lists was ${amount}`}
-                                {console.log("render amount of registered lists")}
+                                {
+                                    (new Date).toLocaleDateString("en-US") == selectedDate.toLocaleDateString("en-US") ?
+                                        `The  number of registered lists today is ${amount}`
+                                        :
+                                        `From ${selectedDate.toLocaleDateString("en-US")} to today, the number of registered lists was ${amount}`
+                                }
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
